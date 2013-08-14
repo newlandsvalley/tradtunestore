@@ -1,9 +1,11 @@
 TradTuneStore
 =============
 
-This is the web interface into the musicrest web service. It allows users to submit traditional tunes in [ABC notation](http://abcnotation.com/), to search for these tunes, and, having found them, to download the scores in a variety of formats or to play them.
+This is the web interface into the [musicrest](https://github.com/newlandsvalley/musicrest) web service. It allows users to submit traditional tunes in [ABC notation](http://abcnotation.com/), to search for these tunes, and, having found them, to download the scores in a variety of formats or to play them - see [tradtunedb](http://www.tradtunedb.org.uk/).
 
 It uses the [Play Framework](http://www.playframework.org/) and is written in Scala.
+
+
 
 Configuration
 -------------
@@ -16,7 +18,7 @@ There are two configuration files which are standard for Play applications.  Fir
 Dependencies
 ------------
 
-*  [Play 2.0.3](http://www.playframework.org/download).
+*  [Play 2.1.2](http://www.playframework.org/download).
 *  [Scalaz 7](http://code.google.com/p/scalaz/wiki/Scalaz7) for validation.
 *  [Dispatch](http://dispatch.databinder.net/Dispatch.html) for proxying requests.
 
