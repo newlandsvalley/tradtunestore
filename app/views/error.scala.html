@@ -1,0 +1,12 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils.Utils._
+
+@main(message)("")(userName)(navigation("home")(userName)) {         
+    <div id="acknowledgediv" role="main" class="main" >
+          <p>@sanitizeErrorMessage(message)</p>
+    </div>
+}
+
+

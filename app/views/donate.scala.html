@@ -1,0 +1,26 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("donate")("")(userName)(navigation("home")(userName)) {         
+    <div id="creditsdiv" role="main" class="main" >
+          <p>The Trad Tune Store is a non-profit-making venture, but hosting it can be expensive . Your donations help to keep the site up and running.</p>
+    
+     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+       <input type="hidden" name="cmd" value="_xclick">
+       <input type="hidden" name="business" value="john.watson@@gmx.co.uk">
+       <input type="hidden" name="item_name" value="TradTuneStore">
+       <input type="hidden" name="no_shipping" value="1">
+       <input type="hidden" name="return" value="http://tradtunestore.org/">
+       <input type="hidden" name="cancel_return" value="http://tradtunestore.org/">
+       <input type="hidden" name="no_note" value="1">
+       <input type="hidden" name="currency_code" value="USD">
+       <input type="hidden" name="tax" value="0">
+       <input type="hidden" name="lc" value="US">
+       <input type="submit" value="donate" />
+     </form>
+
+    </div>
+}
+
+

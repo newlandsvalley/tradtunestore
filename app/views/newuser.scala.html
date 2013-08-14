@@ -1,0 +1,34 @@
+@(registrationForm: Form[User])(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+@import utils.Utils
+
+@main("new user")("")(userName)(navigation("login")(userName)) {         
+   <div id="searchdiv" role="main" class="main" > 
+    
+        <!--form name="Create_user" id="newuserform" action=@(Utils.remoteService) + "user" method="POST" enctype="application/x-www-form-urlencoded" -->
+         @helper.form(action = routes.Application.processNewUser, 'id -> "newuserform", 'enctype -> "application/x-www-form-urlencoded" ) {
+         <fieldset>
+           <legend class="new-user" >New User</legend>
+            <ul>
+             <li>
+              @helper.inputText(registrationForm("name"), 'required -> "required",  '_class -> "newuser", '_help -> "" )
+             </li>
+             <li>
+              @helper.inputText(registrationForm("email"), 'required -> "required", '_class -> "newuser")
+             </li>
+             <li>
+               @helper.inputPassword(registrationForm("password.main"), '_label -> "Password",'required -> "required", '_class -> "newuser", '_help -> "")
+             </li>
+             <li>
+              @helper.inputPassword(registrationForm("password.confirm"), '_label -> "Confirm password", 'required -> "required", '_class -> "newuser",   '_error -> registrationForm.error("password") )
+             </li>
+           </ul> 
+           <input type="submit" value = "Register" />
+         </fieldset>
+        }
+   </div>
+}
+
+

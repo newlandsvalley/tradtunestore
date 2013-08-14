@@ -1,0 +1,42 @@
+@(genre: String, name: String, abc: Html, isSubmitter: Boolean, alternativeTitleForm: Form[AlternativeTitle])(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+
+@main("abc")("")(userName)(navigation("home")(userName)) {         
+    <div id="abcdiv" role="main" class="main" >
+      <div id="abcnotes" >
+        <h2>@name (@genre)</h2><br />
+        @abc   
+      </div>   
+      <div>
+        <nav role="navigation" class="vnav">  
+        <ul>
+        <li>
+        @if(userName.isDefined && userName.get == "administrator") {
+           <ul>
+            @helper.form(action = routes.Application.processAlternativeTitle(genre, name), 'id -> "alternativetitleform", 'enctype -> "application/x-www-form-urlencoded" ) {
+               <li>
+               @helper.inputText(alternativeTitleForm("title"), '_class -> "alternativetitle", 'id -> "title", '_label -> "tune title", 'required -> "required" )
+               </li>
+               <li>
+               <input type= "submit" value="add alternative tune title"  />   
+               <li>         
+            }
+           </ul>
+        }
+        </li>
+        @if(userName.isDefined && isSubmitter) {
+          <li>
+            <form method = "POST" action = "../delete/@name" >
+              <input class="button-link" type= "submit" value="delete" class="delete" />
+            </form>
+          </li>
+        }
+        </ul>
+        </nav>
+      </div>
+    </div>
+}
+
+

@@ -1,0 +1,26 @@
+@(results: Html, currentPage: Int, totalPages: Int)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils._
+@import java.net.URLDecoder
+
+@pageInfo() = {
+  @if(totalPages > 0) {
+     page @currentPage of @totalPages
+  }
+}
+
+
+@main("search results")("")(userName)(navigation("home")(userName)) {         
+    <div id="searchresultsdiv" role="main" class="main" >
+          <p>User List @pageInfo</p>
+          @results 
+          <nav role="navigation">
+           <ul class="pagination">
+             @pageLinks("scandi", None, "alphabetic", currentPage, totalPages)
+           </ul>
+          </nav>         
+    </div>
+}
+
+

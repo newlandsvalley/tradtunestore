@@ -1,0 +1,56 @@
+@(genre: String, predicateOption: Option[String], sort: String, currentPage: Int, totalPages: Int)
+
+@import play.api.templates.Html
+@import snippets._
+@import utils._
+
+
+
+@urlBase = {
+   @("searchresults?genre=" + genre + Utils.predicateTerm(predicateOption) + "&sort=" + sort)
+}
+
+@displayFirst(currentPage: Int, totalPages: Int) = {
+    @if(totalPages > 10  && currentPage > 1) { 
+      @navigationlink(urlBase + "&page=1")(Utils.cssClass("", currentPage.toString))("first")   
+    }
+}
+
+@displayPrev(currentPage: Int) = {
+    @if(currentPage > 1) { 
+      @navigationlink(urlBase + "&page=" + (currentPage-1).toString)(Utils.cssClass("", currentPage.toString))("prev")   
+    }
+}
+
+@displayNext(currentPage: Int, totalPages: Int) = {
+    @if(totalPages > 1 && currentPage < totalPages) { 
+      @navigationlink(urlBase + "&page=" + (currentPage+1).toString)(Utils.cssClass("", currentPage.toString))("next")   
+    }
+}
+
+@displayLast(currentPage: Int, totalPages: Int) = {
+    @if(totalPages > Utils.maxPageLinks && currentPage < totalPages) { 
+      @navigationlink(urlBase + "&page=" + totalPages.toString)(Utils.cssClass("", currentPage.toString))("last")   
+    }
+}
+
+
+@displayNumberedLinks(currentPage: Int, totalPages: Int, numLinks: Int, startPage: Int) = {
+   @if(totalPages > 1) {
+     @for(i <- startPage to (startPage + numLinks)) { 
+        @navigationlink(urlBase + "&page=" + i.toString)(Utils.cssClass(i.toString, currentPage.toString))(i.toString)
+      }
+   }
+}
+
+
+
+@displayFirst(currentPage, totalPages)
+@displayPrev(currentPage)
+@displayNumberedLinks(currentPage, totalPages, (Utils.getNumberOfLinks(totalPages, currentPage)), Utils.getStartPage(totalPages, currentPage))
+@displayNext(currentPage, totalPages)
+@displayLast(currentPage, totalPages)
+
+
+
+

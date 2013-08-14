@@ -1,0 +1,17 @@
+@(genre: String, name: String, tuneUrl: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+
+@imageUrl = @{
+ tuneUrl + "/temporary" +"/png"
+}
+
+@main("tune")("")(userName)(navigation("home")(userName)) {         
+      <div  id="tunediv"  role="main" class="main" >
+         <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->       
+         <img src="@imageUrl" alt="@name from genre @genre"/> 
+       </div>
+}
+
+

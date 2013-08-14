@@ -1,0 +1,13 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("contact us")("")(userName)(navigation("home")(userName)) {         
+    <div id="contactdiv" role="main" class="main" >
+          <p>TradTuneDb has been developed by Bayswater Software.</p>
+          <p>You may like to add further music genres, or perhaps you have other suggestions for improvement or new features.
+Please <a href="mailto:john.watson@@gmx.co.uk">contact us</a> and your request will be considered.</p>
+    </div>
+}
+
+

@@ -1,0 +1,65 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           	controllers.Application.search
+
+GET 	/home			    	controllers.Application.home
+GET 	/search  		    	controllers.Application.search
+POST 	/search 		    	controllers.Application.processSearch
+
+GET 	/advancedsearch		    	controllers.Application.advancedsearch
+POST 	/advancedsearch 	    	controllers.Application.processAdvancedSearch
+
+GET 	/advancedsearchOld	    	controllers.Application.advancedsearchOld
+
+GET 	/searchresults	   	    	controllers.Application.searchresults(genre: String, predicate: Option[String], sort: String, page: Int)
+GET 	/searchresults	   	    	controllers.Application.searchall(genre: String, sort: String, page: Int)
+
+GET 	/loginstatic		    	controllers.Application.loginStatic
+
+GET 	/login			   	controllers.Application.login
+POST 	/login  		   	controllers.Application.processLogin
+
+GET 	/login/password			controllers.Application.passwordReminder
+POST 	/login/password 		controllers.Application.processPasswordReminder
+GET 	/login/password/acknowledge	controllers.Application.passwordReminderAcknowledge
+
+GET 	/logout			    	controllers.Application.logout
+
+GET 	/newuser		    	controllers.Application.newuser
+POST	/newuser		    	controllers.Application.processNewUser
+GET 	/users		    	    controllers.Application.users
+
+GET     /newuser/acknowledge        	controllers.Application.newuserAcknowledge
+
+GET 	/newtune		    	controllers.Application.newtune
+POST 	/newtune		    	controllers.Application.processTune
+POST 	/trytune		    	controllers.Application.processTryTune
+GET 	/upload		    	    controllers.Application.upload
+POST 	/upload		    	    controllers.Application.processUpload
+
+GET 	/genre/:genre/tune/:name    	controllers.Application.tune(genre: String, name: String)
+POST 	/genre/:genre/tune/delete/:name controllers.Application.deleteTune(genre: String, name: String)
+DELETE	/genre/:genre/tune/:name    	controllers.Application.deleteTune(genre: String, name: String)
+
+GET 	/genre/:genre/tune/:name/try   	controllers.Application.trytune(genre: String, name: String)
+
+GET 	/genre/:genre/tune/:name/abc    controllers.Application.abc(genre: String, name: String)
+POST	/genre/:genre/tune/:name/abc    controllers.Application.processAlternativeTitle(genre: String, name: String)
+
+GET 	/about		    		controllers.Application.about
+GET 	/credits		    	controllers.Application.credits	
+GET     /contact		    	controllers.Application.contact
+GET     /donate		        	controllers.Application.donate
+
+GET 	/examine		    	controllers.Application.examine
+
+GET 	/error			    	controllers.Application.error(message: String)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+# Catch all
+GET   /*path   					controllers.Application.noSuchRoute(path: String)

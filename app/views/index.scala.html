@@ -1,0 +1,13 @@
+@(message: String)
+
+@navigation = {
+   <li><a href="search.html" >home</a></li>
+   <li><a href="login.html" >login</a></li>
+   <li><a href="newtune.html" >new tune</a></li>
+}
+
+@main("home")("")(None: Option[String])(navigation) {
+   <p>Welcome to Play 2.0.3</p>
+}
+
+

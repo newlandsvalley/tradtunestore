@@ -1,0 +1,25 @@
+@(genre: String, predicateOption: Option[String], sort: String, results: Html, currentPage: Int, totalPages: Int)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils._
+@import java.net.URLDecoder
+
+@pageInfo() = {
+  @if(totalPages > 0) {
+     page @currentPage of @totalPages
+  }
+}
+
+@main("search results")("")(userName)(navigation("home")(userName)) {         
+    <div id="searchresultsdiv" role="main" class="main" >
+          <p>Search results for genre: @genre @(predicateOption.map(p => "and predicate: " + URLDecoder.decode(p, "UTF-8"))) @pageInfo</p>
+          @results 
+          <nav role="navigation">
+           <ul class="pagination">
+             @pageLinks(genre, predicateOption, sort, currentPage, totalPages)
+           </ul>
+          </nav>         
+    </div>
+}
+
+

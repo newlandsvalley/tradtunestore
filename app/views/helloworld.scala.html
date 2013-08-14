@@ -1,0 +1,11 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("hello")("")(userName)(navigation("login")(userName)) {
+  <div id="hello" role="main" class="main" >
+   <p>Hello World: @message</p>
+  </div>
+}
+
+

@@ -1,0 +1,55 @@
+@(version: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("about")("")(userName)(navigation("home")(userName)) {         
+    <div id="creditsdiv" role="main" class="main" >
+       <h2>TradTuneDB version @version</h2>
+       <p>TradTuneDb is a database of Irish, Scottish, Scandinavian and klezmer tunes. You can search for tunes and then view the scores
+       or hear them played.  Of course, having them played on a rather tinny midi piano is no substitute for hearing the real thing, but it
+       may help you to learn the basics of a tune because you can vary the tempo. Unfortunately, Internet Explorer
+       doesn't yet offer the ability to play tunes in <em>wav</em> format and so you are strongly advised to use a recent release of one of
+       the other major browsers.</p>
+       
+       <p>Once you have registered with TradTuneDB, you can then submit a new tune to the database. As soon as you have done this, it will be
+       given a unique URL (which is all you have to use if you want to share it with a friend) and you will also be able to listen to your tune.  
+       Tunes are submitted in ABC notation but there are some rules to keep in mind:</p> 
+          <ul class="textList" >
+             <li>
+                Only submit one tune at a time.
+             </li>   
+             <li>
+                If the tune has a name that contains non-ASCII characters (such as <em>Polska fran Hälleforsnäs</em>) then
+                please use a Unicode editor to enter the name as it should naturally look and don't use the older ABC mechanism of backslashes.
+             </li>   
+             <li>
+                You need to supply a recognized key signature (ABC <strong>K</strong> header) and a rhythm (ABC <strong>R</strong> header)
+                as well as a title (<strong>T</strong>).  
+                The search dropdowns will show you what values are supported.           
+             </li>    
+             <li>
+               Try to keep the tune notation relatively simple. For example, do not indicate chords (this confuses the player).  You
+                may need to experiment with ornamentation markers because these may detract a little from the melody once it's played.        
+             </li>   
+             <li>When indicating a repeating section of a tune, balance the <strong>|:</strong> and <strong>:|</strong> markers that frame the section.
+             </li>
+             <li>
+               This site is not really intended for your own compositions 
+               (unless they have started to gain traction in the session scene).       
+             </li>          
+          </ul>
+         <p>If in doubt, have a look at the ABC notation for tunes that have been submitted and play properly</p>
+         <p>Because of the one tune at a time rule, you cannot submit various variants of a tune from a single ABC file.  Instead
+         amend the titles of the variants by adding the text <em>variant 1</em>, <em>variant 2</em> etc and submit them separately. 
+          That way, all variants will turn up in searches for the tune title.</p>
+        <p>You may find that you're disappointed with the way the tune sounds or have spotted some mistake.  If so, navigate to the
+         ABC page for the tune, delete it and then re-submit the corrected version. Or if you prefer, you can use the <em>try it out</em>
+         button.  This does not load the tune to the database but does show you its score.  You can then edit your ABC and continue to
+         try it out until you think the score is correct before submitting it to the database.
+         </p>
+   
+
+    </div>
+}
+
+

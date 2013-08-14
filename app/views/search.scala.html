@@ -1,0 +1,75 @@
+@(searchForm: Form[Search])(implicit lang: Lang, genre: String, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+
+@main("search")(s"""onload=genreInit("$genre")""")(userName)(navigation("home")(userName)) {         
+      <div id="searchdiv" role="main" class="main" >
+       
+         @helper.form(action = routes.Application.processSearch, 'id -> "searchform", 'enctype -> "application/x-www-form-urlencoded" ) {
+          
+           <fieldset>
+            <legend >tune search</legend>
+             <ul>
+              <li>
+               @helper.inputText(searchForm("name"), 'name -> "name:", '_class -> "search")
+              </li>
+              <li>
+               <label class="search" for="genre">genre:</label>
+               <select type="text" id="genre" name="genre" class ="medium" onchange="rhythmChange(this.value)" >
+                 <option value = "irish">Irish</option>
+                 <option value = "scottish">Scottish</option>
+                 <option value = "scandi">Scandi</option>
+                 <option value = "klezmer">Klezmer</option>
+               </select>
+              </li>
+              <li>
+               <label class="search" for="type">type:</label>
+               <select type="text" id="rhythm_dropdown" name="rhythm" class ="medium" >   
+               </select>
+              </li>
+              <li>
+               <label class="search" for="key">key:</label>
+               <select type="text" id="key" name="key" class ="medium" >
+                 <option value = "any">any</option>
+		 <option value="Ador">Adorian</option>
+		 <option value="Amaj">Amajor</option>
+		 <option value="Amin">Aminor</option>
+		 <option value="Amix">Amixolydian</option>
+		 <option value="Bdor">Bdorian</option>
+		 <option value="Bmin">Bminor</option>
+		 <option value="Bmix">Bmixolydian</option>
+		 <option value="Cdor">Cdorian</option>
+		 <option value="Cmaj">Cmajor</option>
+		 <option value="Ddor">Ddorian</option>
+		 <option value="Dmaj">Dmajor</option>
+		 <option value="Dmin">Dminor</option>
+		 <option value="Dmix">Dmixolydian</option>
+		 <option value="Edor">Edorian</option>
+		 <option value="Emaj">Emajor</option>
+		 <option value="Emin">Eminor</option>
+		 <option value="Emix">Emixolydian</option>
+		 <option value="Fdor">Fdorian</option>
+		 <option value="Fmaj">Fmajor</option>
+		 <option value="Gdor">Gdorian</option>
+		 <option value="Gmaj">Gmajor</option>
+		 <option value="Gmin">Gminor</option>
+		 <option value="Gmix">Gmixolydian</option>
+               </select>
+              </li>
+              <li>
+               <label class="search" for="sort">ordering:</label>
+               <select type="text" id="sort_dropdown" name="sort" class ="medium" >   
+                  <option value = "alpha">alphabetic</option>
+                  <option value = "date">most recent</option>
+               </select>
+              </li>
+            </ul>
+            <input type="submit" value = "search" />            
+           </fieldset>
+          }
+          <a href="advancedsearch" >advanced search</a>
+       </div>
+}
+
+

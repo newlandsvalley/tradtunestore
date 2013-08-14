@@ -1,0 +1,33 @@
+@(loginForm: Form[Login], message: Option[String])(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+@import utils.Utils
+
+@main("login")("")(userName)(navigation("login")(userName)) {   
+    <div id="logindiv" role="main" class="main" > 
+        <span class="error" >@(message.map(m => m))</span>     
+        <!--form name="Login" id="loginform" action=@(Utils.remoteService) + "user" method="POST" enctype="application/x-www-form-urlencoded" -->
+        @helper.form(action = routes.Application.processLogin, 'id -> "loginform", 'enctype -> "application/x-www-form-urlencoded") {
+         <fieldset>
+           <legend class="login" >Login</legend>
+            <ul>
+             <li>
+             @helper.inputText(loginForm("name"), 'required -> "required", '_class -> "login")
+             </li>
+             <li>
+             @helper.inputPassword(loginForm("password"), 'required -> "required", '_class -> "login")
+             </li>
+           @loginForm.globalError.map { error =>
+             <span class="errors">@error.message</span>
+            }
+           </ul> 
+           <input type="submit" value = "Login" />
+         </fieldset>
+        }
+        <a href="newuser" >register</a>
+        <a href="login/password" >forgotten your password?</a>
+   </div>
+}
+
+

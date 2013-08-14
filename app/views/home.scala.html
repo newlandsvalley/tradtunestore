@@ -1,0 +1,68 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+@import utils.Utils
+
+@main("home")("onload='rhythmInit()'")(userName)(navigation("home")(userName)) {         
+      <div id="searchdiv" role="main" class="main" >
+         <!--form id="searchform" name="Search" action=@(Utils.remoteService) + "search" method="POST" enctype="application/x-www-form-urlencoded" --> 
+         <form id="searchform" name="Search" action="searchresult.html" method="GET"  >
+          
+           <fieldset>
+            <legend >tune search</legend>
+             <ul>
+              <li>
+               <label for="name">Name:</label>
+               <input type="text" name="name" id="name" class ="large" />
+              </li>
+              <li>
+               <label for="genre">Genre:</label>
+               <select type="text" id="genre" name="genre" class ="medium" onchange="rhythmChange(this.value)" />
+                 <option value = "irish">Irish</option>
+                 <option value = "scottish">Scottish</option>
+                 <option value = "scandi">Scandi</option>
+               </select>
+              </li>
+              <li>
+               <label for="type">Type:</label>
+               <select type="text" id="rhythm_dropdown" name="type" class ="medium" />   
+               </select>
+              </li>
+              <li>
+               <label for="key">Key:</label>
+               <select type="text" id="key" name="key" class ="medium" />
+                 <option value = "any">any</option>
+		 <option value="Ador">Adorian</option>
+		 <option value="Amaj">Amajor</option>
+		 <option value="Amin">Aminor</option>
+		 <option value="Amix">Amixolydian</option>
+		 <option value="Bdor">Bdorian</option>
+		 <option value="Bmin">Bminor</option>
+		 <option value="Bmix">Bmixolydian</option>
+		 <option value="Cdor">Cdorian</option>
+		 <option value="Cmaj">Cmajor</option>
+		 <option value="Ddor">Ddorian</option>
+		 <option value="Dmaj">Dmajor</option>
+		 <option value="Dmin">Dminor</option>
+		 <option value="Dmix">Dmixolydian</option>
+		 <option value="Edor">Edorian</option>
+		 <option value="Emaj">Emajor</option>
+		 <option value="Emin">Eminor</option>
+		 <option value="Emix">Emixolydian</option>
+		 <option value="Fdor">Fdorian</option>
+		 <option value="Fmaj">Fmajor</option>
+		 <option value="Gdor">Gdorian</option>
+		 <option value="Gmaj">Gmajor</option>
+		 <option value="Gmin">Gminor</option>
+		 <option value="Gmix">Gmixolydian</option>
+               </select>
+              </li>
+            </ul>
+            <input type="submit" value = "search" />            
+           </fieldset>
+          </form>
+          <a href="advancedsearch" >advanced search</a>
+       </div>
+}
+
+

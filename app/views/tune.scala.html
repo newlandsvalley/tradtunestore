@@ -1,0 +1,56 @@
+@(genre: String, name: String, tuneUrl: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@imageUrl = @{
+  tuneUrl + "/png"
+}
+
+@plainName=@{java.net.URLDecoder.decode(name, "UTF-8")}
+@postscriptName = @{plainName + ".ps"}
+@midiName = @{plainName + ".midi"}
+@abcName = @{plainName + ".abc"}
+@pdfName = @{plainName + ".pdf"}
+
+@main(s"$plainName trad tune")("onload=audioInit()")(userName)(navigation("home")(userName)) {         
+      <div  id="tunediv"  role="main" class="main" >
+         <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->       
+         <img src="@imageUrl" alt="@name from genre @genre"/> 
+     
+         <div>
+           <nav role="navigation" class="vnav">  
+             <p>choose tempo </p>    
+             <div id ="slider">
+               <input id="slide" type="range" min="40" max="240" value="120" step="10"
+                      onclick="stopAudio(); hideControls();" onchange="updateSlider(this.value)" onmouseup="hideControls(); "/>
+	            <p>tempo: 1/4=<span id="tempo">120</span></p>
+              </div>
+             <div>
+                <a id="loadButton" hidden="hidden" class="button-link">load audio</a>
+              </div> 
+             <p></ br></p>    
+             <audio id="audioPlayer" hidden controls preload = "none" >
+                <!--h2>play it</h2-->
+                <source id="audioSource" src="@tuneUrl/wav" base="@tuneUrl/wav" type="audio/wav" >
+                Your browser does not support the audio tag!
+             </audio>
+             <ul>
+              <li><a href="@name/abc" >abc</a></li>
+              <li><a href="@tuneUrl/abc" type="text/vnd.abc" download="@abcName" >download abc</a></li>
+              <li><a href="@tuneUrl/pdf" type="application/pdf" download="@pdfName" >download pdf</a></li>
+              <li><a href="@tuneUrl/ps" type="application/postscript" download="@postscriptName" >download postscript</a></li>
+              <li><a href="@tuneUrl/midi" type = "audio/midi" download="@midiName"  >download midi</a></li>  
+              @if(userName.isDefined && userName.get == "administrator") {
+              <li>
+               <form method = "POST" action = "delete/@name" >
+                  <input class="button-link" type= "submit" value="delete" class="delete" />
+               </form>
+              </li>  
+              }
+            </ul>
+           </nav>
+         </div>
+       </div>
+}
+
+

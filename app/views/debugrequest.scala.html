@@ -1,0 +1,13 @@
+@(headers: Map[String, String], cookies: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("debug request")("")(userName)(navigation("home")(userName)) {         
+    <div id="searchdiv" role="main" class="main" >
+          <p>headers: @headers.toString</p>
+          <br/>
+          <p>cookies: @cookies</p>
+    </div>
+}
+
+

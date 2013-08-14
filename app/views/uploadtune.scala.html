@@ -1,0 +1,31 @@
+@(message: String)(implicit lang: Lang, genre: String, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+
+@main("upload")("")(userName)(navigation("upload")(userName)) {         
+    <div id="uploadtunediv" role="main" class="main" >
+
+   @helper.form(action = routes.Application.processUpload, 'enctype -> "multipart/form-data", 'id -> "uploadtuneform" ) {    
+     <fieldset>
+       <legend >upload tune</legend>
+          <ul>
+            <li>
+             <p>Upload an ABC file to the @genre genre</p>
+            </li>
+            <li>
+             <p>The file should contain a single tune</p>
+            </li>
+            <li>
+             <input type="file" name="abc" class ="fileinput" value="load ABC file">
+            </li>
+          </ul>
+          <p>
+           <input type="submit" value="upload">
+          </p>
+      </fieldset>
+    }
+   </div>
+}
+
+

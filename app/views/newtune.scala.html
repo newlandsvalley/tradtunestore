@@ -1,0 +1,49 @@
+@(tuneForm: Form[Tune])(implicit lang: Lang, genre: String, userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+
+@main("new tune")(s"""onload=selectGenre("$genre")""")(userName)(navigation("newtune")(userName)) {         
+    <div id="newtunediv" role="main" class="main" >
+
+       <!--form name="newtuneform" action="defertobuttons" enctype="text/plain" method="POST"-->
+       @helper.form(action = routes.Application.processTune, 'id -> "newtuneform" ) {
+          <fieldset>
+            <legend >new tune</legend>
+             <ul>
+              <li>
+               <label  class="newtune" for="genre">genre:</label>
+               <select type="text" id="genre" name="genre" class ="medium" />
+                 <option value = "irish">Irish</option>
+                 <option value = "scottish">Scottish</option>
+                 <option value = "scandi">Scandi</option>
+                 <option value = "klezmer">Klezmer</option>
+               </select>
+              </li>
+              <li>
+                <!--
+                <label class="small" for="abc">Enter abc:</label>
+                <textarea cols="45" rows="15" name="abc" id="abc" required="required" ></textarea>  
+                -->
+                @helper.textarea(tuneForm("abc"), '_class -> "newtune", 'cols -> 40, 'rows -> 15, 'required -> "required")
+              </li>
+            </ul> 
+           <div class = "submitgroup" >
+             <input type="submit" value="try it out" formaction="trytune"/> 
+             <input type="submit" value="add to DB" formaction="newtune" /> 
+           </div>
+         </fieldset>
+       }                
+
+      <span id="tunerules">
+         <p>A tune should have at least one title (T) - we use the first as the tune identifier and a 
+            rhythm (R) which we use for the tune type. Please use Unicode for all names.
+            The rhythm must be a recognized type for the genre. 
+            Keep the abc simple and do not use chords. 
+            A repeated section should be sandwiched between matching |: and :| markers.</p>
+       </span>
+
+    </div>
+}
+
+

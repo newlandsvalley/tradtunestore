@@ -1,0 +1,55 @@
+@(message: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("advanced search")("")(userName)(navigation("home")(userName)) {         
+     <div id="advancedsearchdiv" role="main" class="main" >
+        <form id="advancedsearchform" name="Search" action="searchresult.html" method="POST" enctype="application/x-www-form-urlencoded" >
+           <fieldset>
+            <legend >advanced search</legend>
+             <ul>
+              <li>
+               <label for="genre" class="alignleft" >Genre:</label>
+               <select type="text" id="genre" name="genre" class ="medium" />
+                 <option value = "irish">Irish</option>
+                 <option value = "scottish">Scottish</option>
+                 <option value = "scandi">Scandi</option>
+               </select>
+              </li>
+              <li>
+               <input type="text" name="criteria" id="searchcriteria" required="required" />
+              </li>
+              </li>
+            </ul>
+            <input type="submit" value = "search" />            
+           </fieldset>
+          </form>
+          <p>Some example searches:
+          <table id="samplesearch" >
+             <tr>
+                <td>T=sligo</td>
+                <td>'sligo' in the name</td>
+             </tr>
+             <tr>
+                <td>R=slip jig</td>
+                <td>slip jigs</td>
+             </tr>
+             <tr>
+                <td>R=jig</td>
+                <td>both jigs and slip jigs</td>
+             </tr>
+             <tr>
+                <td>abc=fedd</td>
+                <td>with this succession of notes (irrespective of octave)</td>
+             </tr>
+             <tr>
+                <td>R=reel&K=BMin</td>
+                <td>reels in B Minor</td>
+             </tr>
+          </table>
+
+          
+       </div>
+}
+
+

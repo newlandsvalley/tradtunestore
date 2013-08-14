@@ -1,0 +1,19 @@
+@(context: String)(userName: Option[String])
+@import snippets._
+@import utils._
+
+@navigationlink("/home")(Utils.cssClass("home", context))("home") 
+@navigationlink("/newtune")(Utils.cssClass("newtune", context))("new tune")
+@navigationlink("/upload")(Utils.cssClass("upload", context))("upload")
+@(userName match {
+     case Some("administrator")  => navigationlink("/users")(Utils.cssClass("users", context))("users")   
+     case _ =>  None
+})
+@(userName match {
+     case Some(u)  => navigationlink("/logout")(Utils.cssClass("logout", context))("logout")   
+     case _ =>  navigationlink("/login")(Utils.cssClass("login", context))("login")
+})
+
+
+
+
