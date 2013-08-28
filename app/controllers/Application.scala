@@ -14,10 +14,9 @@ import utils._
 import java.net.URLEncoder
 import javax.xml.bind.DatatypeConverter
 
-object Application extends Controller {  
+trait TradTuneController extends Controller {  this: Controller =>
 
-  // type StreamConversion = InputStream => Array[Byte]
-  val version = "1.0.0"
+  val version = "1.0.1"
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
@@ -55,6 +54,7 @@ object Application extends Controller {
            Redirect(routes.Application.searchresults(search.genre, search.predicate, search.sort, 1)).withSession(session + ("genre" -> search.genre))
         }
         else {
+           Logger.debug("search handed to searchall")
            Redirect(routes.Application.searchall(search.genre, search.sort, 1)).withSession(session + ("genre" -> search.genre))
         }
       }
@@ -496,7 +496,7 @@ object Application extends Controller {
 
  def noSuchRoute(path: String) = Action {
     Redirect(routes.Application.error(s"not a recognized request: $path"))    
- }
- 
-  
+ }  
 }
+
+object Application extends Controller with TradTuneController

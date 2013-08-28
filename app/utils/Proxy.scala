@@ -91,12 +91,11 @@ object Proxy {
           val resp = http(req as_str)
           // musicrest should give us back the (unencoded) id of the tune
           Logger.debug("posted tune OK, response: " + resp)
-          println(s"response from post: $resp")
           resp.trim.success
        }
        catch {
          case e: Throwable => {
-           Logger.debug("error (save) found by proxy: " + e.getMessage())
+           Logger.error("error (save) found by proxy: " + e)
            e.getMessage().fail      
            }
        }
@@ -170,7 +169,9 @@ object Proxy {
           paginate(resp)
        }
        catch {
-         case e: Throwable => e.getMessage().fail      
+         case e: Throwable => {
+           e.getMessage().fail      
+         }
        }
      }
    }

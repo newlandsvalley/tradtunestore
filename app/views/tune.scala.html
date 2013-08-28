@@ -12,7 +12,7 @@
 @abcName = @{plainName + ".abc"}
 @pdfName = @{plainName + ".pdf"}
 
-@main(s"$plainName trad tune")("onload=audioInit()")(userName)(navigation("home")(userName)) {         
+@main(plainName)("onload=audioInit()")(userName)(navigation("home")(userName)) {         
       <div  id="tunediv"  role="main" class="main" >
          <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->       
          <img src="@imageUrl" alt="@name from genre @genre"/> 

@@ -46,10 +46,11 @@
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/framework/../repository/cache/org.scala-lang/scala-actors/jars/scala-actors-2.10.0-RC3.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/play/play-test_2.10/2.1.2/jars/play-test_2.10.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/junit/junit-dep/4.10/jars/junit-dep.jar" kind="lib"></classpathentry>
-  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.specs2/specs2_2.10/1.13/jars/specs2_2.10.jar" kind="lib"></classpathentry>
-  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.specs2/scalaz-core_2.10/7.0.0/jars/scalaz-core_2.10.jar" kind="lib"></classpathentry>
-  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.specs2/scalaz-concurrent_2.10/7.0.0/jars/scalaz-concurrent_2.10.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/framework/../repository/cache/org.specs2/specs2_2.10/jars/specs2_2.10-1.14.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/framework/../repository/cache/org.specs2/specs2-scalaz-core_2.10/jars/specs2-scalaz-core_2.10-7.0.0.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/framework/../repository/cache/org.specs2/specs2-scalaz-concurrent_2.10/jars/specs2-scalaz-concurrent_2.10-7.0.0.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.specs2/scalaz-effect_2.10/7.0.0/jars/scalaz-effect_2.10.jar" kind="lib"></classpathentry>
+  <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.specs2/scalaz-core_2.10/7.0.0/jars/scalaz-core_2.10.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/com.novocode/junit-interface/0.9/jars/junit-interface.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.scala-tools.testing/test-interface/0.5/jars/test-interface.jar" kind="lib"></classpathentry>
   <classpathentry path="/home/john/Development/Frameworks/play-2.1.2/repository/local/org.fluentlenium/fluentlenium-festassert/0.7.3/jars/fluentlenium-festassert.jar" kind="lib"></classpathentry>
