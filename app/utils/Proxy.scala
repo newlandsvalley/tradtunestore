@@ -269,9 +269,11 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val urlString = Utils.remoteService + "user" 
-       val headers = Map("Accept" -> "text/plain", "Content-Type" -> "application/x-www-form-urlencoded")
+       val headers = Map("Accept" -> "text/html", "Content-Type" -> "application/x-www-form-urlencoded")
        // both trad tune store and musicrest independently check that the confirmation password matches
-       def req =  (url(urlString) <:< headers).POST << Map("name" -> user.name, "email" -> user.email, "password" -> user.password, "password2" -> user.password)
+       def req =  (url(urlString) <:< headers).POST << Map("name" -> user.name, 
+                                                           "email" -> user.email, 
+                                                           "password" -> user.password, "password2" -> user.password)
 
        try {
           val resp = http(req as_str)
