@@ -1,7 +1,7 @@
 TradTuneStore
 =============
 
-This is the web interface into the [musicrest](https://github.com/newlandsvalley/musicrest) web service. It allows users to submit traditional tunes in [ABC notation](http://abcnotation.com/), to search for these tunes, and, having found them, to download the scores in a variety of formats or to play them - see [tradtunedb](http://www.tradtunedb.org.uk/). This version uses the  [MIDI.js](http://mudcu.be/midi-js/) player which plays midi files fetched from the web service (Previous versions used HTML5 audio tags to play wav files). 
+This is the web interface into the [musicrest](https://github.com/newlandsvalley/musicrest) web service. It allows users to submit traditional tunes in [ABC notation](http://abcnotation.com/), to search for these tunes, and, having found them, to download the scores in a variety of formats or to play them - see [tradtunedb](http://www.tradtunedb.org.uk/). This version uses the  [MIDI.js](http://mudcu.be/midi-js/) player which plays midi files fetched from the web service (previous versions used HTML5 audio tags to play wav files). 
 
 It uses the [Play Framework](http://www.playframework.org/) and is written in Scala.
 
