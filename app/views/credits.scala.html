@@ -4,10 +4,11 @@
 
 @main("credits")("")(userName)(navigation("home")(userName)) {         
     <div id="creditsdiv" role="main" class="main" >
-          <p>TradTuneDb obviously owes a tremendous debt to Chris Walshaw for the <a href="http://abcnotation.com/">ABC notation</a>. It uses the MusicRest web service for storing and transcoding its tunes. This in turn transcodes by means of:</p>
+          <p>TradTuneDb uses <a href="http://abcnotation.com/">ABC notation</a> and so obviously owes a tremendous debt to Chris Walshaw who developed it. 
+ It uses the <a href="https://github.com/newlandsvalley/musicrest">MusicRest</a> web service for storing and transcoding its tunes. This in turn transcodes by means of:</p>
           <table id="samplesearch" >
              <tr>
-                <td>ABC to postscript:</td>
+                <td>ABC to <a href="http://en.wikipedia.org/wiki/PostScript">postscript:</a></td>
                 <td><a href="http://moinejf.free.fr/">abcm2ps</a></td>
              </tr>
              <tr>
@@ -15,14 +16,11 @@
                 <td><a href="http://linux.about.com/od/commands/l/blcmdl1_convert.htm">convert</a></td>
              </tr>
              <tr>
-                <td>ABC to midi:</td>
+                <td>ABC to <a href="http://en.wikipedia.org/wiki/MIDI">midi:</a></td>
                 <td><a href="http://abc.sourceforge.net/abcMIDI/">abcMIDI</a></td>
              </tr>
-             <tr>
-                <td>midi to wav:</td>
-                <td><a href="https://wiki.archlinux.org/index.php/Timidity">timidity</a></td>
-             </tr>
           </table>
+          <p>It uses the <a href="http://mudcu.be/midi-js/">MIDI.js</a> midi player to play tunes.
           <p>Code is written in scala, with particular thanks to the following:</p>         
           <table id="samplesearch" >
              <tr>

@@ -16,7 +16,7 @@ import javax.xml.bind.DatatypeConverter
 
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.1"
+  val version = "1.0.2"
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
@@ -314,8 +314,8 @@ trait TradTuneController extends Controller {  this: Controller =>
   * 
   */
   
-  /** Post a tune and get back a tune id which we redirect to,  Interestingly, we don't have to URL-encode the returned name
-   *  we get back ourselves if we redirect directly to the application but we do have to if we redirect through the URL
+  /** Post a tune and get back a tune id which we redirect to,  Interestingly, we didn't have to URL-encode the returned name with Play 2.1.3 
+   *  but we do from Play 2.2.0. We get back ourselves if we redirect directly to the application but we do have to if we redirect through the URL
    * 
    */
   private def postTune [A] (request: Request[A], tune: Tune) = {
@@ -326,9 +326,10 @@ trait TradTuneController extends Controller {  this: Controller =>
           Redirect(routes.Application.error(e))
         },
         tuneId =>  { 
-          implicit val displayLinks = true          
-          Logger.debug("redirecting to tune page with id " + tuneId)
-          Redirect(routes.Application.tune(tune.genre,  tuneId)).withSession(request.session + ("genre" -> genre))  
+          implicit val displayLinks = true      
+          val encodedTuneId = URLEncoder.encode(tuneId, "UTF-8")        
+          Logger.debug("redirecting to tune page with id " + encodedTuneId)
+          Redirect(routes.Application.tune(tune.genre,  encodedTuneId)).withSession(request.session + ("genre" -> genre))  
        }       
      )    
   }  

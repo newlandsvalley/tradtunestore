@@ -12,45 +12,159 @@
 @abcName = @{plainName + ".abc"}
 @pdfName = @{plainName + ".pdf"}
 
-@main(plainName)("onload=audioInit()")(userName)(navigation("home")(userName)) {         
-      <div  id="tunediv"  role="main" class="main" >
-         <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->       
-         <img src="@imageUrl" alt="@name from genre @genre"/> 
+@main(plainName)("")(userName)(navigation("home")(userName)) {         
+   <div  id="tunediv"  role="main" class="main" >
+      <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->  
+      <div hidden="hidden" id="midiTune">@tuneUrl/midi</div>  
+      <img src="@imageUrl" alt="@name from genre @genre"/> 
      
-         <div>
-           <nav role="navigation" class="vnav">  
-             <p>choose tempo </p>    
-             <div id ="slider">
-               <input id="slide" type="range" min="40" max="240" value="120" step="10"
-                      onclick="stopAudio(); hideControls();" onchange="updateSlider(this.value)" onmouseup="hideControls(); "/>
-	            <p>tempo: 1/4=<span id="tempo">120</span></p>
-              </div>
-             <div>
-                <a id="loadButton" hidden="hidden" class="button-link">load audio</a>
-              </div> 
-             <p></ br></p>    
-             <audio id="audioPlayer" hidden controls preload = "none" >
-                <!--h2>play it</h2-->
-                <source id="audioSource" src="@tuneUrl/wav" base="@tuneUrl/wav" type="audio/wav" >
-                Your browser does not support the audio tag!
-             </audio>
-             <ul>
-              <li><a href="@name/abc" >abc</a></li>
-              <li><a href="@tuneUrl/abc" type="text/vnd.abc" download="@abcName" >download abc</a></li>
-              <li><a href="@tuneUrl/pdf" type="application/pdf" download="@pdfName" >download pdf</a></li>
-              <li><a href="@tuneUrl/ps" type="application/postscript" download="@postscriptName" >download postscript</a></li>
-              <li><a href="@tuneUrl/midi" type = "audio/midi" download="@midiName"  >download midi</a></li>  
-              @if(userName.isDefined && userName.get == "administrator") {
-              <li>
-               <form method = "POST" action = "delete/@name" >
-                  <input class="button-link" type= "submit" value="delete" class="delete" />
-               </form>
-              </li>  
-              }
-            </ul>
-           </nav>
+      <div>
+        <nav role="navigation" class="vnav">  
+          <p>choose tempo </p>
+
+          <div id ="slider">
+            <input id="slide" type="range" min="40" max="240" value="120" step="10"  onchange="updateSlider(this.value)" />
+            <p>tempo: 1/4=<span id="tempo">120</span></p>
+          </div>
+
+     <div style="margin-bottom: 30px;  border: 1px solid #000; background: rgba(255,255,255,0.5); border-radius: 10px;  width: 520px; position: relative; z-index: 2;" >
+        <div  id="audioPlayer" class="player" style="height: 35px; box-shadow: 0 -1px #000; margin-bottom: 0; border-bottom-right-radius: 10; border-bottom-left-radius: 10;" >
+         <div style="margin: 0 auto; width: 80px; float: right;">
+            <input type="image" src="@routes.Assets.at("MIDI.js/images/play.png")" align="absmiddle" value="pause" onclick="pausePlayStop()" id="pausePlayStop">
+            <input type="image" src="@routes.Assets.at("MIDI.js/images/stop.png")" align="absmiddle" value="stop" onclick="pausePlayStop(true)">
          </div>
+        <div class="time-controls" style="float: left; margin: 0; position: relative; top: 5px;">
+          <span id="time1" class="time">0:00</span>
+            <span id="capsule">
+	      <span id="cursor"></span>
+             </span>
+          <span id="time2" class="time" style="text-align: left;">-0:00</span>
+        </div>
        </div>
+      </div>
+
+       <ul>
+         <li><a href="@name/abc" >abc</a></li>
+         <li><a href="@tuneUrl/abc" type="text/vnd.abc" download="@abcName" >download abc</a></li>
+         <li><a href="@tuneUrl/pdf" type="application/pdf" download="@pdfName" >download pdf</a></li>
+         <li><a href="@tuneUrl/ps" type="application/postscript" download="@postscriptName" >download postscript</a></li>
+         <li><a href="@tuneUrl/midi" type = "audio/midi" download="@midiName"  >download midi</a></li>  
+         @if(userName.isDefined && userName.get == "administrator") {
+         <li>
+           <form method = "POST" action = "delete/@name" >
+             <input class="button-link" type= "submit" value="delete" class="delete" />
+           </form>
+         </li>  
+         }
+       </ul>
+     </nav>
+    </div>
+  </div>
+
+<script type="text/javascript">
+
+var audio = $("#audioPlayer");
+var slider = $("#slider");
+var tempo = $("#tempo");
+var tune =  $("#midiTune");
+
+window.onload = function () {
+  loadAudio();
+};
+
+function loadAudio(){
+
+	MIDI.loadPlugin({
+		soundfontUrl: "/assets/MIDI.js/soundfont/",
+		instrument: "acoustic_grand_piano",
+                callback: function() {
+		  // this is the language we are running in
+		  // this sets up the MIDI.Player and gets things going...
+		  player = MIDI.Player;
+		  // player.timeWarp = 1; // speed the song is played back
+                  player.timeWarp = getTimeWarp();
+		  player.loadFile(tune.text());
+                  // the link below requires CORS
+		  // player.loadFile('http://192.168.1.64:8080/musicrest/genre/irish/tune/antara-reel/midi');
+		  MIDIPlayerPercentage(player);                
+		  //
+		  //MIDI.loader.stop();
+                }
+	});
+}
+
+var MIDIPlayerPercentage = function(player) {
+	// update the timestamp
+	var time1 = document.getElementById("time1");
+	var time2 = document.getElementById("time2");
+	var capsule = document.getElementById("capsule");
+	var timeCursor = document.getElementById("cursor");
+	//
+	Event.add(capsule, "drag", function (event, self) {
+		Event.cancel(event);
+		player.currentTime = (self.x) / 420 * player.endTime;
+		if (player.currentTime < 0) player.currentTime = 0;
+		if (player.currentTime > player.endTime) player.currentTime = player.endTime;
+		if (self.state === "down") {
+			player.pause(true);
+		} else if (self.state === "up") {
+			player.resume();
+		}
+	});
+	//
+	function timeFormatting(n) {
+		var minutes = n / 60 >> 0; 
+		var seconds = String(n - (minutes * 60) >> 0);
+		if (seconds.length == 1) seconds = "0" + seconds;
+		return minutes + ":" + seconds;
+	};
+	player.setAnimation(function(data, element) {
+		var percent = data.now / data.end;
+		var now = data.now >> 0; // where we are now
+		var end = data.end >> 0; // end of song
+		// display the information to the user
+		timeCursor.style.width = (percent * 100) + "%";
+		time1.innerHTML = timeFormatting(now);
+		time2.innerHTML = "-" + timeFormatting(end - now);
+	});
+};
+
+// Toggle between Pause and Play modes.
+var pausePlayStop = function(stop) {
+  var playButton =  document.getElementById("pausePlayStop");
+  if (stop) {
+	MIDI.Player.stop();
+	playButton.src = "@routes.Assets.at("MIDI.js/images/play.png")";
+  } else if (MIDI.Player.playing) {
+	playButton.src = "@routes.Assets.at("MIDI.js/images/play.png")";
+	MIDI.Player.pause(true);
+  } else {
+	playButton.src = "@routes.Assets.at("MIDI.js/images/pause.png")";
+	MIDI.Player.resume();
+  }
+};
+
+function updateSlider(slideAmount) {
+  // stop the player
+  pausePlayStop(true);
+  // display what the slider has chosen
+  tempo.text(slideAmount);  
+  // reload the tune at the new speed
+  player = MIDI.Player;
+  player.timeWarp = getTimeWarp();
+  player.loadFile(tune.text());
+}
+
+function getTimeWarp() {
+  var timeWarp = 120 / tempo.text();
+  console.log("time warp is "  + timeWarp);
+  return timeWarp;
+}
+
+
+</script>
+
+
 }
 
 

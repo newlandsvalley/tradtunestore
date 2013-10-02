@@ -25,7 +25,7 @@
                 <label class="small" for="abc">Enter abc:</label>
                 <textarea cols="45" rows="15" name="abc" id="abc" required="required" ></textarea>  
                 -->
-                @helper.textarea(tuneForm("abc"), '_class -> "newtune", 'cols -> 40, 'rows -> 15, 'required -> "required")
+                @helper.textarea(tuneForm("abc"), '_class -> "newtune", 'cols -> 75, 'rows -> 15, 'required -> "required")
               </li>
             </ul> 
            <div class = "submitgroup" >
@@ -36,9 +36,11 @@
        }                
 
       <span id="tunerules">
-         <p>A tune should have at least one title (T) - we use the first as the tune identifier and a 
-            rhythm (R) which we use for the tune type. Please use Unicode for all names.
-            The rhythm must be a recognized type for the genre. 
+         <p>Tunes should be entered in <a href="http://abcnotation.com/">ABC notation</a>.  If you're not sure
+            what this is, <a href="http://www.lesession.co.uk/abc/abc_notation.htm">here's a good introduction</a>.
+            Each tune should have at least one title (T) - we use the first as the tune identifier. It should also have a 
+            rhythm (R) which we use for the tune type and a key signature (K). See the search dropdowns for recognized keys and rhythms for each genre. 
+            Please use Unicode for all names.
             Keep the abc simple and do not use chords. 
             A repeated section should be sandwiched between matching |: and :| markers.</p>
        </span>
