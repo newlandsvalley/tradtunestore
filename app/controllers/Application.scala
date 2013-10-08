@@ -14,12 +14,17 @@ import utils._
 import java.net.URLEncoder
 import javax.xml.bind.DatatypeConverter
 
+
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.2"
+  val version = "1.0.2 Beta"
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  // not used
+  def index = Action { implicit request => {
+    val host = request.headers.get(play.api.http.HeaderNames.HOST).getOrElse("")
+    // Ok(views.html.index(s"Your host name is ${host}."))     
+    Redirect(routes.Application.home())
+    }
   }
 
   // home is search
@@ -389,8 +394,11 @@ trait TradTuneController extends Controller {  this: Controller =>
              }
              ,
              tuneId =>  { 
-               Logger.debug("redirecting to abc page with id " + urlEncodedTuneId)
-               Redirect(routes.Application.abc(genre,  urlEncodedTuneId))
+               Logger.debug("Alternative title incoming id from proxy " + tuneId)
+               // Logger.debug("redirecting to abc page with id " + urlEncodedTuneId)
+               // Redirect(routes.Application.abc(genre,  urlEncodedTuneId))
+               Logger.debug("redirecting to abc page with this id (unencoded)")
+               Redirect(routes.Application.abc(genre,  tuneId))
             }       
           )
         }
@@ -400,6 +408,8 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def tune (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
+    val userAgent = request.headers.get(play.api.http.HeaderNames.USER_AGENT).getOrElse("")
+    implicit val isInternetExporer = userAgent.contains("MSIE")
     
     val exists = Proxy.existsTune(request, genre, name)
     Logger.info(s"Tune $name exists? $exists")

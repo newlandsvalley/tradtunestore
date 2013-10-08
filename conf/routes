@@ -3,11 +3,11 @@
 # ~~~~
 
 # Home page
-GET     /                           	controllers.Application.search
+GET     /                           controllers.Application.search
 
-GET 	/home			    	controllers.Application.home
-GET 	/search  		    	controllers.Application.search
-POST 	/search 		    	controllers.Application.processSearch
+GET 	/home			    	    controllers.Application.home
+GET 	/search  		    	    controllers.Application.search
+POST 	/search 		    	    controllers.Application.processSearch
 
 GET 	/advancedsearch		    	controllers.Application.advancedsearch
 POST 	/advancedsearch 	    	controllers.Application.processAdvancedSearch
@@ -19,8 +19,8 @@ GET 	/searchresults	   	    	controllers.Application.searchall(genre: String, so
 
 GET 	/loginstatic		    	controllers.Application.loginStatic
 
-GET 	/login			   	controllers.Application.login
-POST 	/login  		   	controllers.Application.processLogin
+GET 	/login			         	controllers.Application.login
+POST 	/login  		   	        controllers.Application.processLogin
 
 GET 	/login/password			controllers.Application.passwordReminder
 POST 	/login/password 		controllers.Application.processPasswordReminder
@@ -63,3 +63,4 @@ GET 	/error			    	controllers.Application.error(message: String)
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # Catch all
 GET   /*path   					controllers.Application.noSuchRoute(path: String)
+

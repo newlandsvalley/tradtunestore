@@ -1,4 +1,4 @@
-@(genre: String, name: String, tuneUrl: String)(implicit lang: Lang, userName: Option[String])
+@(genre: String, name: String, tuneUrl: String)(implicit lang: Lang, userName: Option[String], isInternetExplorer: Boolean)
 
 @import snippets._
 
@@ -15,11 +15,13 @@
 @main(plainName)("")(userName)(navigation("home")(userName)) {         
    <div  id="tunediv"  role="main" class="main" >
       <!--img src="@tuneUrl/png" alt="@name from genre @genre" width="494" height="345" /-->  
-      <div hidden="hidden" id="midiTune">@tuneUrl/midi</div>  
+  
       <img src="@imageUrl" alt="@name from genre @genre"/> 
      
       <div>
         <nav role="navigation" class="vnav">  
+   @if(!isInternetExplorer) {       
+          <div id="midiTune" midi="@tuneUrl/midi"/>  
           <p>choose tempo </p>
 
           <div id ="slider">
@@ -42,6 +44,7 @@
         </div>
        </div>
       </div>
+      }
 
        <ul>
          <li><a href="@name/abc" >abc</a></li>
@@ -74,6 +77,8 @@ window.onload = function () {
 
 function loadAudio(){
 
+	// the loader graphic
+	MIDI.loader = new widgets.Loader;
 	MIDI.loadPlugin({
 		soundfontUrl: "/assets/MIDI.js/soundfont/",
 		instrument: "acoustic_grand_piano",
@@ -82,14 +87,14 @@ function loadAudio(){
 		  // this sets up the MIDI.Player and gets things going...
 		  player = MIDI.Player;
 		  // player.timeWarp = 1; // speed the song is played back
-                  player.timeWarp = getTimeWarp();
-		  player.loadFile(tune.text());
+          player.timeWarp = getTimeWarp();
+		  player.loadFile(tune.attr( "midi" ));
                   // the link below requires CORS
 		  // player.loadFile('http://192.168.1.64:8080/musicrest/genre/irish/tune/antara-reel/midi');
-		  MIDIPlayerPercentage(player);                
-		  //
-		  //MIDI.loader.stop();
-                }
+		  MIDIPlayerPercentage(player);
+		  // clear the loader graphic
+		  MIDI.loader.stop();
+          }
 	});
 }
 
@@ -152,14 +157,14 @@ function updateSlider(slideAmount) {
   // reload the tune at the new speed
   player = MIDI.Player;
   player.timeWarp = getTimeWarp();
-  player.loadFile(tune.text());
+  player.loadFile(tune.attr( "midi" ));
 }
 
 function getTimeWarp() {
   var timeWarp = 120 / tempo.text();
   console.log("time warp is "  + timeWarp);
   return timeWarp;
-}
+}  
 
 
 </script>

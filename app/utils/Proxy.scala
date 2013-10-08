@@ -326,7 +326,7 @@ object Proxy {
          case _ => "/html"
        }
        val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + tune + path
-       Logger.debug(s"ABC request accept is ${initialRequest.accept}" )
+       Logger.debug(s"ABC request accept is ${initialRequest.acceptedTypes}" )
 
        Logger.debug("proxy url is: " + urlString)
 
