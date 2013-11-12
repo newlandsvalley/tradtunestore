@@ -10,7 +10,7 @@ import java.io.{InputStream, InputStreamReader}
 import javax.xml.bind.DatatypeConverter
 import scala.util.matching.Regex
 import models.Search._
-import models.{Login, Tune, User, ResultsPage}
+import models.{Login, Tune, User, ResultsPage, Comment}
 
 /**
  * Proxy uses dispatch as an HTTP client.  This code was developed before the Spray client was developed.
@@ -59,6 +59,22 @@ object Proxy {
        }
      }
    }
+   
+   /** register a new user */
+   def registerUser(uuid: String): Validation[String, String] = withHttp { 
+     http => {   
+       val headers = Map("Accept" -> "text/html; charset=UTF-8")   
+       val urlString = Utils.remoteService + "user/validate/" + uuid
+       try { 
+         val resp = http((url(urlString) <:< headers) as_str)
+         resp.success
+       }  
+       catch {
+         case e: Throwable => e.getMessage().fail      
+       }
+     }
+   }
+   
 
    /** post a new tune to musicrest 
     *
@@ -124,7 +140,7 @@ object Proxy {
        builder += "Content-Type" -> "application/x-www-form-urlencoded"
        basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
        val headers = builder.result            
-
+       
        def req =  (url(urlString) <:< headers).POST << Map("title" -> title)
 
        try {
@@ -141,6 +157,107 @@ object Proxy {
        }
      }
    }
+   
+  /** post a new/edited comment to musicrest 
+    *
+    * @param initialRequest - the request to tradtunestore
+    * @param genre the tune genre
+    * @param tune the tune name (url encoded)
+    * @param comment - the comment
+    */
+   def postComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment): Validation[String, String] = withHttp {   
+     http => {      
+       val session: Session = initialRequest.session
+       val basicAuth: Option[String] = session.get("basicauth") 
+       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comments"
+       
+       Logger.debug("post comment url:" + urlString)
+       
+       /** construct the request headers for the proxy */
+       val builder = Map.newBuilder[String, String]
+       builder += "Accept" -> "text/plain"
+       builder += "Content-Type" -> "application/x-www-form-urlencoded"
+       basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
+       val headers = builder.result
+       
+       def req =  (url(urlString) <:< headers).POST << Map("user" -> comment.user,
+                                                           "timestamp" -> String.valueOf(comment.timestamp),
+                                                           "subject" -> comment.subject,
+                                                           "text" -> comment.text)
+
+       try {
+          val resp = http(req as_str)
+          // musicrest should give us back the (unencoded) id of the tune
+          Logger.debug("posted comment OK, response: " + resp)
+          resp.trim.success
+       }
+       catch {
+         case e: Throwable => {
+           Logger.error("error (post comment) found by proxy: " + e)
+           e.getMessage().fail      
+           }
+       }
+     }
+   }
+   
+   /** delete the comment from musicrest
+    *     
+    * @param initialRequest - the request to tradtunestore
+    * @param genre the tune genre
+    * @param tune the tune name (url encoded)
+    * @param comment - the comment
+    *    
+    *    */
+   def deleteComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment): Validation[String, String] = withHttp {   
+     http => {      
+       val session: Session = initialRequest.session
+       val basicAuth: Option[String] = session.get("basicauth") 
+       val user = java.net.URLEncoder.encode(comment.user, "UTF-8")
+       val commentId = String.valueOf(comment.timestamp)
+       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comment/${user}/${commentId}"
+          
+       Logger.debug("delete comment url:" + urlString)   
+ 
+       val builder = Map.newBuilder[String, String]
+       builder += "Accept" -> "text/plain"
+       basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
+       val headers = builder.result            
+       
+       def req =  (url(urlString) <:< headers).DELETE 
+       try {
+          val resp = http(req as_str)
+          // musicrest should give us a success message
+          Logger.debug("deleted tune OK, response: " + resp)
+          resp.trim.success
+       }
+       catch {
+         case e: Throwable => {
+           Logger.debug("error (delete comment) found by proxy: " + e.getMessage())
+           e.getMessage().fail      
+           }
+       }
+     }
+   }
+   
+  def getComments(genre: String, tuneName: String): Validation[String, String] = withHttp {
+     http => {
+       
+       val headers = Map("Accept" -> "application/json; charset=UTF-8")   
+       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comments"
+
+       Logger.debug("get comments url is: " + urlString)
+
+       try { 
+         val resp = http((url(urlString) <:< headers) as_str)
+         resp.success
+       }  
+       catch {
+         case e: Throwable => {
+            e.getMessage().fail      
+         }
+       }
+     }
+   }  
  
    /** search for tunes */
    def search(initialRequest: Request[AnyContent], genre: String, predicateOption: Option[String], sort: String, page: Int): Validation[String, ResultsPage] = withHttp {
@@ -269,11 +386,22 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val urlString = Utils.remoteService + "user" 
+       val host = initialRequest.headers.get(play.api.http.HeaderNames.HOST).getOrElse("")
+       val refererUrl = "http://" + host + initialRequest.path + "/register"
        val headers = Map("Accept" -> "text/html", "Content-Type" -> "application/x-www-form-urlencoded")
        // both trad tune store and musicrest independently check that the confirmation password matches
+       /*
        def req =  (url(urlString) <:< headers).POST << Map("name" -> user.name, 
                                                            "email" -> user.email, 
-                                                           "password" -> user.password, "password2" -> user.password)
+                                                           "password" -> user.password, 
+                                                           "password2" -> user.password)
+                                                            
+       */      
+       def req =  (url(urlString) <:< headers).POST << Map("name" -> user.name, 
+                                                           "email" -> user.email, 
+                                                           "password" -> user.password, 
+                                                           "password2" -> user.password,
+                                                           "refererurl" -> refererUrl)
 
        try {
           val resp = http(req as_str)

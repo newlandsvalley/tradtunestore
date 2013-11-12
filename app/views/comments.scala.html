@@ -1,0 +1,63 @@
+@(comments: Vector[models.Comment], commentForm: Form[Comment], genre: String, tuneid: String, isTry: Boolean)(userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+@import utils.Utils
+@import play.api.templates._
+
+@render(comment: models.Comment) = {
+   <div>
+     <article submitter="@{comment.user}" ts="@{comment.timestamp}" id="@{comment.id}">
+     <h3>@{comment.subject}</h3>
+     <p>@{Html(comment.text)}</p>
+     <p>posted by @{comment.user} on @{comment.date}</p>
+     @if(Utils.isUserOrAdministrator(userName, comment.user)) {
+       @if( !isTry ) {     
+        <a href="comment/@{comment.id}">edit</a>
+        <a href="comment/@{comment.id}/delete">delete</a>
+        }
+     }
+     <hr/>
+     </article>
+   </div>
+}
+
+@main("Welcome to Play")("")(userName)(navigation("home")(userName)) {
+    <div id="commentdiv" role="main" class="main" > 
+    
+    <p>number of comments: @{comments.size}</p>
+   
+    @for(c <- comments) {
+       @{render(c.expanded)}
+    }        
+         
+    @if(userName.isDefined) {
+        @helper.form(action = routes.Application.processOriginalComment(genre, tuneid), 'id -> "commentform", 'enctype -> "application/x-www-form-urlencoded") {
+         <fieldset>
+           <legend class="comment" >Add a comment</legend>
+            <input type="hidden" name="user" value="@{userName}">
+            <input type="hidden" name="timestamp" value="@{System.currentTimeMillis}">
+            <ul>
+             <li>   
+             @helper.inputText(commentForm("subject"), 'required -> "required", '_class -> "comment", 'required -> "required", '_help -> "" )
+             </li>
+             <li>
+             @helper.textarea(commentForm("text"), '_class -> "comment", 'cols -> 45, 'rows -> 8, 'required -> "required",
+              '_help -> "")
+             </li>
+             <li>@{Html(Comment.help)}</li>
+           @commentForm.globalError.map { error =>
+             <span class="errors">@error.message</span>
+            }
+           </ul> 
+           <div class = "submitgroup" >
+             <input type="submit" value="post" formaction="@{routes.Application.processOriginalComment(genre, tuneid)}"/> 
+             <input type="submit" value="try it out" formaction="@{routes.Application.processTryComment(genre, tuneid)}" /> 
+           </div>
+         </fieldset>
+        }    
+     }
+   </div>
+}
+
+

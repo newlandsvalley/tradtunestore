@@ -1,11 +1,13 @@
 package controllers
 
 import play.api._
+import play.api.cache.Cache
+import play.api.Play.current
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.templates.Html
-import models.{Login, Search, AdvancedSearch, Tune, User, ResultsPage}
+import models.{Login, Search, AdvancedSearch, Tune, User, ResultsPage, Comment, CommentsModel}
 import models.Search._
 import Forms._
 import scalaz.Validation
@@ -17,7 +19,8 @@ import javax.xml.bind.DatatypeConverter
 
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.2 Beta"
+  val version = "1.0.3 Beta" 
+  val UUID = "uuid"
 
   // not used
   def index = Action { implicit request => {
@@ -142,6 +145,127 @@ trait TradTuneController extends Controller {  this: Controller =>
     Redirect(routes.Application.error("Missing file"))
   }
 }
+  
+  def comments(genre: String, tuneid: String) = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    Ok(views.html.comments(commentsModel.getAll, commentForm, genre, tuneid, false)(userName)).withSession(session + (UUID -> uuid))
+    }
+  }
+  
+  def processOriginalComment(genre: String, tuneid: String)  = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val encodedTuneId = URLEncoder.encode(tuneid, "UTF-8")    
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    commentForm.bindFromRequest.fold (
+      errors => {
+        val formErrors = errors.errors
+        Logger.debug("comment form errors: " + formErrors.mkString)
+        BadRequest(views.html.comments(commentsModel.getAll, errors, genre, tuneid, false)(userName))
+      },
+      label => {
+        val comment = commentForm.bindFromRequest.get
+        val response: Validation[String, String] = Proxy.postComment(request, genre, encodedTuneId, comment) 
+        response.fold (
+          e => Status(500)("Error posting comment " + e)
+          ,
+          s => {  
+            // add the comment to the session cache
+            commentsModel.add(comment)
+            // cross-site scripting workaround for Chrome - see http://code.google.com/p/chromium/issues/detail?id=98787
+            // we must add the X-XSS-Protection header to allow Chrome to run the script that renders any embedded iframe in the Post
+            Ok(views.html.comments(commentsModel.getAll, commentForm, genre, tuneid, false)(userName)).withHeaders("X-XSS-Protection" -> "0")
+          }
+        ) 
+      }
+    )}
+  }   
+  
+  /** this doesn't save the comment to the backend */
+  def processTryComment(genre: String, tuneid: String)  = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    commentForm.bindFromRequest.fold (
+      errors => {
+        val formErrors = errors.errors
+        Logger.debug("comment form errors: " + formErrors.mkString)
+        BadRequest(views.html.comments(commentsModel.getAll, errors, genre, tuneid, true)(userName))
+      },
+      label => {
+        val comment = commentForm.bindFromRequest.get
+        // macro-expand urls to hrefs
+        val comments = commentsModel.tryComment(comment)
+        Ok(views.html.comments(comments, commentForm.fill(comment), genre, tuneid, true)(userName)).withHeaders("X-XSS-Protection" -> "0")
+      }
+    )}
+  }   
+  
+ def processEditedComment(genre: String, tuneid: String, commentId: String)  = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val encodedTuneId = URLEncoder.encode(tuneid, "UTF-8")    
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    val originalCommentOption = commentsModel.get(commentId)
+    originalCommentOption match {
+      case None => Redirect(routes.Application.error(s"Comment: ${commentId} not found" ))
+      
+      case Some(originalComment) => 
+       commentForm.bindFromRequest.fold (
+         errors => {
+           val formErrors = errors.errors
+           Logger.debug("comment form errors: " + formErrors.mkString)
+           BadRequest(views.html.commentEdit(originalComment, errors, genre, tuneid)(userName))
+         },
+         label => {
+           val comment = commentForm.bindFromRequest.get
+           val response: Validation[String, String] = Proxy.postComment(request, genre, encodedTuneId, comment)  
+           response.fold (
+             e => Status(500)("Error posting comment " + e)
+             ,
+            s => {  
+              // add the comment to the session cache
+              commentsModel.add(comment)
+              // Redirect(routes.Application.comments(genre, tuneid)).withHeaders("X-XSS-Protection" -> "0")
+              // Ok(views.html.comments(commentsModel.getAll, commentForm, genre, tuneid, true)(userName)).withHeaders("X-XSS-Protection" -> "0")
+              Ok(views.html.commentEdit(comment, commentForm.fill(comment), genre, tuneid)(userName)).withHeaders("X-XSS-Protection" -> "0")
+             }
+           ) 
+         }
+       )
+      }      
+    }  
+ }  
+  
+  def commentEdit(genre: String, tuneid: String, id: String) = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    val commentOption = commentsModel.get(id)
+    commentOption match {
+       case Some(c) => Ok(views.html.commentEdit(c, commentForm.fill(c), genre, tuneid)(userName))
+       case None => Redirect(routes.Application.error(s"Comment: ${id} not found" ))    
+      }
+    }
+  }  
+  
+  def commentDelete(genre: String, tuneid: String, id: String) = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val encodedTuneId = URLEncoder.encode(tuneid, "UTF-8")    
+    val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
+    val commentOption = commentsModel.get(id)
+    commentOption match {
+      case Some(comment) => {        
+       val response: Validation[String, String] = Proxy.deleteComment(request, genre, encodedTuneId, comment) 
+       response.fold (
+         e => Status(500)("Error deleting comment " + e)
+         ,
+         s => {  
+           val comments = commentsModel.delete(id)
+           Redirect(routes.Application.comments(genre, tuneid))
+          }
+        )
+      }
+      case None => Redirect(routes.Application.error(s"Comment: ${id} not found" ))    
+    }
+  } } 
 
   // old static rendering
   def loginStatic = Action {
@@ -160,7 +284,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       label => {
         val login = loginForm.bindFromRequest.get
         val basicAuth = DatatypeConverter.printBase64Binary( (login.name + ":" + login.password).getBytes("UTF-8") )
-        Redirect(routes.Application.home).withSession(Security.username -> login.name, "password" -> login.password, "basicauth" -> basicAuth)     
+        Redirect(routes.Application.home).withSession(session + (Security.username -> login.name) + ("password" -> login.password) +  ("basicauth" -> basicAuth))     
       }
     )
   }
@@ -213,6 +337,16 @@ trait TradTuneController extends Controller {  this: Controller =>
   def newuserAcknowledge = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
     Ok(views.html.acknowledge("The last part of the registration process is to reply to an email confirmation message that has been sent to you."))
+    }
+  } 
+  
+  def newuserRegister(uuid: String) = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    val registration: Validation[String, String] = Proxy.registerUser(uuid) 
+    registration.fold(
+             e => Redirect(routes.Application.error(e)),
+             s => Ok(views.html.login(loginForm, None))
+             )       
     }
   } 
   
@@ -489,6 +623,12 @@ trait TradTuneController extends Controller {  this: Controller =>
     Ok(views.html.donate("home"))
     }
   }  
+  
+  def help = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    Ok(views.html.help("home"))
+    }
+  }  
 
   def error(message: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
@@ -508,6 +648,30 @@ trait TradTuneController extends Controller {  this: Controller =>
  def noSuchRoute(path: String) = Action {
     Redirect(routes.Application.error(s"not a recognized request: $path"))    
  }  
+ 
+ private def commentsModelFromSession(session: Session, genre: String, tuneid: String): (String, CommentsModel) = {
+    val uuid = session.get(UUID).getOrElse(java.util.UUID.randomUUID().toString())
+    // get the existing model from the cache if it exists or else install one for the supplied tune
+    val existingCommentsModel = Cache.getOrElse[CommentsModel](uuid) {
+      installCommentsModel(uuid, genre, tuneid)
+    }
+    // get a new comments model if we've moved to a new tune
+    val commentsModel = if (existingCommentsModel.isFor(genre, tuneid)) {      
+      existingCommentsModel
+    }
+    else {
+      installCommentsModel(uuid, genre, tuneid)
+    }
+    (uuid, commentsModel)
+  } 
+  
+  private def installCommentsModel(uuid: String, genre: String, tuneid: String):CommentsModel = {    
+     val cm = new CommentsModel(genre, tuneid)
+     cm.init       
+     Cache.set(uuid, cm)
+     Logger.debug(s"setting new cm in cache for uuid ${uuid} and genre ${genre} and tune ${tuneid}")
+     cm
+  }
 }
 
 object Application extends Controller with TradTuneController

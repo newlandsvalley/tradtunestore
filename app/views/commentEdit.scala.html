@@ -1,0 +1,52 @@
+@(originalComment: Comment, commentForm: Form[Comment], genre: String, tuneid: String)(userName: Option[String])
+
+@import snippets._
+@import utils.Pimps._
+@import utils.Utils
+@import play.api.templates._
+
+@render(comment: models.Comment) = {
+   <div>
+     <article submitter="@{comment.user}" ts="@{comment.timestamp}" id="@{comment.id}">
+     <h3>@{comment.subject}</h3>
+     <p>@{Html(comment.text)}</p>
+     <p>posted by @{comment.user} on @{comment.date}</p>    
+        <a href="../comments">view all comments</a>
+     <hr/>
+     </article>
+   </div>
+}
+
+@main("Edit comment")("")(userName)(navigation("home")(userName)) {
+    <div id="commentdiv" >     
+    
+ 
+    @if(userName.isDefined) {
+          
+        @{render(originalComment.expanded)}
+       
+        @helper.form(action = routes.Application.processEditedComment(genre, tuneid, originalComment.id), 'id -> "commentform", 'enctype -> "application/x-www-form-urlencoded") {
+         <fieldset>
+           <legend class="comment" >Edit comment</legend>
+            <input type="hidden" name="user" value="@{originalComment.user}">
+            <input type="hidden" name="timestamp" value="@{originalComment.timestamp}">
+            <ul>
+             <li>   
+             @helper.inputText(commentForm("subject"), 'required -> "required", '_class -> "comment", 'required -> "required", '_help -> "" )
+             </li>
+             <li>
+             @helper.textarea(commentForm("text"), '_class -> "comment", 'cols -> 45, 'rows -> 8, 'required -> "required", '_help -> "")
+             </li>
+             <li>@{Html(Comment.help)}</li>
+           @commentForm.globalError.map { error =>
+             <span class="errors">@error.message</span>
+            }
+           </ul> 
+           <input type="submit" value = "Post" />
+         </fieldset>
+        }     
+     }
+   </div>
+}
+
+

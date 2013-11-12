@@ -70,4 +70,10 @@ object Utils {
        abc.contains("submitted by " + u + "<br")
      }.getOrElse(false)
    }
+   
+   def isUserOrAdministrator(user: Option[String], target: String): Boolean = {
+     user.map{u =>
+       (u == "administrator") || (u == target)
+     }.getOrElse(false)
+   }   
 }

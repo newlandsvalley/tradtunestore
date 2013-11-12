@@ -317,7 +317,8 @@ span.help {
 /* Centre Main Pages
 ---------------------------------------------- */
 
-#searchdiv { 
+#searchdiv,
+#commentdiv { 
   width: 50%;
   margin-left: auto;
   margin-right: auto;
@@ -359,6 +360,7 @@ span.help {
 
 
 #contactdiv,
+#helpdiv,
 #creditsdiv { 
   width: 80%;
   margin-left: auto;
@@ -396,9 +398,6 @@ td {
     white-space: nowrap;
 }
 
-/* Tune List Tables
----------------------------------------------- */
-
 .tunelist table tr td {
    padding: 0.25em 1em;
 }
@@ -418,6 +417,11 @@ td {
    color: black;   
    text-decoration: underline;
    background: transparent;
+}
+
+table.textalign tr td  {
+   padding-left: 2em;
+   padding-right: 2em;
 }
 
 /* Just a simple list of text items 

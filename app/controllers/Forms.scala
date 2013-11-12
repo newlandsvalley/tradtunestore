@@ -5,7 +5,7 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.data.validation._
-import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User}
+import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User, Comment}
 import utils.Proxy
 
 object Forms {
@@ -81,5 +81,14 @@ object Forms {
     mapping (
       "title" -> text
     ) (AlternativeTitle.apply)(AlternativeTitle.unapply)
+  ) 
+  
+  val commentForm = Form(
+    mapping (
+      "user" -> text, 
+      "timestamp" -> longNumber,
+      "subject" -> (text verifying (pattern("""[^><]*""".r, error="any character allowed except < and >"))),
+      "text" -> (text verifying ( Comment.constraint) )
+    ) (Comment.apply)(Comment.unapply)    
   ) 
 }
