@@ -5,6 +5,8 @@ This is the web interface into the [musicrest](https://github.com/newlandsvalley
 
 It uses the [Play Framework](http://www.playframework.org/) and is written in Scala.
 
+Current version: 1.0.3
+
 Configuration
 -------------
 
