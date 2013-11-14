@@ -12,7 +12,7 @@ import play.api.Logger
 import utils.Proxy
 
 
-case class Comment (user: String, timestamp: Long, subject: String, originalText: String) {
+case class Comment (user: String, timestamp: Long, subject: String, private val originalText: String) {
   val dateFormat = new SimpleDateFormat( "EEE, d MMM yyyy 'at' HH:mm:ss " )
   val date = dateFormat.format(new java.util.Date(timestamp))
   val text = replaceDoubleQuotes

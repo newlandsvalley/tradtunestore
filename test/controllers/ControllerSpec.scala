@@ -10,7 +10,7 @@ import Helpers._
 import javax.xml.bind.DatatypeConverter
 import java.net.URLEncoder
 import utils.Proxy
-import models.Tune
+import models.{Tune, Comment}
 
 /** These are essentially integration tests. They require a valid musicrest backend to be up and running (itself backed by a Mongo database).
  *  The tests exercise both the controller and the proxy behaviour. The mongo database is required to have only an administrator user
@@ -27,7 +27,7 @@ class ControllerSpec extends Specification {
   
   class TestController() extends Controller with TradTuneController  
   
-  val before = {deleteTunesForInsertion; insertTunes}
+  val before = {deleteTunesForInsertion; deleteCommentsForInsertion; insertTunes}
   
   "controller" should {
     "home() should be valid" in {
@@ -229,14 +229,113 @@ class ControllerSpec extends Specification {
           val content = contentAsString(result)
           content must contain("noon lasses")
     }
+    "comments() should be valid" in new WithApplication {
+          val controller = new TestController()          
+          val result = controller.comments("irish", "noon+lasses-reel")(FakeRequest())      
+          result must not beNull     
+          val content = contentAsString(result)
+          content must contain("number of comments: 0")
+    } 
+    "posting a comment when logged in with a good tune should redirect (to comments page)" in  new WithApplication {   
+           
+       val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+       
+       val resultOption = route(FakeRequest(POST, "/genre/irish/tune/noon+lasses-reel/comments").withBody(commentFormData).withSession(Security.username -> testUser.name, "password" -> testUser.password, "basicauth" -> basicAuth)     )
+          
+       resultOption match {
+         case Some(result) => {              
+           result must not beNull    
+           val httpStatus = status(result) 
+           httpStatus must equalTo(OK)  
+           val content = contentAsString(result)
+           content must contain("number of comments: 1")
+         }
+         case _ => {
+           failure("got no response")
+         }
+       }    
+    }  
+    "posting a try comment when logged in with a good tune should redirect (to comments page)" in  new WithApplication {   
+           
+       val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+       
+       val resultOption = route(FakeRequest(POST, "/genre/irish/tune/a+fig+for+a+kiss-slip+jig/comments/try").withBody(commentFormData).withSession(Security.username -> testUser.name, "password" -> testUser.password, "basicauth" -> basicAuth)     )
+          
+       resultOption match {
+         case Some(result) => {              
+           result must not beNull    
+           val httpStatus = status(result) 
+           httpStatus must equalTo(OK)  
+           val content = contentAsString(result)
+           content must contain("number of comments: 1")
+         }
+         case _ => {
+           failure("got no response")
+         }
+       }    
+    }  
+    "deleting a comment when logged in with a good tune should redirect (to comments page)" in  new WithApplication {   
+           
+       val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+       val tuneId = "a+fig+for+a+kiss-slip+jig"
+       val commentId = "administrator_0"
+         
+       insertSampleComment(tuneId)
+       
+       val resultOption = route(FakeRequest(GET, s"/genre/irish/tune/${tuneId}/comment/${commentId}/delete").withSession(Security.username -> testUser.name, "password" -> testUser.password, "basicauth" -> basicAuth)     )
+          
+       resultOption match {
+         case Some(result) => {              
+           result must not beNull    
+           val httpStatus = status(result) 
+           httpStatus must equalTo(SEE_OTHER)
+           val location = redirectLocation(result).getOrElse("not redirected")
+           location must contain("/genre/irish/tune/a+fig+for+a+kiss-slip+jig/comments")
+         }
+         case _ => {
+           failure("got no response")
+         }
+       }    
+    }  
+    "editing a comment when logged in with a good tune should redirect (to edit comments page)" in  new WithApplication {   
+           
+       val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+       val tuneId = "a+fig+for+a+kiss-slip+jig"
+       val commentId = "administrator_0"
+         
+       insertSampleComment(tuneId)
+       
+       val resultOption = route(FakeRequest(POST, s"/genre/irish/tune/${tuneId}/comment/${commentId}").withBody(commentFormData).withSession(Security.username -> testUser.name, "password" -> testUser.password, "basicauth" -> basicAuth)     )
+          
+       resultOption match {
+         case Some(result) => {              
+           result must not beNull    
+           val httpStatus = status(result) 
+           httpStatus must equalTo(OK)  
+           val content = contentAsString(result)
+           content must contain("Edit comment")
+           content must contain("test subject")
+         }
+         case _ => {
+           failure("got no response")
+         }
+       }    
+    }  
   }
+   
   
-  /* run these before a test.  We need WithApplication because FakeApplication needs to look up a real configuration */
+  /* run these before a test.  We need WithApplication because FakeRequest needs to look up a real configuration */
   def deleteTunesForInsertion = new WithApplication {   
     val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
     val request = FakeRequest().withSession("basicauth" -> basicAuth)     
     Proxy.deleteTune(request, "irish", "a+fig+for+a+kiss-slip+jig")
     Proxy.deleteTune(request, "irish", "noon+lasses-reel")
+  }
+  
+  def deleteCommentsForInsertion = new WithApplication {   
+    val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+    val request = FakeRequest().withSession("basicauth" -> basicAuth)  
+    Proxy.deleteAllComments(request, "irish")
   }
   
   
@@ -276,6 +375,22 @@ K: Edor
 |: g2e g2e edB | f2d dcd fed |1 g2e g2e edB |
 dBG GBd e2f :|2 gfe fed ecA | B/c/dB AGF E2F ||"""
     
-    
+
+ /* two representations of the same sample comment */  
+ val commentFormData = Map(
+         "user" -> Seq("administrator"),
+         "timestamp" -> Seq("0"),
+         "subject" -> Seq("test subject"),
+         "text" -> Seq("test text")
+       )    
+       
+ val sampleComment = Comment("administrator", 0L, "test subject", "test text")
+       
+ /* luckily, this is an idempotent operation in MusicRest */
+ def insertSampleComment(tuneId: String) = {   
+    val basicAuth = DatatypeConverter.printBase64Binary( (testUser.name + ":" + testUser.password).getBytes("UTF-8") )  
+    val request = FakeRequest().withSession("basicauth" -> basicAuth)  
+    Proxy.postComment(request, "irish", tuneId, sampleComment)
+  }
 
 }

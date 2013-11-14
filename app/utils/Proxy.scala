@@ -227,7 +227,7 @@ object Proxy {
        try {
           val resp = http(req as_str)
           // musicrest should give us a success message
-          Logger.debug("deleted tune OK, response: " + resp)
+          Logger.debug("deleted comment OK, response: " + resp)
           resp.trim.success
        }
        catch {
@@ -237,7 +237,45 @@ object Proxy {
            }
        }
      }
-   }
+   }  
+   
+ /** delete all the comment within the genre from musicrest
+    * (only used as a convenience in tests)     
+    *     
+    * @param initialRequest - the request to tradtunestore
+    * @param genre the tune genre
+    * @param tune the tune name (url encoded)
+    * @param comment - the comment
+    *    
+    *    */
+   def deleteAllComments[A](initialRequest: Request[A], genre: String): Validation[String, String] = withHttp {   
+     http => {      
+       val session: Session = initialRequest.session
+       val basicAuth: Option[String] = session.get("basicauth") 
+       val urlString =  Utils.remoteService + s"genre/${genre}/comments"
+          
+       Logger.debug("delete all comments url:" + urlString)   
+ 
+       val builder = Map.newBuilder[String, String]
+       builder += "Accept" -> "text/plain"
+       basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
+       val headers = builder.result            
+       
+       def req =  (url(urlString) <:< headers).DELETE 
+       try {
+          val resp = http(req as_str)
+          // musicrest should give us a success message
+          Logger.debug("deleted all comments OK, response: " + resp)
+          resp.trim.success
+       }
+       catch {
+         case e: Throwable => {
+           Logger.debug("error (delete all comments) found by proxy: " + e.getMessage())
+           e.getMessage().fail      
+           }
+       }
+     }
+   }     
    
   def getComments(genre: String, tuneName: String): Validation[String, String] = withHttp {
      http => {

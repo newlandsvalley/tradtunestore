@@ -50,8 +50,8 @@ GET 	/genre/:genre/tune/:name/try   		controllers.Application.trytune(genre: Str
 GET 	/genre/:genre/tune/:name/abc    	controllers.Application.abc(genre: String, name: String)
 POST	/genre/:genre/tune/:name/abc    	controllers.Application.processAlternativeTitle(genre: String, name: String)
 
-GET     /genre/:genre/tune/:tune/comments   controllers.Application.comments(genre: String, tune: String)
-POST    /genre/:genre/tune/:tune/comments  	controllers.Application.processOriginalComment(genre: String, tune: String)
+GET     /genre/:genre/tune/:tune/comments   			controllers.Application.comments(genre: String, tune: String)
+POST    /genre/:genre/tune/:tune/comments  				controllers.Application.processOriginalComment(genre: String, tune: String)
 POST    /genre/:genre/tune/:tune/comments/try     		controllers.Application.processTryComment(genre: String, tune: String)
 GET     /genre/:genre/tune/:tune/comment/:id      		controllers.Application.commentEdit(genre: String, tune: String, id: String)
 POST    /genre/:genre/tune/:tune/comment/:id      		controllers.Application.processEditedComment(genre: String, tune: String, id: String)
@@ -62,7 +62,7 @@ GET 	/about		    					controllers.Application.about
 GET 	/credits		    				controllers.Application.credits	
 GET     /contact		    				controllers.Application.contact
 GET     /donate		        				controllers.Application.donate
-GET     /help		        				controllers.Application.help
+GET		/help                				controllers.Application.help
 
 GET 	/examine		    				controllers.Application.examine
 
@@ -73,4 +73,5 @@ GET 	/error			    				controllers.Application.error(message: String)
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
 # Catch all
 GET   /*path   					controllers.Application.noSuchRoute(path: String)
+
 

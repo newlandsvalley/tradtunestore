@@ -89,6 +89,13 @@ class ModelsSpec extends Specification {
       val comment = Comment("auser", 1L, "a title", embed) 
       comment.text must_== """<iframe width='560' height='315' src='//www.youtube.com/embed/gE6j-Zp323w' frameborder='0' allowfullscreen></iframe>"""
     }
+    "accept a mixture of embedded XML and plain text without complaining" in {
+      val mixed = """<iframe width="560" height="315" src="//www.youtube.com/embed/gE6j-Zp323w" frameborder="0" allowfullscreen></iframe>
+        this is an embedded YouTube iframe reference"""
+      val comment = Comment("auser", 1L, "a title", mixed) 
+      comment.text must contain ("<iframe width='560' height='315' src='//www.youtube.com/embed/gE6j-Zp323w' frameborder='0' allowfullscreen></iframe>")
+      comment.text must contain("this is an embedded YouTube iframe reference")
+    }
     "leave already existing anchors unaffected" in {
       val originalText = """<a href='http://www.ref1.com'>http://www.ref1.com</a>"""
       val expandedText = Comment.macroExpand(originalText)
