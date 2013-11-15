@@ -155,6 +155,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   
   def processOriginalComment(genre: String, tuneid: String)  = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
+    Logger.debug(s"process original comment: tune: ${tuneid}")
     val encodedTuneId = URLEncoder.encode(tuneid, "UTF-8")    
     val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
     commentForm.bindFromRequest.fold (
@@ -184,6 +185,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   /** this doesn't save the comment to the backend */
   def processTryComment(genre: String, tuneid: String)  = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
+    Logger.debug(s"process try comment: tune: ${tuneid}")
     val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
     commentForm.bindFromRequest.fold (
       errors => {

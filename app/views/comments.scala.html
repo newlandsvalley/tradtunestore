@@ -22,7 +22,7 @@
    </div>
 }
 
-@main("Welcome to Play")("")(userName)(navigation("home")(userName)) {
+@main("Comments")("")(userName)(navigation("home")(userName)) {
     <div id="commentdiv" role="main" class="main" > 
     
     <p>number of comments: @{comments.size}</p>
@@ -51,7 +51,7 @@
             }
            </ul> 
            <div class = "submitgroup" >
-             <input type="submit" value="post" formaction="@{routes.Application.processOriginalComment(genre, tuneid)}"/> 
+             <input type="submit" value="post" /> 
              <input type="submit" value="try it out" formaction="@{routes.Application.processTryComment(genre, tuneid)}" /> 
            </div>
          </fieldset>
