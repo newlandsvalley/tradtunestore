@@ -7,9 +7,13 @@ import java.net.URLEncoder
 import scala.xml.XML
 import scala.collection.immutable.VectorBuilder
 import play.api.data.validation._
-import play.api.libs.json._
+// import play.api.libs.json._
 import play.api.Logger
 import utils.Proxy
+import argonaut._
+import Argonaut._
+import scalaz._
+import Scalaz._
 
 
 case class Comment (user: String, timestamp: Long, subject: String, private val originalText: String) {
@@ -28,23 +32,8 @@ case class Comment (user: String, timestamp: Long, subject: String, private val 
 
 object Comment {  
   
-  def fromMap(jsonMap: scala.collection.Map[String, String]): Option[Comment] = 
-    for {
-     user <- jsonMap.get("user")
-     // in musicrest the timestamp is named the comment id (cid)
-     timestamp <- jsonMap.get("cid").flatMap { cid => 
-       try {
-         Some(cid.toLong)
-       }
-       catch {
-          case e:Exception => None
-       }
-     }
-     subject <- jsonMap.get("subject")
-     text <- jsonMap.get("text")
-    } yield { 
-      Comment(user, timestamp, subject, text) 
-    }
+  // interconversion between the Comment case class and JSON (for argonaut)
+  implicit val CodecComment = casecodec4(Comment.apply, Comment.unapply)("user", "cid", "subject", "text")
   
   val constraint: Constraint[String] = Constraint("constraints.commentcheck")({
   plainText =>  {
@@ -207,11 +196,18 @@ object Comment {
     to embed the video and then copy the code they provide into the text box.  Alternatively you can copy the <em>watch</em> URL of the video you're viewing from your 
     web browser’s address bar and we'll attempt to embed the video into the comment."""
   }   
-    
+}
 
+/* a simple list of comments - convenience case class for deserialising JSON */
+case class CommentsList(list: List[Comment])
+
+object CommentsList {
+  implicit val CodecComments = casecodec1(CommentsList.apply, CommentsList.unapply)("comment")
 }
 
 class CommentsModel(val genre: String, val tuneid: String) {
+   import CommentsList._
+   
    val m = scala.collection.mutable.Map[String, Comment]()
   
    def clear = m.clear
@@ -226,9 +222,39 @@ class CommentsModel(val genre: String, val tuneid: String) {
        ,
        s => {
          Logger.debug(s"Got comments json ${s}")
-         parse(s)
+         addFrom(s)
        }
      )
+   }
+   
+   /* add the comments from JSON to the comments model */
+   def addFrom(jsonString: String) = {
+     val cList = parse(jsonString)
+     for {c <- cList} {   
+       Logger.debug(s"Adding comment from JSON: ${c.subject}")
+       add(c)
+     }
+   }
+   
+   /** Parse a JSON string representing a comments list and return the list of comments 
+    *  
+    *  Sample JSON comments from MusicRest look like this:
+    *  
+    *   {"comment" :[ {"user": "administrator" ,"cid": "1383835634013" ,"subject": "subject 5" ,"text": "comment 5 text" },
+    *                 {"user": "test user" ,"cid": "1383835634003" ,"subject": "subject 4" ,"text": "comment 4 text" }
+    *               ]
+    *   } 
+    *  
+    * This implementation relies on Argonaut
+    */
+   private def parse(jsonString: String): List[Comment] = {     
+     val jsonOpt = Parse.parseOption(jsonString) 
+     val optList = 
+       for {
+         json <- jsonOpt
+         commentsList <- json.as[CommentsList].toOption
+         } yield { commentsList.list}
+     optList.getOrElse(Nil)
    }
      
    // add(sample.mimicMusicrestLoad(genre, tuneid))
@@ -262,16 +288,9 @@ class CommentsModel(val genre: String, val tuneid: String) {
      getAll
    }
    
-   /** Sample JSON comments from MusicRest look like this:
-    *  
-    *   {"comment" :[ {"user": "administrator" ,"cid": "1383835634013" ,"subject": "subject 5" ,"text": "comment 5 text" },
-    *                 {"user": "test user" ,"cid": "1383835634003" ,"subject": "subject 4" ,"text": "comment 4 text" }
-    *               ]
-    *   } 
-    *  
-    *  There must be a better way of doing this!  The trouble is, in JSON (and XML), the only type is String, and the OO API 
-    *  we have with Play JSON (jerkson) does not seem to handle type conversions very nicely for us
-    */
+ 
+   
+   /*
    def parse(jsonString: String) = {
      val json: JsValue = Json.parse(jsonString)
      val commentSeq = (json \\ "comment" )
@@ -310,6 +329,8 @@ class CommentsModel(val genre: String, val tuneid: String) {
          })// end of typed Rows foreach       
        })  // end of commentSeq foreach
    }
+   * 
+   */
 }
 
 /* just used in testing

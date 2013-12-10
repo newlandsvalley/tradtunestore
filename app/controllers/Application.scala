@@ -110,7 +110,9 @@ trait TradTuneController extends Controller {  this: Controller =>
     resultsValidation.fold (
       e => Status(500)("Unexpected search error " + e)
       ,
-      resultsPage => {
+      resultsPage => {        
+        
+        Logger.debug("search results from Proxy: " + resultsPage.content)
         
         Ok(views.html.searchresults(genre, predicateOption, sort, 
            Html(resultsPage.content), resultsPage.currentPage, resultsPage.totalPages))

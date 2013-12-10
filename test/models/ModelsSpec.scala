@@ -7,11 +7,11 @@ class ModelsSpec extends Specification {
   val commentsModel = new CommentsModel("agenre", "atune")
  
   "comments model" should {
-    "parse a single json comment" in {
+    "add a single json comment" in {
       val json = """ {"comment" :[ {"user": "administrator" ,"cid": "1383835634013" ,"subject": "subject 5" ,"text": "comment 5 text" }
                  ] }"""
       commentsModel.clear
-      commentsModel.parse(json)
+      commentsModel.addFrom(json)
       commentsModel.size must_== (1)
       val key = "administrator_1383835634013"
       val commentOpt = commentsModel.get(key)
@@ -24,23 +24,23 @@ class ModelsSpec extends Specification {
       val json = """ {"comment" :[ {"user": "administrator" ,"cid": "1383835634013", "expectedfields": "missing" }
                  ] }"""
       commentsModel.clear
-      commentsModel.parse(json)
+      commentsModel.addFrom(json)
       commentsModel.size must_== (0)
       }
     "silently ignore a json comment with a non-numeric timestamp" in {
       val json = """ {"comment" :[ {"user": "administrator" ,"cid": "not a number" ,"subject": "subject 5" ,"text": "comment 5 text" }
                  ] }"""
       commentsModel.clear
-      commentsModel.parse(json)
+      commentsModel.addFrom(json)
       commentsModel.size must_== (0)
       }
-    "parse a set of json comments" in {
+    "add a set of json comments" in {
       val json = """ {"comment" :[ {"user": "administrator" ,"cid": "1383835634013" ,"subject": "subject 5" ,"text": "comment 5 text" },
       		                       {"user": "test user" ,"cid": "1383835634003" ,"subject": "subject 6" ,"text": "comment 4 text" },
       		                       {"user": "john" ,"cid": "1383835634006" ,"subject": "subject 7" ,"text": "comment 4 text" }
                  ] }"""
       commentsModel.clear
-      commentsModel.parse(json)
+      commentsModel.addFrom(json)
       commentsModel.size must_== (3)
       val key = "john_1383835634006"
       val commentOpt = commentsModel.get(key)
@@ -52,7 +52,7 @@ class ModelsSpec extends Specification {
     "parse an empty json comment" in {
       val json = """ {"comment" :[  ] }"""
       commentsModel.clear
-      commentsModel.parse(json)
+      commentsModel.addFrom(json)
       commentsModel.size must_== (0)
       }
   } 
