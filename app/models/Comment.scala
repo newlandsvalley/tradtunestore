@@ -7,7 +7,6 @@ import java.net.URLEncoder
 import scala.xml.XML
 import scala.collection.immutable.VectorBuilder
 import play.api.data.validation._
-// import play.api.libs.json._
 import play.api.Logger
 import utils.Proxy
 import argonaut._
@@ -288,50 +287,7 @@ class CommentsModel(val genre: String, val tuneid: String) {
      getAll
    }
    
- 
-   
-   /*
-   def parse(jsonString: String) = {
-     val json: JsValue = Json.parse(jsonString)
-     val commentSeq = (json \\ "comment" )
-     commentSeq.foreach(arr => {
-       // println(s" found JSON comment ${arr} of type ${arr.getClass()}")
-       val typedRows:List[scala.collection.Map[String, String]]  = arr match {
-         case jsa: JsArray => {           
-           // convert the untyped JsArray to something a bit more strongly typed
-           val rows: List[scala.collection.Map[String, JsValue]] = jsa.value.toList.map { 
-             f => f match {
-               case jso: JsObject => {
-                 // println(s"found JsObject fields ${jso.fields}")
-                 jso.value 
-                 }
-               case _ => {
-                 // println("Expected JsObject Fields")
-                 Map[String, JsValue]().empty
-                 }
-               }
-             }     
-           // convert the JsValue values to Strings because that is all we have in each JsObject value
-           val fieldMapList: List[scala.collection.Map[String, String]]  = rows map { row => row.map( kvs => kvs match {
-             case (key: String, svalue: JsString) => (key, svalue.value)
-             case (key, _) => ("bad" + key, "")
-             } ) }
-           fieldMapList
-         }
-         case _ => List.empty
-       }
-       typedRows.foreach(r => {
-         val commentOption = Comment.fromMap(r)
-         commentOption match {
-           case Some(c) => add(c)
-           case None => Logger.error(s"Could not build Comment from json: ${arr} row: ${r}")
-           }
-         })// end of typed Rows foreach       
-       })  // end of commentSeq foreach
-   }
-   * 
-   */
-}
+ }
 
 /* just used in testing
 object sample {
