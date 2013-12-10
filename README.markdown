@@ -20,6 +20,7 @@ Dependencies
 
 *  [Play 2.2.0](http://www.playframework.org/download).
 *  [Scalaz 7](http://code.google.com/p/scalaz/wiki/Scalaz7) for validation.
+*  [Argonaut](http://argonaut.io/) for JSON parsing.
 *  [Dispatch](http://dispatch.databinder.net/Dispatch.html) for proxying requests.
 
 Blog
