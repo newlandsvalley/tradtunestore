@@ -6,6 +6,7 @@ import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.data.validation._
 import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User, Comment}
+import models.User._
 import utils.Proxy
 
 object Forms {
@@ -33,10 +34,10 @@ object Forms {
   val registrationForm = Form(
     mapping (
       "name" -> (text verifying (pattern("""^[A-Za-z]([A-Za-z0-9_-]){5,24}$""".r, error="Names should start with a letter, be at least 5 characters, and may contain underscore or minus"))),
-      "email" -> text, 
+      "email" -> (text verifying ( User.emailConstraint) ), 
       // Create a tuple mapping for the password/confirm
       "password" -> tuple(
-        "main" -> text(minLength = 7),
+        "main" -> (text verifying ( User.passwordConstraint) ),
         "confirm" -> text
        ).verifying (
         // Add an additional constraint: both passwords must match
