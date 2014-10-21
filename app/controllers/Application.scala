@@ -19,7 +19,7 @@ import javax.xml.bind.DatatypeConverter
 
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.3 Beta" 
+  val version = "1.0.4 Beta" 
   val UUID = "uuid"
 
   // not used
@@ -133,7 +133,7 @@ trait TradTuneController extends Controller {  this: Controller =>
     // abc.ref.moveTo(new File("/tmp/abc"))
     val contents = Files.readFile(abc.ref.file)
     // do basic validation on the submission
-    if (Some("text/vnd.abc") != contentType) {      
+    if ((Some("text/vnd.abc") != contentType) && (Some("text/plain") != contentType))  {      
        Redirect(routes.Application.error(s"Not an ABC file: $contentType"))
     }
     else if (10000 < abc.ref.file.length()) {      

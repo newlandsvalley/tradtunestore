@@ -11,13 +11,13 @@
        <legend >upload tune</legend>
           <ul>
             <li>
-             <p>Upload an ABC file to the @genre genre (with extension <em>.abc</em>)</p>
+             <p>Upload an ABC file to the @genre genre. (The file extension should be <em>.txt</em> although some browsers support <em>.abc</em>)</p>
             </li>
             <li>
              <p>The file should contain a single tune</p>
             </li>
             <li>
-             <input type="file" name="abc" class ="fileinput" value="load ABC file">
+             <input type="file" name="abc" class ="fileinput" value="load ABC file" accept=".abc, .txt" media_type="text/vnd.abc" >
             </li>
           </ul>
           <p>
