@@ -18,7 +18,7 @@ var arr;
     break;
 
     case "scandi":
-      arr = new Array("any","polska","brudmarsch","gånglåt","skänklåt","slängpolska","polka","långdans","marsch","schottis","waltz");
+      arr = new Array("any","polska","brudmarsch","gånglåt","skänklåt","slängpolska","polka","långdans","marsch","schottis","engelska","waltz");
     break;
 
     case "klezmer":
@@ -46,5 +46,4 @@ var arr;
      var genre_dropdown = document.getElementById("genre");   
      rhythmChange(genre)
   }
-
-
+ 
