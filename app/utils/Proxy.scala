@@ -370,7 +370,7 @@ object Proxy {
    }   
    
    /** check that the tune exists */
-   def existsTune(initialRequest: Request[AnyContent], genre: String, name: String): Boolean = withHttp {   
+   def existsTune1(initialRequest: Request[AnyContent], genre: String, name: String): Boolean = withHttp {   
      http => {      
        val headers = Map("Accept" -> "text/plain; charset=UTF-8")
        val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + name + "/exists"
@@ -389,6 +389,19 @@ object Proxy {
        }
      }
    }  
+   
+   // experimental
+   def existsTune(initialRequest: Request[AnyContent], genre: String, tune: String): (Boolean, String) = withHttp {   
+     val response: Validation[String, String] = getAbc(initialRequest, "application/json", genre, tune)
+     http => response.fold(
+       e => { 
+          (false, null)
+       }
+       ,
+       abcJsonMeta =>  { 
+         (true, abcJsonMeta)
+       }   )  
+   }
 
 
    /** delete the tune from musicrest */
@@ -479,16 +492,21 @@ object Proxy {
    }   
 
    /** get the abc for a tune in HTML format or ABC format as requested - (we only display HTML in tradtunestore at the moment) 
-    *  downloads in vnd.abc format go directly to the backend without need of the proxy
+    *  downloads in vnd.abc format go directly to the backend without need of the proxy.  We are now going to use JSON as a more
+    *  convenient mechanism for decoding into scala case classes in some instances where we need access to the header metadata.
+    *  
+    *  11/12/2014 - added JSON case
     *  */
    def getAbc(initialRequest: Request[AnyContent], requestedContentType: String, genre: String, tune: String): Validation[String, String] = withHttp {
      http => {
        val headers = requestedContentType match {
          case x @ "text/vnd.abc" => Map("Accept" -> x)
+         case y @ "application/json" => Map("Accept" -> y)
          case _ => Map("Accept" -> "text/html; charset=UTF-8")
        }
        val path = requestedContentType match {
          case "text/vnd.abc" => "/abc"
+         case "application/json" => "/json"
          case _ => "/html"
        }
        val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + tune + path
@@ -501,7 +519,7 @@ object Proxy {
          resp.success
        }  
        catch {
-         case e: Throwable => {
+         case e: Throwable => { 
             e.getMessage().fail      
          }
        }

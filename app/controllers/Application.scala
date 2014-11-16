@@ -19,7 +19,7 @@ import javax.xml.bind.DatatypeConverter
 
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.4 Beta" 
+  val version = "1.0.5" 
   val UUID = "uuid"
 
   // not used
@@ -549,13 +549,25 @@ trait TradTuneController extends Controller {  this: Controller =>
     val userAgent = request.headers.get(play.api.http.HeaderNames.USER_AGENT).getOrElse("")
     implicit val isInternetExporer = userAgent.contains("MSIE")
     
-    val exists = Proxy.existsTune(request, genre, name)
+    val (exists, abcJsonMeta) = Proxy.existsTune(request, genre, name)
     Logger.info(s"Tune $name exists? $exists")
     
     if (exists) {         
       val imageUrl: String = Utils.remoteService + "genre/" +  URLEncoder.encode(genre, "UTF-8") + "/tune/" + URLEncoder.encode(name, "UTF-8")
+      // parse the JSON ABC Metadata
+      val abcMetaOpt = AbcMeta.parseAbcJson(abcJsonMeta)
+      // Logger.debug(s"ABC headers parsed from json: ${abcMetaOpt} ")
+      if (abcMetaOpt.isEmpty) {
+        Logger.error(s"abc Json that could not be parsed ${abcJsonMeta}")
+      }
+      
+      // construct a tempo from what's provided or else fall back to the default
+      val tempo = abcMetaOpt.map{
+        am => Tempo(am.tempo, am.timeSignature)
+      }.getOrElse(Tempo.default)
+      Logger.debug(s"Tempo: ${tempo} maxSlider: ${tempo.maxCountSlider}")
 
-      Ok(views.html.tune(genre, name, imageUrl))
+      Ok(views.html.tune(genre, name, imageUrl, abcMetaOpt, tempo))
     }
     else {      
       Redirect(routes.Application.error(s"Tune $name not found"))

@@ -573,6 +573,26 @@ div#user {
   color: blue;
 }
 
+/** definition lists */
+
+dl {  
+    padding: 0.5em;
+  }
+  dt {
+    float: left;
+    clear: left;
+    font-weight: bold;
+    color: blue;
+  }
+  dt:after {
+    content: ":";
+  }
+  dd {
+    margin: 0 0 0 110px;
+    width: 400px;
+    padding: 0 0 0.3em 0; 
+  }
+
 /** navigation for pagination */
 
 .pagination ul {

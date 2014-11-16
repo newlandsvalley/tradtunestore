@@ -1,4 +1,4 @@
-@(genre: String, name: String, tuneUrl: String)(implicit lang: Lang, userName: Option[String], isInternetExplorer: Boolean)
+@(genre: String, name: String, tuneUrl: String, abcMetaOpt: Option[utils.AbcMeta], requestedTempo: utils.Tempo)(implicit lang: Lang, userName: Option[String], isInternetExplorer: Boolean)
 
 @import snippets._
 
@@ -11,6 +11,7 @@
 @midiName = @{plainName + ".midi"}
 @abcName = @{plainName + ".abc"}
 @pdfName = @{plainName + ".pdf"}
+@abcMetadata = @{abcMetaOpt.get}
 
 @main(plainName)("")(userName)(navigation("home")(userName)) {         
    <div  id="tunediv"  role="main" class="main" >
@@ -24,9 +25,9 @@
           <div id="midiTune" midi="@tuneUrl/midi"/>  
           <p>choose tempo </p>
 
-          <div id ="slider">
-            <input id="slide" type="range" min="40" max="240" value="120" step="10"  onchange="updateSlider(this.value)" />
-            <p>tempo: 1/4=<span id="tempo">120</span></p>
+          <div id ="slider" >
+            <input id="slide" type="range" min="@requestedTempo.minCountSlider" max="@requestedTempo.maxCountSlider" value="@requestedTempo.startCountSlider" step="@requestedTempo.step"  onchange="updateSlider(this.value)" />
+            <p>tempo: @requestedTempo.beatUnit=<span id="tempo">@requestedTempo.startCountSlider</span></p>
           </div>
 
      <div style="margin-bottom: 30px;  border: 1px solid #000; background: rgba(255,255,255,0.5); border-radius: 10px;  width: 500px; position: relative; z-index: 2;" >
@@ -46,13 +47,33 @@
       </div>
       }
 
-       <ul>
-         <li><a href="@name/comments" >comments</a></li>
-         <li><a href="@name/abc" >abc</a></li>
-         <li><a href="@tuneUrl/abc" type="text/vnd.abc" download="@abcName" >download abc</a></li>
-         <li><a href="@tuneUrl/pdf" type="application/pdf" download="@pdfName" >download pdf</a></li>
-         <li><a href="@tuneUrl/ps" type="application/postscript" download="@postscriptName" >download postscript</a></li>
-         <li><a href="@tuneUrl/midi" type = "audio/midi" download="@midiName"  >download midi</a></li>  
+ 
+       <h4>Tune information</h4>
+       <dl>
+       @if(abcMetaOpt.isDefined) {
+           @if(abcMetadata.origin.isDefined) {
+             <dt>origin</dt><dd>@{abcMetadata.origin.get}</dd>
+           }
+           @if(abcMetadata.source.isDefined) {
+             <dt>source</dt><dd>@{abcMetadata.source.get}</dd>
+           }
+           @if(abcMetadata.composer.isDefined) {
+             <dt>composer</dt><dd>@{abcMetadata.composer.get}</dd>
+           }
+           <dt>submitter</dt><dd>@{abcMetadata.submitter}</dd>
+           @if(abcMetadata.transcriber.isDefined) {
+             <dt>transcriber</dt><dd>@{abcMetadata.transcriber.get}</dd>
+           }  
+       }        
+           <dt>view</dt><dd><a href="@name/comments" >comments</a>
+                   <a href="@name/abc" >abc</a></dd>           
+           <dt>download</dt><dd><a href="@tuneUrl/abc" type="text/vnd.abc" download="@abcName" >abc</a>
+             <a href="@tuneUrl/pdf" type="application/pdf" download="@pdfName" >pdf</a>
+             <a href="@tuneUrl/ps" type="application/postscript" download="@postscriptName" >postscript</a>
+             <a href="@tuneUrl/midi" type = "audio/midi" download="@midiName"  >midi</a></dd>
+           </dl>   
+       </dl>
+       <ul>               
          @if(userName.isDefined && userName.get == "administrator") {
          <li>
            <form method = "POST" action = "delete/@name" >
@@ -71,6 +92,7 @@ var audio = $("#audioPlayer");
 var slider = $("#slider");
 var tempo = $("#tempo");
 var tune =  $("#midiTune");
+var originalTempo = @requestedTempo.startCountSlider
 
 window.onload = function () {
   loadAudio();
@@ -162,7 +184,7 @@ function updateSlider(slideAmount) {
 }
 
 function getTimeWarp() {
-  var timeWarp = 120 / tempo.text();
+  var timeWarp = originalTempo / tempo.text();
   console.log("time warp is "  + timeWarp);
   return timeWarp;
 }  
