@@ -18,7 +18,7 @@ var arr;
     break;
 
     case "scandi":
-      arr = new Array("any","polska","brudmarsch","gånglåt","skänklåt","slängpolska","polka","långdans","marsch","schottis","engelska","waltz");
+      arr = new Array("any","polska","brudmarsch","gånglåt","skänklåt","slängpolska","polka","långdans","marsch","schottis","engelska","hambo","waltz");
     break;
 
     case "klezmer":
