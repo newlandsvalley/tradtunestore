@@ -23,7 +23,7 @@ Dependencies
 ------------
 
 *  [Play 2.3.8](http://www.playframework.org/download).
-*  [Argonaut 6.0.4](http://argonaut.io/) for JSON parsing.
+*  [Argonaut 6.1](http://argonaut.io/) for JSON parsing.
 *  [Dispatch 0.11.2](http://dispatch.databinder.net/Dispatch.html) for proxying requests.
 
 Blog
