@@ -9,6 +9,8 @@ import scala.collection.immutable.VectorBuilder
 import play.api.data.validation._
 import play.api.Logger
 import utils.Proxy
+import utils.Proxy.resolveFuture
+import utils.Utils._
 import argonaut._
 import Argonaut._
 import scalaz._
@@ -215,9 +217,9 @@ class CommentsModel(val genre: String, val tuneid: String) {
    
    // def init = add(sample.comment)
    def init = {
-     val response = Proxy.getComments(genre, URLEncoder.encode(tuneid, "UTF-8")  )
+     val response = resolveFuture(Proxy.getComments(genre, URLEncoder.encode(tuneid, "UTF-8"))  )
      response.fold (
-       e => Logger.error(s"Error getting comments for ${tuneid} :" + e)
+       e => Logger.error(s"Error getting comments for ${tuneid} :" + e.getMessage())
        ,
        s => {
          Logger.debug(s"Got comments json ${s}")

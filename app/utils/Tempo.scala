@@ -57,7 +57,7 @@ case class Tempo(beatUnit: Fraction, count: Int) {
     else
       5
   private def roundToStep(count: Int): Int =
-    round((count + step - 1) / step)*step
+    round(((count + step - 1) / step)*step)
 }
 
 object Tempo {    

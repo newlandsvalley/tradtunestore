@@ -11,7 +11,7 @@
 }
 
 
-@main("users")("")(userName)(navigation("home")(userName)) {         
+@main("users")(None)(userName)(navigation("users")(userName)) {         
     <div id="searchresultsdiv" role="main" class="main" >
           <p>User List @pageInfo</p>
           @results 

@@ -3,7 +3,7 @@
 @import snippets._
 @import utils.Utils
 
-@main("login")("")(userName)(navigation("login")(userName)) {         
+@main("login")(None)(userName)(navigation("login")(userName)) {         
     <div id="searchdiv" role="main" class="main" >
         <form name="Login" id="loginform" action=@(Utils.remoteService) + "user" method="POST" enctype="application/x-www-form-urlencoded" >
          <fieldset>

@@ -2,7 +2,7 @@
 
 @import snippets._
 
-@main("help")("")(userName)(navigation("home")(userName)) {         
+@main("help")(None)(userName)(navigation("home")(userName)) {         
     <div id="helpdiv" role="main" class="main" >
        <h2>Are there any known issues or restrictions?</h2>
        <p>Tunes cannot be played in Internet Explorer. Because this is probably the main reason for using the system in the first
@@ -57,9 +57,10 @@
          
        and of course you can also change the speed by moving the slider. 
        </p>
-       <p>If you can't find a ready-made ABC file, you will have to build one yourself from scratch.  This usually means you first have to transcribe the
-       tune and then you can convert to ABC notes by a process that is largely mechanical.  There are good <a href='http://abcnotation.com/learn'>ABC tutorials</a> 
-       to help you to do this. It should have the file extension <em>.txt</em> although some browsers will also accept the <em>.abc</em> extension.
+       <p>If you can't find a ready-made ABC file but you do have a midi recording of the tune, you can try to <a href='helpmidi2abc'>convert the midi</a> 
+       directly into ABC. Otherwise, you will have to build the ABC yourself from scratch.  This usually means you first have to transcribe the tune and 
+       then it is a largely mechanical process to convert the score.  There are good <a href='http://abcnotation.com/learn'>ABC tutorials</a> to help you 
+       to do this. Your final file should have the extension <em>.txt</em> although some browsers will also accept the <em>.abc</em> extension.
        </p>
        <p>Now you've got your ABC file, you can try to upload it to TradTuneDB.  Firstly, make sure you are logged in and that you are using your intended genre. 
        Then, you can either use the <em>new tune</em> form and paste the ABC into the form field, or you can use the <em>upload</em> option where you enter the location 

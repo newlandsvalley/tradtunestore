@@ -1,18 +1,18 @@
-# Ignore all dotfiles...
-.*
-# except for .gitignore
-!.gitignore
-
-/.idea/
-/project/boot/
-/project/plugins/project
-target/
-cache/
-logs/
-deprecated/
-dist/
-lib_managed/
-src_managed/
-test-output/
-*.iml
-build.sbt.1.1M8
+logs
+project/project
+project/target
+target
+cache
+logs
+deprecated
+tmp
+.history
+dist
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings

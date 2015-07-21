@@ -5,6 +5,7 @@
 @navigationlink("/home")(Utils.cssClass("home", context))("home") 
 @navigationlink("/newtune")(Utils.cssClass("newtune", context))("new tune")
 @navigationlink("/upload")(Utils.cssClass("upload", context))("upload")
+@navigationlink("/midi2abc")(Utils.cssClass("midi2abc", context))("midi2abc")
 @(userName match {
      case Some("administrator")  => navigationlink("/users")(Utils.cssClass("users", context))("users")   
      case _ =>  None

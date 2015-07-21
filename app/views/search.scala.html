@@ -2,8 +2,12 @@
 
 @import snippets._
 @import utils.Pimps._
+@import utils.Utils
 
-@main("search")(s"""onload=genreInit("$genre")""")(userName)(navigation("home")(userName)) {         
+
+@onLoad=@{Utils.onLoadCommand2(genre, "any")}
+
+@main("search")(onLoad)(userName)(navigation("home")(userName)) {         
       <div id="searchdiv" role="main" class="main" >
        
          @helper.form(action = routes.Application.processSearch, 'id -> "searchform", 'enctype -> "application/x-www-form-urlencoded" ) {
@@ -16,7 +20,7 @@
               </li>
               <li>
                <label class="search" for="genre">genre:</label>
-               <select type="text" id="genre" name="genre" class ="medium" onchange="rhythmChange(this.value)" >
+               <select id="genre" name="genre" class ="medium" onchange="rhythmChange(this.value, true)" >
                  <option value = "irish">Irish</option>
                  <option value = "scottish">Scottish</option>
                  <option value = "scandi">Scandi</option>
@@ -25,12 +29,12 @@
               </li>
               <li>
                <label class="search" for="type">type:</label>
-               <select type="text" id="rhythm_dropdown" name="rhythm" class ="medium" >   
+               <select id="rhythm_dropdown" name="rhythm" class ="medium" >   
                </select>
               </li>
               <li>
                <label class="search" for="key">key:</label>
-               <select type="text" id="key" name="key" class ="medium" >
+               <select id="key" name="key" class ="medium" >
                  <option value = "any">any</option>
 		 <option value="Ador">Adorian</option>
 		 <option value="Amaj">Amajor</option>
@@ -59,7 +63,7 @@
               </li>
               <li>
                <label class="search" for="sort">ordering:</label>
-               <select type="text" id="sort_dropdown" name="sort" class ="medium" >   
+               <select id="sort_dropdown" name="sort" class ="medium" >   
                   <option value = "alpha">alphabetic</option>
                   <option value = "date">most recent</option>
                </select>

@@ -2,8 +2,11 @@
 
 @import snippets._
 @import utils.Pimps._
+@import utils.Utils
 
-@main("new tune")(s"""onload=selectGenre("$genre")""")(userName)(navigation("newtune")(userName)) {         
+@onLoad=@{Utils.onLoadCommand1(genre)}
+
+@main("new tune")(onLoad)(userName)(navigation("newtune")(userName)) {         
     <div id="newtunediv" role="main" class="main" >
 
        <!--form name="newtuneform" action="defertobuttons" enctype="text/plain" method="POST"-->

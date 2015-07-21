@@ -10,7 +10,7 @@
   }
 }
 
-@main("search results")("")(userName)(navigation("home")(userName)) {         
+@main("search results")(None)(userName)(navigation("home")(userName)) {         
     <div id="searchresultsdiv" role="main" class="main" >
           <p>Search results for genre: @genre @(predicateOption.map(p => "and predicate: " + URLDecoder.decode(p, "UTF-8"))) @pageInfo</p>
           @results 

@@ -2,9 +2,12 @@
 
 @import snippets._
 @import utils.Pimps._
+@import utils.Utils
 
 
-@main("advanced search")(s"""onload=selectGenre("$genre")""")(userName)(navigation("home")(userName)) {         
+@onLoad=@{Utils.onLoadCommand1(genre)}
+
+@main("advanced search")(onLoad)(userName)(navigation("home")(userName)) {         
      <div id="advancedsearchdiv" role="main" class="main" >
         @helper.form(action = routes.Application.processAdvancedSearch, 'id -> "advancedsearchform", 'enctype -> "application/x-www-form-urlencoded" ) {
         <!--form id="advancedsearchform" name="Search" action="searchresult.html" method="POST" enctype="application/x-www-form-urlencoded" -->

@@ -3,7 +3,7 @@
 @import snippets._
 @import utils.Utils._
 
-@main(message)("")(userName)(navigation("home")(userName)) {         
+@main(message)(None)(userName)(navigation("home")(userName)) {         
     <div id="acknowledgediv" role="main" class="main" >
           <p>@sanitizeErrorMessage(message)</p>
     </div>

@@ -388,6 +388,13 @@ span.help {
     float: left;
 }
 
+#metadatadiv { 
+  width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
 
 /* TABLES
 ---------------------------------------------- */
@@ -592,6 +599,40 @@ dl {
     width: 400px;
     padding: 0 0 0.3em 0; 
   }
+
+/** the metadata form */
+
+dl.metadata {  
+    padding: 0;
+}
+
+.metadata dt {
+    float: left;
+    clear: left;
+}
+
+.metadata dt:after {
+    content: " :";
+}
+
+.metadata dd {
+    margin: 0 0 0 314px;
+    width: 400px;
+    padding: 0 0, 0.3em 0; 
+}
+
+/* label alignment in metadata forms */
+.metadata dt label {
+  width: 275px;
+}
+
+/* links alignment */
+
+#download {
+    float: left;
+}
+
+
 
 /** navigation for pagination */
 

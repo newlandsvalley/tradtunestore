@@ -3,7 +3,7 @@
 @import snippets._
 @import utils.Pimps._
 @import utils.Utils
-@import play.api.templates._
+@import play.twirl.api._
 
 @render(comment: models.Comment) = {
    <div>
@@ -17,7 +17,7 @@
    </div>
 }
 
-@main("Edit comment")("")(userName)(navigation("home")(userName)) {
+@main("Edit comment")(None)(userName)(navigation("home")(userName)) {
     <div id="commentdiv" >     
     
  

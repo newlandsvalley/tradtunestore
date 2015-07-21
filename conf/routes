@@ -12,8 +12,6 @@ POST 	/search 		    	    controllers.Application.processSearch
 GET 	/advancedsearch		    	controllers.Application.advancedsearch
 POST 	/advancedsearch 	    	controllers.Application.processAdvancedSearch
 
-GET 	/advancedsearchOld	    	controllers.Application.advancedsearchOld
-
 GET 	/searchresults	   	    	controllers.Application.searchresults(genre: String, predicate: Option[String], sort: String, page: Int)
 GET 	/searchresults	   	    	controllers.Application.searchall(genre: String, sort: String, page: Int)
 
@@ -24,49 +22,57 @@ POST 	/login  		   	        controllers.Application.processLogin
 
 GET 	/login/password			    controllers.Application.passwordReminder
 POST 	/login/password 		    controllers.Application.processPasswordReminder
-GET 	/login/password/acknowledge	controllers.Application.passwordReminderAcknowledge
+GET 	/login/password/acknowledge	    controllers.Application.passwordReminderAcknowledge
 
-GET 	/logout			    	    		controllers.Application.logout
+GET 	/logout			    	    controllers.Application.logout
 
-GET 	/newuser		    	    		controllers.Application.newuser
-POST	/newuser		    	    		controllers.Application.processNewUser
-GET 	/users		    	        		controllers.Application.users
+GET 	/newuser		    	    controllers.Application.newuser
+POST	/newuser		    	    controllers.Application.processNewUser
+GET 	/users		    	            controllers.Application.users
 
-GET     /newuser/acknowledge        		controllers.Application.newuserAcknowledge
-GET     /newuser/register/:uuid     		controllers.Application.newuserRegister(uuid: String)
+GET     /newuser/acknowledge        	    controllers.Application.newuserAcknowledge
+GET     /newuser/register/:uuid     	    controllers.Application.newuserRegister(uuid: String)
 
-GET 	/newtune		    	    		controllers.Application.newtune
-POST 	/newtune		    	    		controllers.Application.processTune
-POST 	/trytune		    	    		controllers.Application.processTryTune
-GET 	/upload		    	        		controllers.Application.upload
-POST 	/upload		    	        		controllers.Application.processUpload
+GET 	/newtune		    	    controllers.Application.newtune
+POST 	/newtune		    	    controllers.Application.processTune
+POST 	/trytune		    	    controllers.Application.processTryTune
+GET 	/upload		    	            controllers.Application.upload
+POST 	/upload		    	            controllers.Application.processUpload
 
-GET 	/genre/:genre/tune/:name    		controllers.Application.tune(genre: String, name: String)
-POST 	/genre/:genre/tune/delete/:name 	controllers.Application.deleteTune(genre: String, name: String)
-DELETE	/genre/:genre/tune/:name    		controllers.Application.deleteTune(genre: String, name: String)
 
-GET 	/genre/:genre/tune/:name/try   		controllers.Application.trytune(genre: String, name: String)
+GET     /midi2abc		            controllers.Application.uploadMidi
+POST 	/midi2abc	    	            controllers.Application.processUploadMidi
 
-GET 	/genre/:genre/tune/:name/abc    	controllers.Application.abc(genre: String, name: String)
-POST	/genre/:genre/tune/:name/abc    	controllers.Application.processAlternativeTitle(genre: String, name: String)
+GET 	/convert	    	            controllers.Application.convert(filename: String, abc: Option[String], tuneImageRef: Option[String], tuneImageError: Option[String])
+POST 	/convert 		            controllers.Application.processMidiMetadata
 
-GET     /genre/:genre/tune/:tune/comments   			controllers.Application.comments(genre: String, tune: String)
-POST    /genre/:genre/tune/:tune/comments  				controllers.Application.processOriginalComment(genre: String, tune: String)
-POST    /genre/:genre/tune/:tune/comments/try     		controllers.Application.processTryComment(genre: String, tune: String)
-GET     /genre/:genre/tune/:tune/comment/:id      		controllers.Application.commentEdit(genre: String, tune: String, id: String)
-POST    /genre/:genre/tune/:tune/comment/:id      		controllers.Application.processEditedComment(genre: String, tune: String, id: String)
+GET 	/genre/:genre/tune/:name    	    controllers.Application.tune(genre: String, name: String)
+POST 	/genre/:genre/tune/delete/:name     controllers.Application.deleteTune(genre: String, name: String)
+DELETE	/genre/:genre/tune/:name    	    controllers.Application.deleteTune(genre: String, name: String)
+
+GET 	/genre/:genre/tune/:name/try   	    controllers.Application.trytune(genre: String, name: String)
+
+GET 	/genre/:genre/tune/:name/abc        controllers.Application.abc(genre: String, name: String)
+POST	/genre/:genre/tune/:name/abc        controllers.Application.processAlternativeTitle(genre: String, name: String)
+
+GET     /genre/:genre/tune/:tune/comments   		controllers.Application.comments(genre: String, tune: String)
+POST    /genre/:genre/tune/:tune/comments  		controllers.Application.processOriginalComment(genre: String, tune: String)
+POST    /genre/:genre/tune/:tune/comments/try     	controllers.Application.processTryComment(genre: String, tune: String)
+GET     /genre/:genre/tune/:tune/comment/:id      	controllers.Application.commentEdit(genre: String, tune: String, id: String)
+POST    /genre/:genre/tune/:tune/comment/:id      	controllers.Application.processEditedComment(genre: String, tune: String, id: String)
 
 GET     /genre/:genre/tune/:tune/comment/:id/delete   	controllers.Application.commentDelete(genre: String, tune: String, id: String)
 
-GET 	/about		    					controllers.Application.about
-GET 	/credits		    				controllers.Application.credits	
-GET     /contact		    				controllers.Application.contact
-GET     /donate		        				controllers.Application.donate
-GET		/help                				controllers.Application.help
+GET 	/about		    				controllers.Application.about
+GET 	/credits		    			controllers.Application.credits	
+GET     /contact		    			controllers.Application.contact
+GET     /donate		        			controllers.Application.donate
+GET     /help                				controllers.Application.help
+GET     /helpmidi2abc                			controllers.Application.helpMidi2abc
 
-GET 	/examine		    				controllers.Application.examine
+GET 	/examine		    			controllers.Application.examine
 
-GET 	/error			    				controllers.Application.error(message: String)
+GET 	/error			    			controllers.Application.error(message: String)
 
 
 # Map static resources from the /public folder to the /assets URL path

@@ -5,9 +5,12 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.data.validation._
-import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User, Comment}
+import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User, Comment, MidiMetadata}
 import models.User._
 import utils.Proxy
+import utils.Proxy.resolveFuture
+import utils.Utils._
+import javax.xml.bind.DatatypeConverter
 
 object Forms {
 
@@ -21,7 +24,7 @@ object Forms {
       "name" -> text,
       "password" -> text
     ) (Login.apply)(Login.unapply)
-    verifying ("user not registered", f => Proxy.checkUser(f.name, f.password))
+    verifying ("user not registered", f => checkUser(f.name, f.password))
   ) 
   
    val passwordReminderForm = Form(
@@ -78,6 +81,19 @@ object Forms {
     ) (Tune.apply)(Tune.unapply)
   ) 
 
+  val midiMetadataForm = Form(
+    mapping (
+      "trackno"  -> text,
+      "leadin"   -> text,
+      "notelen"  -> text,
+      "genre"    -> text,
+      "rhythm"   -> text,
+      "key"      -> text,
+      "mode"     -> text,
+      "filename" -> text
+    ) (MidiMetadata.apply)(MidiMetadata.unapply)
+  )
+
   val alternativeTitleForm = Form(
     mapping (
       "title" -> text
@@ -92,4 +108,27 @@ object Forms {
       "text" -> (text verifying ( Comment.constraint) )
     ) (Comment.apply)(Comment.unapply)    
   ) 
+
+  /** check that a user is registered */
+  def checkUser(name: String, password: String): Boolean = {
+    val basicAuth = DatatypeConverter.printBase64Binary( (name + ":" + password).getBytes("UTF-8") )
+    val userValidation = resolveFuture(Proxy.checkUser(basicAuth))
+      userValidation.fold (
+         e => false,
+         s => true
+      )        
+  }
+
+  /** default values for the MIDI metadata form */
+  def defaultMidiMetadataForm(genre: String) = {
+    val rhythm = defaultRhythm(genre)
+    val defaultMetadata = MidiMetadata("0", "0", "1/16", genre, rhythm, "A", "major", "") 
+    midiMetadataForm.fill(defaultMetadata)
+    }
+
+
+  /** get an individual form value by supplying the key */
+  def getFormValue[T](form: Form[T], key: String): Option[String] = {
+     form.data.get(key)
+  }
 }

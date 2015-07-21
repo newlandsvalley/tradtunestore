@@ -1,77 +1,68 @@
 package utils
 
-import dispatch._
+import dispatch._, Defaults._
 import play.api.mvc.{Request, Session, AnyContent}
 import play.api.data.validation.{Constraint, Valid, Invalid, ValidationResult}
 import play.api.{Play, Logger}
-import scalaz.Validation
-import scalaz.Scalaz._
 import java.io.{InputStream, InputStreamReader}
-import javax.xml.bind.DatatypeConverter
 import scala.util.matching.Regex
 import models.Search._
 import models.{Login, Tune, User, ResultsPage, Comment}
+import utils.Utils._
+import com.ning.http.client.Response
+import scala.util.{Success, Failure, Try}
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
+import utils.DispatchWorkaround._
 
 /**
- * Proxy uses dispatch as an HTTP client.  This code was developed before the Spray client was developed.
- * Perhaps we ought to upgrade to Spray.  I can't be bothered at the moment.
- * 
+ * Proxy uses dispatch as an HTTP client.  Unfortunately I've just upgraded to the latest release.  This is painful because of the absence of proper documentation.
+ * For example, there is no scaladoc, the jokey documentation is trivial, and there are still references to and from the 'periodic table of operators'
+ * which a careful analysis of the github code shows no longer to be supported to the same extent.
+ *
+ * It is also painful because it supports no mechanism of returning the text of an HTTP error to the user in the context of Either disjunctions which it 
+ * is so pleased about - all you get is the error code.  Also, there seems to me no easy access to the response headers. 
  */
 
 object Proxy {
+
+
+   /** this is a hack.  It is intended to replace Dispatch's OK operator with one that will recognise the text of error repsonses
+    *  and return either the successful page or an exception which holds the text
+    */
+   implicit class MyRequestHandlerTupleBuilder(req: Req) {
+     def OKOrErr[T](f: Response => T) =
+      (req.toRequest, new OkOrErr(f))
+   }
    
    /** check that the musicrest service is up */
-   def checkService(): Validation[String, String] = withHttp { 
+   def checkService(): Future[Either[Throwable, String]] = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/plain; charset=UTF-8")   
        val urlString = Utils.remoteService
-       try { 
-         val resp = http((url(urlString) <:< headers) as_str)
-         resp.success
-       }  
-       catch {
-         case e: Throwable => e.getMessage().fail      
-       }
+       val req = url(urlString) <:< headers
+       Http(req OKOrErr as.String).either  
      }
-   }
+   }    
 
    /** check that a user is registered */
-   def checkUser(name: String, password: String): Boolean = {
-      val basicAuth = DatatypeConverter.printBase64Binary( (name + ":" + password).getBytes("UTF-8") )
-      val userValidation: Validation[String, String] = checkUser(basicAuth)
-        userValidation.fold (
-           e => false,
-           s => true
-        )        
-   }
-
-   /** check that a user is registered */
-   def checkUser(basicAuth: String): Validation[String, String] = withHttp { 
+   def checkUser(basicAuth: String): Future[Either[Throwable, String]] = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/plain; charset=UTF-8", "Authorization" -> ("Basic " + basicAuth))   
        val urlString = Utils.remoteService + "user/check"
-       try { 
-         val resp = http((url(urlString) <:< headers) as_str)
-         resp.success
-       }  
-       catch {
-         case e: Throwable => e.getMessage().fail      
-       }
+       val req = url(urlString) <:< headers
+       Http(req OKOrErr as.String).either 
      }
    }
    
    /** register a new user */
-   def registerUser(uuid: String): Validation[String, String] = withHttp { 
+   def registerUser(uuid: String):  Future[Either[Throwable, String]]  = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/html; charset=UTF-8")   
        val urlString = Utils.remoteService + "user/validate/" + uuid
-       try { 
-         val resp = http((url(urlString) <:< headers) as_str)
-         resp.success
-       }  
-       catch {
-         case e: Throwable => e.getMessage().fail      
-       }
+       val req = url(urlString) <:< headers
+       Http(req OKOrErr as.String).either
      }
    }
    
@@ -81,13 +72,18 @@ object Proxy {
     * @param initialRequest - the request to tradtunestore
     * @param tune - the tune details
     * @param saveMode - (true - save to musicrest, false - just try out the transcode)
+    * @param temporaryAuth - a temporary basic auth available only for on-the-fly transcoding of ABC generated from midi 
     */
-   def postTune[A](initialRequest: Request[A], tune: Tune, saveMode: Boolean): Validation[String, String] = withHttp {   
+   def postTune[A](initialRequest: Request[A], tune: Tune, saveMode: Boolean, temporaryAuth: Option[String] = None): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
-       val basicAuth: Option[String] = session.get("basicauth") 
-       val urlString = 
-        if (saveMode) 
+       val sessionAuth: Option[String] = session.get("basicauth")
+       val basicAuth = if (sessionAuth.isDefined)
+                         sessionAuth
+                       else
+                         temporaryAuth
+
+       val urlString =  if (saveMode) 
           Utils.remoteService + "genre/" + tune.genre + "/tune"
         else
           Utils.remoteService + "genre/" + tune.genre + "/transcode"
@@ -103,18 +99,9 @@ object Proxy {
             
        def req =  (url(urlString) <:< headers).POST << Map("abc" -> tune.abc)
 
-       try {
-          val resp = http(req as_str)
-          // musicrest should give us back the (unencoded) id of the tune
-          Logger.debug("posted tune OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.error("error (save) found by proxy: " + e)
-           e.getMessage().fail      
-           }
-       }
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim
      }
    }
 
@@ -125,7 +112,7 @@ object Proxy {
     * @param tune - the url-encoded tune id
     * @param title - the alternative title
     */
-   def postAlternativeTitle(initialRequest: Request[AnyContent], genre: String, tune: String, title: String): Validation[String, String] = withHttp {   
+   def postAlternativeTitle(initialRequest: Request[AnyContent], genre: String, tune: String, title: String): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
@@ -141,20 +128,10 @@ object Proxy {
        basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
        val headers = builder.result            
        
-       def req =  (url(urlString) <:< headers).POST << Map("title" -> title)
-
-       try {
-          val resp = http(req as_str)
-          // musicrest should give us back the (unencoded) id of the tune
-          Logger.debug("posted tune OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (save) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+       def req =  (url(urlString) <:< headers).POST << Map("title" -> title)  
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }
    
@@ -165,7 +142,7 @@ object Proxy {
     * @param tune the tune name (url encoded)
     * @param comment - the comment
     */
-   def postComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment): Validation[String, String] = withHttp {   
+   def postComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment):  Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
@@ -183,20 +160,10 @@ object Proxy {
        def req =  (url(urlString) <:< headers).POST << Map("user" -> comment.user,
                                                            "timestamp" -> String.valueOf(comment.timestamp),
                                                            "subject" -> comment.subject,
-                                                           "text" -> comment.text)
-
-       try {
-          val resp = http(req as_str)
-          // musicrest should give us back the (unencoded) id of the tune
-          Logger.debug("posted comment OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.error("error (post comment) found by proxy: " + e)
-           e.getMessage().fail      
-           }
-       }
+                                                           "text" -> comment.text)   
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }
    
@@ -208,7 +175,7 @@ object Proxy {
     * @param comment - the comment
     *    
     *    */
-   def deleteComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment): Validation[String, String] = withHttp {   
+   def deleteComment[A](initialRequest: Request[A], genre: String, tuneName: String, comment: Comment):  Future[Either[Throwable, String]]  = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
@@ -224,18 +191,9 @@ object Proxy {
        val headers = builder.result            
        
        def req =  (url(urlString) <:< headers).DELETE 
-       try {
-          val resp = http(req as_str)
-          // musicrest should give us a success message
-          Logger.debug("deleted comment OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (delete comment) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }  
    
@@ -248,7 +206,7 @@ object Proxy {
     * @param comment - the comment
     *    
     *    */
-   def deleteAllComments[A](initialRequest: Request[A], genre: String): Validation[String, String] = withHttp {   
+   def deleteAllComments[A](initialRequest: Request[A], genre: String): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
@@ -262,43 +220,26 @@ object Proxy {
        val headers = builder.result            
        
        def req =  (url(urlString) <:< headers).DELETE 
-       try {
-          val resp = http(req as_str)
-          // musicrest should give us a success message
-          Logger.debug("deleted all comments OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (delete all comments) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }     
    
-  def getComments(genre: String, tuneName: String): Validation[String, String] = withHttp {
+  def getComments(genre: String, tuneName: String): Future[Either[Throwable, String]] = withHttp {
      http => {
        
        val headers = Map("Accept" -> "application/json; charset=UTF-8")   
        val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comments"
 
        Logger.debug("get comments url is: " + urlString)
-
-       try { 
-         val resp = http((url(urlString) <:< headers) as_str)
-         resp.success
-       }  
-       catch {
-         case e: Throwable => {
-            e.getMessage().fail      
-         }
-       }
+       def req =  (url(urlString) <:< headers)
+       Http(req OKOrErr as.String).either 
      }
    }  
  
    /** search for tunes */
-   def search(initialRequest: Request[AnyContent], genre: String, predicateOption: Option[String], sort: String, page: Int): Validation[String, ResultsPage] = withHttp {
+   def search(initialRequest: Request[AnyContent], genre: String, predicateOption: Option[String], sort: String, page: Int): Future[Either[Throwable, ResultsPage]] = withHttp {
      http => {
        val headers = Map("Accept" -> "text/html; charset=UTF-8")
        val urlString = predicateOption.map (
@@ -308,31 +249,16 @@ object Proxy {
        Logger.debug("search proxy url is: " + urlString)
        Logger.debug("Proxy requesting page " + page)
 
-       try { 
-    
-          val resp = http((url(urlString) <:< headers) >+ { r => 
-             (r >:> { 
-               hs => {
-                  val pagination: Option[String] = hs("Musicrest-Pagination").headOption
-                  Logger.debug("musicrest pagination header: " + pagination)
-                  hs
-                 }
-              },
-              r as_str
-              )        
-          })
-          paginate(resp)
-       }
-       catch {
-         case e: Throwable => {
-           e.getMessage().fail      
-         }
-       }
+       val req =  (url(urlString) <:< headers)
+       val resp =  Http(req OKOrErr as.Response(
+              x => paginate(scalaHeaders(x.getHeaders()), x.getResponseBody())
+       )).either
+       resp  
      }
    }
    
    /** user list */
-   def users(initialRequest: Request[AnyContent], pageNo: Int): Validation[String, ResultsPage] = withHttp {
+   def users(initialRequest: Request[AnyContent], pageNo: Int): Future[Either[Throwable, ResultsPage]] = withHttp {
      http => {
        // val headers = Map("Accept" -> "text/html; charset=UTF-8")       
  
@@ -347,65 +273,17 @@ object Proxy {
        val urlString = Utils.remoteService + "user?" + "page=" + pageNo.toString
 
        Logger.debug("Proxy requesting page " + pageNo)
-
-       try { 
-    
-          val resp = http((url(urlString) <:< headers) >+ { r => 
-             (r >:> { 
-               hs => {
-                  val pagination: Option[String] = hs("Musicrest-Pagination").headOption
-                  Logger.debug("musicrest pagination header: " + pagination)
-                  hs
-                 }
-              },
-              r as_str
-              )        
-          })
-          paginate(resp)
-       }
-       catch {
-         case e: Throwable => e.getMessage().fail      
-       }
+       val req =  (url(urlString) <:< headers)
+       val resp =  Http(req OKOrErr as.Response(
+              x => paginate(scalaHeaders(x.getHeaders()), x.getResponseBody())
+       )).either
+       resp  
      }
    }   
    
-   /** check that the tune exists */
-   def existsTune1(initialRequest: Request[AnyContent], genre: String, name: String): Boolean = withHttp {   
-     http => {      
-       val headers = Map("Accept" -> "text/plain; charset=UTF-8")
-       val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + name + "/exists"
-        
-       def req =  (url(urlString) <:< headers)
-       try {
-          val resp = http(req as_str)
-          Logger.debug("asked if tune exists OK, response: " + resp)
-          resp.contains("true")
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (tune exists) found by proxy: " + e.getMessage())
-           false    
-           }
-       }
-     }
-   }  
-   
-   // experimental
-   def existsTune(initialRequest: Request[AnyContent], genre: String, tune: String): (Boolean, String) = withHttp {   
-     val response: Validation[String, String] = getAbc(initialRequest, "application/json", genre, tune)
-     http => response.fold(
-       e => { 
-          (false, null)
-       }
-       ,
-       abcJsonMeta =>  { 
-         (true, abcJsonMeta)
-       }   )  
-   }
-
-
+ 
    /** delete the tune from musicrest */
-   def deleteTune(initialRequest: Request[AnyContent], genre: String, name: String): Validation[String, String] = withHttp {   
+   def deleteTune(initialRequest: Request[AnyContent], genre: String, name: String): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
@@ -414,26 +292,16 @@ object Proxy {
        val builder = Map.newBuilder[String, String]
        builder += "Accept" -> "text/plain"
        basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
-       val headers = builder.result            
-       
+       val headers = builder.result        
        def req =  (url(urlString) <:< headers).DELETE 
-       try {
-          val resp = http(req as_str)
-          // musicrest shuld give us back the (unencoded) id of the tune
-          Logger.debug("deleted tune OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (delete) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }
 
    /** save a new user to musicrest */
-   def saveUser(initialRequest: Request[AnyContent], user: User): Validation[String, String] = withHttp {   
+   def saveUser(initialRequest: Request[AnyContent], user: User): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val urlString = Utils.remoteService + "user" 
@@ -452,42 +320,24 @@ object Proxy {
                                                            "email" -> user.email, 
                                                            "password" -> user.password, 
                                                            "password2" -> user.password,
-                                                           "refererurl" -> refererUrl)
-
-       try {
-          val resp = http(req as_str)
-          Logger.debug("posted new user OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (save user) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+                                                           "refererurl" -> refererUrl) 
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }
    
    /** get an emailed reminder of the user's password */
-   def remindUserPassword(initialRequest: Request[AnyContent], userName: String): Validation[String, String] = withHttp {   
+   def remindUserPassword(initialRequest: Request[AnyContent], userName: String): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
        val urlString = Utils.remoteService + "user/password/resend" 
        val headers = Map("Accept" -> "text/plain", "Content-Type" -> "application/x-www-form-urlencoded")
        // both trad tune store and musicrest independently check that the confirmation password matches
        def req =  (url(urlString) <:< headers).POST << Map("name" -> userName)
-
-       try {
-          val resp = http(req as_str)
-          Logger.debug("posted remind user password OK, response: " + resp)
-          resp.trim.success
-       }
-       catch {
-         case e: Throwable => {
-           Logger.debug("error (remind user password) found by proxy: " + e.getMessage())
-           e.getMessage().fail      
-           }
-       }
+       val resp =  Http(req OKOrErr as.String).either
+       for (r <- resp.right) 
+          yield r.trim     
      }
    }   
 
@@ -497,7 +347,7 @@ object Proxy {
     *  
     *  11/12/2014 - added JSON case
     *  */
-   def getAbc(initialRequest: Request[AnyContent], requestedContentType: String, genre: String, tune: String): Validation[String, String] = withHttp {
+   def getAbc(initialRequest: Request[AnyContent], requestedContentType: String, genre: String, tune: String): Future[Either[Throwable, String]] = withHttp {
      http => {
        val headers = requestedContentType match {
          case x @ "text/vnd.abc" => Map("Accept" -> x)
@@ -512,17 +362,9 @@ object Proxy {
        val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + tune + path
        Logger.debug(s"ABC request accept is ${initialRequest.acceptedTypes}" )
 
-       Logger.debug("proxy url is: " + urlString)
-
-       try { 
-         val resp = http((url(urlString) <:< headers) as_str)
-         resp.success
-       }  
-       catch {
-         case e: Throwable => { 
-            e.getMessage().fail      
-         }
-       }
+       Logger.debug("proxy url is: " + urlString)   
+       val req =  (url(urlString) <:< headers)
+       Http(req OKOrErr as.String).either 
      }
    }
 
@@ -541,10 +383,11 @@ object Proxy {
       }
     }
    }   
+ 
    
    /** Build a paginated result set from a search response */
-   private def paginate(resp: (Map[String, Set[String]],String)): Validation[String, ResultsPage] = 
-     resp match {
+   private def paginate(headers: Map[String, Set[String]], content: String): ResultsPage = 
+     (headers, content) match {
         case (headers, content) => {
           val pagination: String = headers("Musicrest-Pagination").headOption.getOrElse("[1 of 1]")
           val paginationExtractor = """^\[([0-9]+) of ([0-9]+)\]""".r
@@ -560,9 +403,42 @@ object Proxy {
           }
           Logger.debug("response headers: " + headers)
           Logger.debug("page " + page.currentPage + " of " + page.totalPages)
-          page.success              
+          page            
         }    
      }        
-   
 
+  /** resolve a future (returned from the proxy request) 
+      This stage handles the logging and manufacture of more sensible error messages for the user
+  */  
+  def resolveFuture[A] (future: Future[Either[Throwable, A]], timeout:Int = Utils.defaultTimeout): Either[Throwable, A] = {
+    val res = resolveFutureWork(future, timeout)
+    val newres = res.fold (
+      e => {
+         Logger.error(s"Proxied request error: $e")
+         e match {
+           case e1:java.net.ConnectException => Left(TradTuneStoreException("downstream MusicRest server unavailable"))
+           case e2:java.util.concurrent.TimeoutException => Left(TradTuneStoreException("connection to downstream MusicRest server timed out"))  
+           case _ => Left(e)
+         }
+       }
+      ,
+      s => Right(s)
+    )
+    newres
+  }
+
+  /** resolve a future (returned from the proxy request) */  
+  private def resolveFutureWork[A] (future: Future[Either[Throwable, A]], timeout: Int): Either[Throwable, A] = {
+    try {
+      val result: Try[Either[Throwable, A]] = Await.ready(future, Duration(timeout, MILLISECONDS)).value.get
+      result match {
+        case Success(either) => either
+        case Failure(e) => Left(e)
+      }
+    }
+    catch {
+      case (e:Throwable) => Left(e)
+    }     
+  }
+ 
 }

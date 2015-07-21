@@ -3,6 +3,10 @@ package utils
 import java.io.InputStream
 import java.net.URLEncoder
 import play.api.{Play, Logger}
+import models.TuneRef
+import javax.xml.bind.DatatypeConverter
+// import utils.TradTuneStoreException
+
 
 object Utils {
 
@@ -48,7 +52,7 @@ object Utils {
 
    
    /** MusicRest returns all error responses prefaced by the ': 400'   (invalid request) code.  
-    *  Also, Dispatch stupidly prefaces this with its own message.  
+    *  Dispatch classic stupidly prefaces this with its own message.  We do the same with our DonstreamException type.
     *  So we just sanitize errors we know about by relocating to the ': 400' part.
     */
    def sanitizeErrorMessage(message: String): String = {
@@ -59,11 +63,17 @@ object Utils {
        message.substring(errorCodePosition + 5)
    }
    
+   /* the downstream musicrest server */
    def remoteService = {
      val remoteServer = Play.current.configuration.getString("musicrest.server").getOrElse("localhost:8080/musicrest/")
      "http://" + remoteServer  
    }
-   
+
+   /* default timeout for the downstream musicrest server */
+   val defaultTimeout:Int = Play.current.configuration.getInt("musicrest.timeout").getOrElse(2500)
+   val longTimeout:Int = defaultTimeout * 2
+  
+  
    /* quick and dirty parse of the ABC HTML to see if this user is the submitter */
    def isSubmitter(user: Option[String], abc: String): Boolean = {
      user.map{u =>
@@ -76,4 +86,51 @@ object Utils {
        (u == "administrator") || (u == target)
      }.getOrElse(false)
    }   
+
+  val dataHome = Play.current.configuration.getString("data.home").getOrElse("/var/data/midi2abc") 
+ 
+  val scriptDir = dataHome + "/scripts"  
+  val abcDir = dataHome + "/abc"  
+  val midiDir = dataHome + "/midi"
+
+  val midi2abcUsername = Play.current.configuration.getString("midi2abc.username").getOrElse("administrator")
+  val midi2abcPassword = Play.current.configuration.getString("midi2abc.password").getOrElse("unknown")
+
+  /** command to invoke the javascript initialisation on window load for the appropriate genre */
+  def onLoadCommand1(genre: String) = {
+    Some(scala.xml.Unparsed(s"""genreInit("${genre}")"""))
+  }  
+
+  /** command to invoke the javascript initialisation on window load for the appropriate genre and rhythm */
+  def onLoadCommand2(genre: String, rhythm: String) = {
+    Some(scala.xml.Unparsed(s"""genreAndRhythmInit("${genre}", "${rhythm}")"""))
+  }  
+ 
+  /** default rhythm values for each genre */
+  def defaultRhythm(genre: String): String = genre match {
+    case "irish" => "reel"
+    case "scottish" => "reel"
+    case "scandi" => "polska"
+    case "klezmer" => "freylekhs"
+  }
+
+  /** build a url of the tune image as served up by musicrest */
+  def imageUrl(tuneRef: TuneRef) : String = {
+     remoteService + "genre/" + tuneRef.genre + "/tune/" + tuneRef.name + "/temporary" +"/png"
+  }
+
+  def base64Encode(s: String) = DatatypeConverter.printBase64Binary( s.getBytes("UTF-8") )
+
+  /** excise the (first occurrence of) the pattern from the target string */ 
+  def excise(pat:String, targ:String) : String = {
+    val pos = targ.indexOf(pat)
+    pos match {
+      case (-1) => targ
+      case n => targ.substring(0,n) + targ.substring(n + pat.length, targ.length)
+    }
+  }
+     
+
+
+   
 }

@@ -3,24 +3,28 @@ package controllers
 import play.api._
 import play.api.cache.Cache
 import play.api.Play.current
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, Controller, Request, Session, Security}
 import play.api.data._
 import play.api.data.Forms._
-import play.api.templates.Html
-import models.{Login, Search, AdvancedSearch, Tune, User, ResultsPage, Comment, CommentsModel}
+import play.twirl.api.Html
+import models.{Login, Search, AdvancedSearch, Tune, TuneRef, User, ResultsPage, Comment, CommentsModel, MidiMetadata}
 import models.Search._
 import Forms._
-import scalaz.Validation
-import java.io.InputStream
-import utils._
+import java.io.{InputStream, File}
 import java.net.URLEncoder
-import javax.xml.bind.DatatypeConverter
-
+import utils._
+import utils.Utils._
+import utils.Proxy.resolveFuture
+import scala.sys.process.{Process, ProcessLogger}
+import scala.util.Random
 
 trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.0.5" 
+  val version = "1.1.0" 
   val UUID = "uuid"
+  val random = new Random(System.currentTimeMillis())
+
+  
 
   // not used
   def index = Action { implicit request => {
@@ -59,23 +63,18 @@ trait TradTuneController extends Controller {  this: Controller =>
         val search = searchForm.bindFromRequest.get
         if (search.predicate.isDefined) {
            Logger.debug("search predicate handed to view: " + search.predicate)
-           Redirect(routes.Application.searchresults(search.genre, search.predicate, search.sort, 1)).withSession(session + ("genre" -> search.genre))
+           Redirect(routes.Application.searchresults(search.genre, search.predicate, search.sort, 1)).withSession(request.session + ("genre" -> search.genre))
         }
         else {
            Logger.debug("search handed to searchall")
-           Redirect(routes.Application.searchall(search.genre, search.sort, 1)).withSession(session + ("genre" -> search.genre))
+           Redirect(routes.Application.searchall(search.genre, search.sort, 1)).withSession(request.session + ("genre" -> search.genre))
         }
       }
     )
     }
   }
 
-  def advancedsearchOld = Action { request => {
-    implicit val userName: Option[String] =  request.session.get("username")
-    Ok(views.html.advancedsearchOld("home"))
-    }
-  }  
-
+ 
   def advancedsearch = Action { request => {
     implicit val userName: Option[String] =  request.session.get("username")
     implicit val genre: String =  request.session.get("genre").getOrElse("irish")
@@ -96,7 +95,7 @@ trait TradTuneController extends Controller {  this: Controller =>
         Logger.debug("search predicate handed to view: " + advancedSearch.criteria)
         Logger.debug("proposed new predicate: " + advancedSearch.predicate)
         // Redirect(routes.Application.searchresults(advancedSearch.genre, Some(advancedSearch.criteria), "alpha", 1))
-        Redirect(routes.Application.searchresults(advancedSearch.genre, advancedSearch.predicate, "alpha", 1)).withSession(session + ("genre" -> advancedSearch.genre))
+        Redirect(routes.Application.searchresults(advancedSearch.genre, advancedSearch.predicate, "alpha", 1)).withSession(request.session + ("genre" -> advancedSearch.genre))
       }
     )
     }
@@ -106,9 +105,9 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def searchresults(genre: String, predicateOption: Option[String], sort: String, page: Int) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val resultsValidation: Validation[String, ResultsPage] = Proxy.search(request, genre, predicateOption, sort, page)
+    val resultsValidation = resolveFuture(Proxy.search(request, genre, predicateOption, sort, page))
     resultsValidation.fold (
-      e => Status(500)("Unexpected search error " + e)
+      e => Redirect(routes.Application.error("Unexpected search error: " + e.getMessage()))
       ,
       resultsPage => {        
         
@@ -122,36 +121,134 @@ trait TradTuneController extends Controller {  this: Controller =>
   }  
   
   def processUpload = Action(parse.multipartFormData) { request =>
-  request.body.file("abc").map { abc =>
-    import java.io.File
-    import play.api.libs.Files
-    implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-    val filename = abc.filename 
-    val contentType = abc.contentType
-    Logger.debug(s"upload content type $contentType")
-    Logger.debug(s"file length ${abc.ref.file.length}")
-    // abc.ref.moveTo(new File("/tmp/abc"))
-    val contents = Files.readFile(abc.ref.file)
-    // do basic validation on the submission
-    if ((Some("text/vnd.abc") != contentType) && (Some("text/plain") != contentType))  {      
-       Redirect(routes.Application.error(s"Not an ABC file: $contentType"))
+    request.body.file("abc").map { abc =>
+      import java.io.File
+      // import play.api.libs.Files - deprecated in Play 2.3
+      import java.nio.file.{Path, Paths, Files}
+      implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
+      val filename = abc.filename 
+      val contentType = abc.contentType
+      Logger.debug(s"upload content type $contentType")
+      Logger.debug(s"file length ${abc.ref.file.length}")
+      val path = Paths.get(abc.ref.file.getPath())
+      val contents = new String(Files.readAllBytes(path))
+      // do basic validation on the submission
+      if ((Some("text/vnd.abc") != contentType) && (Some("text/plain") != contentType))  {      
+        Redirect(routes.Application.error(s"Not an ABC file: $contentType"))
+      }
+      else if (10000 < abc.ref.file.length()) {      
+        Redirect(routes.Application.error(s"File too big (${abc.ref.file.length()})"))
+      }    
+      else {      
+        // val random = new Random(System.currentTimeMillis())
+        val tune = Tune(genre, contents)
+        postTune(request, tune)
+        }
+      }.getOrElse {
+        Redirect(routes.Application.error("Missing file"))
     }
-    else if (10000 < abc.ref.file.length()) {      
-       Redirect(routes.Application.error(s"File too big (${abc.ref.file.length()})"))
-    }    
-    else {      
-       val tune = Tune(genre, contents)
-       postTune(request, tune)
-    }
-  }.getOrElse {
-    Redirect(routes.Application.error("Missing file"))
   }
-}
+
+  def uploadMidi = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
+    Ok(views.html.uploadmidi("unused message")) 
+    }
+  }  
+
+  def processUploadMidi = Action(parse.multipartFormData) { request =>
+    request.body.file("midi").map { midi =>
+      val filename = midi.filename 
+      Logger.info(s"uploading file $filename")
+      // generate a new file prefix with a random element to prevent files from multiple users clashing when written to the file system
+      val slug = "_" + random.alphanumeric.take(5).mkString
+      val fileprefix = filename.takeWhile(c => c != '.').filter(_.isLetterOrDigit) + slug
+      val newfilename = fileprefix + ".mid"
+      val contentType = midi.contentType
+      Logger.debug(s"file length: ${midi.ref.file.length} content type: $contentType")
+      // do basic validation on the submission
+      if ((Some("audio/midi") != contentType) && (Some("audio/mid") != contentType))  {      
+         val badContentType = contentType.getOrElse("")
+         Redirect(routes.Application.error(s"Not a midi file: $badContentType"))
+      }
+      else if (10000 < midi.ref.file.length()) {      
+         Redirect(routes.Application.error(s"File too big (${midi.ref.file.length()})"))
+      }    
+      else { 
+         Logger.debug(s"file for upload: $filename")
+         midi.ref.moveTo(new File(Utils.midiDir + "//"  + newfilename))
+         Redirect(routes.Application.convert(fileprefix, None, None, None)).withSession(request.session + ("slug" -> slug))
+      }
+    }.getOrElse {
+      Redirect(routes.Application.error("No file supplied"))
+    }
+  }
+
+  def convert(filename: String, abc: Option[String], tuneImageRef: Option[String], tuneImageError: Option[String]) = Action { implicit request => { 
+    implicit val userName: Option[String] =  request.session.get("username")
+    implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
+    val metadataForm = defaultMidiMetadataForm(genre)
+    Ok(views.html.convert(metadataForm, filename, abc, tuneImageRef, tuneImageError)) 
+    }
+  }  
+
+  def processMidiMetadata = Action { implicit request => {     
+    implicit val userName: Option[String] =  request.session.get("username")
+    implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
+    val slug = request.session.get("slug").getOrElse("")
+    midiMetadataForm.bindFromRequest.fold (
+      errors => {
+         Logger.debug("metadata form errors: " + errors)
+         BadRequest(views.html.convert(errors, "", None, None, None))
+      },
+      label => {
+        val metadata = midiMetadataForm.bindFromRequest.get
+        // clea up the midi metadata in the format required for the Haskell miditoabc
+        transcodeMidiToAbc(metadata.formatMiditoabc) match {
+          case (Left(msg)) =>  Redirect(routes.Application.error(s"error: $msg"))
+          case (Right(fn)) =>  {
+                
+                implicit val genre: String =  metadata.genre
+
+                Logger.debug(s"metadata rhythm: ${metadata.rhythm}")
+                try {
+                  val source = scala.io.Source.fromFile(fn)
+                  val lines = try source.mkString finally source.close()
+                  val tune = Tune(metadata.genre, lines)
+                  val abc = Utils.excise(slug, lines)
+                  // get a temporary authorisation for cases where we're not logged in
+                  val temporaryAuth = base64Encode(Utils.midi2abcUsername + ":" + Utils.midi2abcPassword)
+                  val result = resolveFuture (Proxy.postTune(request, tune, false, Some(temporaryAuth)), Utils.longTimeout)
+
+                  result.fold (
+                       e => {
+                           Ok(views.html.convert(midiMetadataForm.bindFromRequest, metadata.filename, Some(abc), None, Some(e.getMessage()))).withSession(request.session + ("genre" -> genre))
+                       }
+                       ,
+                       tuneId => {  
+                           val encodedTuneId = URLEncoder.encode(tuneId, "UTF-8")    
+                           val tuneRef = TuneRef(metadata.genre, encodedTuneId)   
+                           val url = Utils.imageUrl(tuneRef)
+                           Ok(views.html.convert(midiMetadataForm.bindFromRequest, metadata.filename, Some(abc), Some(url), None)).withSession(request.session + ("genre" -> genre))   
+                           }
+                  )       
+                }
+                catch {
+                  case t: Throwable =>  Redirect(routes.Application.error(s"Unexpected error converting ${fn}"))
+                }           
+            }    
+        }
+       
+      }
+    ) 
+    }
+  }
+
   
   def comments(genre: String, tuneid: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
     val (uuid, commentsModel) = commentsModelFromSession(request.session, genre, tuneid)
-    Ok(views.html.comments(commentsModel.getAll, commentForm, genre, tuneid, false)(userName)).withSession(session + (UUID -> uuid))
+    Ok(views.html.comments(commentsModel.getAll, commentForm, genre, tuneid, false)(userName)).withSession(request.session + (UUID -> uuid))
     }
   }
   
@@ -168,9 +265,9 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => {
         val comment = commentForm.bindFromRequest.get
-        val response: Validation[String, String] = Proxy.postComment(request, genre, encodedTuneId, comment) 
+        val response = resolveFuture(Proxy.postComment(request, genre, encodedTuneId, comment))
         response.fold (
-          e => Status(500)("Error posting comment " + e)
+          e => Status(500)("Error posting comment " + e.getMessage)
           ,
           s => {  
             // add the comment to the session cache
@@ -221,9 +318,9 @@ trait TradTuneController extends Controller {  this: Controller =>
          },
          label => {
            val comment = commentForm.bindFromRequest.get
-           val response: Validation[String, String] = Proxy.postComment(request, genre, encodedTuneId, comment)  
+           val response = resolveFuture(Proxy.postComment(request, genre, encodedTuneId, comment) )
            response.fold (
-             e => Status(500)("Error posting comment " + e)
+             e => Status(500)("Error posting comment " + e.getMessage())
              ,
             s => {  
               // add the comment to the session cache
@@ -257,9 +354,9 @@ trait TradTuneController extends Controller {  this: Controller =>
     val commentOption = commentsModel.get(id)
     commentOption match {
       case Some(comment) => {        
-       val response: Validation[String, String] = Proxy.deleteComment(request, genre, encodedTuneId, comment) 
+       val response = resolveFuture(Proxy.deleteComment(request, genre, encodedTuneId, comment))
        response.fold (
-         e => Status(500)("Error deleting comment " + e)
+         e => Status(500)("Error deleting comment " + e.getMessage())
          ,
          s => {  
            val comments = commentsModel.delete(id)
@@ -287,8 +384,8 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => {
         val login = loginForm.bindFromRequest.get
-        val basicAuth = DatatypeConverter.printBase64Binary( (login.name + ":" + login.password).getBytes("UTF-8") )
-        Redirect(routes.Application.home).withSession(session + (Security.username -> login.name) + ("password" -> login.password) +  ("basicauth" -> basicAuth))     
+        val basicAuth = base64Encode(login.name + ":" + login.password)
+        Redirect(routes.Application.home).withSession(request.session + (Security.username -> login.name) +  ("password" -> login.password) +  ("basicauth" -> basicAuth))     
       }
     )
   }
@@ -296,9 +393,9 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def login = Action { implicit request => {
     implicit val userName:Option[String] =  request.session.get("username")
-    val service: Validation[String, String] = Proxy.checkService() 
+    val service = resolveFuture(Proxy.checkService())
     service.fold(
-             e => Redirect(routes.Application.error(e)),
+             e => Redirect(routes.Application.error(e.getMessage())),
              s => Ok(views.html.login(loginForm, None))
              )    
     }
@@ -324,10 +421,10 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => { 
         val user = registrationForm.bindFromRequest.get
-          val response: Validation[String, String] = Proxy.saveUser(request, user)
+          val response = resolveFuture(Proxy.saveUser(request, user))
           response.fold(
              e => { 
-                Redirect(routes.Application.error(e))
+                Redirect(routes.Application.error(e.getMessage()))
              }
              ,
              user =>  { 
@@ -346,9 +443,9 @@ trait TradTuneController extends Controller {  this: Controller =>
   
   def newuserRegister(uuid: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val registration: Validation[String, String] = Proxy.registerUser(uuid) 
+    val registration = resolveFuture(Proxy.registerUser(uuid))
     registration.fold(
-             e => Redirect(routes.Application.error(e)),
+             e => Redirect(routes.Application.error(e.getMessage())),
              s => Ok(views.html.login(loginForm, None))
              )       
     }
@@ -376,10 +473,10 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => { 
         val reminder = passwordReminderForm.bindFromRequest.get
-          val response: Validation[String, String] = Proxy.remindUserPassword(request, reminder.name)
+          val response = resolveFuture(Proxy.remindUserPassword(request, reminder.name))
           response.fold(
              e => { 
-                Redirect(routes.Application.error(e))
+                Redirect(routes.Application.error(e.getMessage()))
              }
              ,
              user =>  { 
@@ -392,9 +489,9 @@ trait TradTuneController extends Controller {  this: Controller =>
   
   def users = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val resultsValidation: Validation[String, ResultsPage] = Proxy.users(request, 1)
+    val resultsValidation = resolveFuture(Proxy.users(request, 1))
     resultsValidation.fold (
-      e => Status(500)("Unexpected search error " + e)
+      e => Status(500)("Unexpected search error " + e.getMessage())
       ,
       resultsPage => {        
         Ok(views.html.usersresults(Html(resultsPage.content), resultsPage.currentPage, resultsPage.totalPages))
@@ -407,9 +504,9 @@ trait TradTuneController extends Controller {  this: Controller =>
   def newtune = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")  
     implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-    val service: Validation[String, String] = Proxy.checkService() 
+    val service = resolveFuture(Proxy.checkService())
     service.fold(
-             e => Redirect(routes.Application.error(e)),
+             e => Redirect(routes.Application.error(e.getMessage())),
              s => userName.map(u => Ok(views.html.newtune(tuneForm))).
                       getOrElse( Ok(views.html.login(loginForm, Some("You must log in before you can submit a new tune"))))
              )        
@@ -463,10 +560,10 @@ trait TradTuneController extends Controller {  this: Controller =>
    */
   private def postTune [A] (request: Request[A], tune: Tune) = {
      implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-     val response: Validation[String, String] = Proxy.postTune(request, tune, true)
+     val response = resolveFuture(Proxy.postTune(request, tune, true), Utils.longTimeout)
      response.fold(
         e => {  
-          Redirect(routes.Application.error(e))
+          Redirect(routes.Application.error(e.getMessage()))
         },
         tuneId =>  { 
           implicit val displayLinks = true      
@@ -487,10 +584,10 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => {
         val tune = tuneForm.bindFromRequest.get
-          val response: Validation[String, String] = Proxy.postTune(request, tune, false)
+          val response = resolveFuture(Proxy.postTune(request, tune, false), Utils.longTimeout)
           response.fold(
              e => { 
-                Redirect(routes.Application.error(e))
+                Redirect(routes.Application.error(e.getMessage()))
              }
              ,
              tuneId =>  { 
@@ -507,9 +604,9 @@ trait TradTuneController extends Controller {  this: Controller =>
   def upload = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
     implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-    val service: Validation[String, String] = Proxy.checkService() 
+    val service = resolveFuture(Proxy.checkService())
     service.fold(
-             e => Redirect(routes.Application.error(e)),
+             e => Redirect(routes.Application.error(e.getMessage())),
              s => userName.map(u => Ok(views.html.uploadtune("unused message"))).
                       getOrElse( Ok(views.html.login(loginForm, Some("You must log in before you can upload a new tune"))))
              )            
@@ -525,10 +622,10 @@ trait TradTuneController extends Controller {  this: Controller =>
         label => {
           val alternativeTitle = alternativeTitleForm.bindFromRequest.get
           val urlEncodedTuneId = URLEncoder.encode(tuneId, "UTF-8")
-          val response: Validation[String, String] = Proxy.postAlternativeTitle(request, genre, urlEncodedTuneId, alternativeTitle.title)
+          val response = resolveFuture(Proxy.postAlternativeTitle(request, genre, urlEncodedTuneId, alternativeTitle.title))
           response.fold(
              e => { 
-                Redirect(routes.Application.error(e))
+                Redirect(routes.Application.error(e.getMessage()))
              }
              ,
              tuneId =>  { 
@@ -549,7 +646,7 @@ trait TradTuneController extends Controller {  this: Controller =>
     val userAgent = request.headers.get(play.api.http.HeaderNames.USER_AGENT).getOrElse("")
     implicit val isInternetExporer = userAgent.contains("MSIE")
     
-    val (exists, abcJsonMeta) = Proxy.existsTune(request, genre, name)
+    val (exists, abcJsonMeta) = existsTune(request, genre, name)
     Logger.info(s"Tune $name exists? $exists")
     
     if (exists) {         
@@ -586,10 +683,10 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def deleteTune (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val response: Validation[String, String] = Proxy.deleteTune(request, genre, URLEncoder.encode(name, "UTF-8"))    
+    val response = resolveFuture(Proxy.deleteTune(request, genre, URLEncoder.encode(name, "UTF-8")))
     response.fold(
        e => { 
-          Redirect(routes.Application.error("deletion error " + e))
+          Redirect(routes.Application.error("deletion error " + e.getMessage()))
        }
        ,
        ok =>  { Redirect(routes.Application.error("Tune: " + name + " deleted" ))
@@ -601,10 +698,10 @@ trait TradTuneController extends Controller {  this: Controller =>
   def abc (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
 
-    val response: Validation[String, String] = Proxy.getAbc(request, "text/html", genre, URLEncoder.encode(name, "UTF-8"))    
+    val response = resolveFuture(Proxy.getAbc(request, "text/html", genre, URLEncoder.encode(name, "UTF-8")))    
     response.fold(
        e => { 
-          Redirect(routes.Application.error("get abc error " + e))
+          Redirect(routes.Application.error("get abc error " + e.getMessage()))
        }
        ,
        abc =>  { 
@@ -645,6 +742,13 @@ trait TradTuneController extends Controller {  this: Controller =>
     Ok(views.html.help("home"))
     }
   }  
+
+  def helpMidi2abc = Action { implicit request => {
+    implicit val userName: Option[String] =  request.session.get("username")
+    Ok(views.html.helpmidi2abc("home"))
+    }
+  }  
+
 
   def error(message: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
@@ -687,6 +791,51 @@ trait TradTuneController extends Controller {  this: Controller =>
      Cache.set(uuid, cm)
      Logger.debug(s"setting new cm in cache for uuid ${uuid} and genre ${genre} and tune ${tuneid}")
      cm
+  }
+
+   def existsTune(initialRequest: Request[AnyContent], genre: String, tune: String): (Boolean, String) = {   
+     val response = resolveFuture(Proxy.getAbc(initialRequest, "application/json", genre, tune))
+     response.fold(
+       e => { 
+          (false, null)
+       }
+       ,
+       abcJsonMeta =>  { 
+         (true, abcJsonMeta)
+       })  
+   }
+
+  private def transcodeMidiToAbc (metadata: MidiMetadata): Either[String, File] = {
+    import scala.collection.mutable.StringBuilder    
+
+    val out = new StringBuilder
+    val err = new StringBuilder
+
+    val logger = ProcessLogger(
+      (o: String) => out.append(o),
+      (e: String) => err.append(e))
+      
+    val script = Utils.scriptDir + "/" +  "midi2abc.sh" 
+    val cmd = script + " " + Utils.midiDir + " " + Utils.abcDir + " " + metadata.filename + " " + metadata.trackno +
+                       " " + metadata.leadin + " " +  metadata.notelen +  " " + metadata.rhythm + " " + metadata.key + " " + metadata.mode
+
+    Logger.debug(cmd)
+
+    val pb = Process(cmd)
+    val exitValue = pb.run(logger).exitValue
+
+    exitValue match {
+      case 0 => { 
+                 val fileName = Utils.abcDir + "//"  + metadata.filename + ".abc"
+                 val file = new File(fileName)
+                 Logger.info(s"successful midi conversion of ${fileName}")
+                 Right(file)
+                 }
+      case _ => { 
+                 Logger.error("midi conversion error " + err.toString)         
+                 Left(err.toString)
+                }
+    } 
   }
 }
 
