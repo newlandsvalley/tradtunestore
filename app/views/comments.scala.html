@@ -34,7 +34,7 @@
     @if(userName.isDefined) {
         @helper.form(action = routes.Application.processOriginalComment(genre, tuneid), 'id -> "commentform", 'enctype -> "application/x-www-form-urlencoded") {
          <fieldset>
-           <legend class="comment" >Add a comment</legend>
+           <legend class="comment" >Add a Comment</legend>
             <input type="hidden" name="user" value="@{userName}">
             <input type="hidden" name="timestamp" value="@{System.currentTimeMillis}">
             <ul>

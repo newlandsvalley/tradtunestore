@@ -16862,7 +16862,7 @@ Elm.AbcTutorial.make = function (_elm) {
                             ,{ctor: "_Tuple2",_0: "font-family",_1: "Georgia, serif"}
                             ,{ctor: "_Tuple2",_0: "text-decoration",_1: "none"}
                             ,{ctor: "_Tuple2",_0: "vertical-align",_1: "middle"}
-                            ,{ctor: "_Tuple2",_0: "margin",_1: "10px 5px 10px 5px"}
+                            ,{ctor: "_Tuple2",_0: "margin",_1: "5px 5px 5px 5px"}
                             ,{ctor: "_Tuple2"
                              ,_0: "font"
                              ,_1: "100% \"Trebuchet MS\", Verdana, sans-serif"}]);
@@ -16937,8 +16937,10 @@ Elm.AbcTutorial.make = function (_elm) {
             return "error";
          } else {
             return A2($Basics._op["++"],
+            "lesson ",
+            A2($Basics._op["++"],
             $Basics.toString(i + 1),
-            A2($Basics._op["++"]," - ",_p6._0.title));
+            A2($Basics._op["++"]," - ",_p6._0.title)));
          }
    };
    var toPerformance = function (ml) {
@@ -17010,6 +17012,9 @@ Elm.AbcTutorial.make = function (_elm) {
       _U.list([centreStyle]),
       _U.list([A2($Html.h1,
               _U.list([]),
+              _U.list([$Html.text("ABC Tutorial")]))
+              ,A2($Html.h2,
+              _U.list([]),
               _U.list([$Html.text(title(model.lessonIndex))]))
               ,A2($Html.textarea,
               _U.list([$Html$Attributes.value(instruction(model.lessonIndex))
@@ -17035,7 +17040,7 @@ Elm.AbcTutorial.make = function (_elm) {
                               })
                               ,taStyle
                               ,$Html$Attributes.cols(70)
-                              ,$Html$Attributes.rows(13)
+                              ,$Html$Attributes.rows(12)
                               ,$Html$Attributes.autocomplete(false)
                               ,$Html$Attributes.spellcheck(false)
                               ,$Html$Attributes.autofocus(true)]),

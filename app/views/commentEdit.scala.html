@@ -27,7 +27,7 @@
        
         @helper.form(action = routes.Application.processEditedComment(genre, tuneid, originalComment.id), 'id -> "commentform", 'enctype -> "application/x-www-form-urlencoded") {
          <fieldset>
-           <legend class="comment" >Edit comment</legend>
+           <legend class="comment" >Edit Comment</legend>
             <input type="hidden" name="user" value="@{originalComment.user}">
             <input type="hidden" name="timestamp" value="@{originalComment.timestamp}">
             <ul>
