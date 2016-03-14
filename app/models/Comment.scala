@@ -9,7 +9,6 @@ import scala.collection.immutable.VectorBuilder
 import play.api.data.validation._
 import play.api.Logger
 import utils.Proxy
-import utils.Proxy.resolveFuture
 import utils.Utils._
 import argonaut._
 import Argonaut._
@@ -206,7 +205,7 @@ object CommentsList {
   implicit val CodecComments = casecodec1(CommentsList.apply, CommentsList.unapply)("comment")
 }
 
-class CommentsModel(val genre: String, val tuneid: String) {
+class CommentsModel(val proxy: Proxy, val genre: String, val tuneid: String) {
    import CommentsList._
    
    val m = scala.collection.mutable.Map[String, Comment]()
@@ -217,7 +216,7 @@ class CommentsModel(val genre: String, val tuneid: String) {
    
    // def init = add(sample.comment)
    def init = {
-     val response = resolveFuture(Proxy.getComments(genre, URLEncoder.encode(tuneid, "UTF-8"))  )
+     val response = proxy.resolveFuture(proxy.getComments(genre, URLEncoder.encode(tuneid, "UTF-8"))  )
      response.fold (
        e => Logger.error(s"Error getting comments for ${tuneid} :" + e.getMessage())
        ,

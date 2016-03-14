@@ -5,8 +5,6 @@ import java.net.URLEncoder
 import play.api.{Play, Logger}
 import models.TuneRef
 import javax.xml.bind.DatatypeConverter
-// import utils.TradTuneStoreException
-
 
 object Utils {
 
@@ -63,17 +61,7 @@ object Utils {
        message.substring(errorCodePosition + 5)
    }
    
-   /* the downstream musicrest server */
-   def remoteService = {
-     val remoteServer = Play.current.configuration.getString("musicrest.server").getOrElse("localhost:8080/musicrest/")
-     "http://" + remoteServer  
-   }
-
-   /* default timeout for the downstream musicrest server */
-   val defaultTimeout:Int = Play.current.configuration.getInt("musicrest.timeout").getOrElse(2500)
-   val longTimeout:Int = defaultTimeout * 2
-  
-  
+   
    /* quick and dirty parse of the ABC HTML to see if this user is the submitter */
    def isSubmitter(user: Option[String], abc: String): Boolean = {
      user.map{u =>
@@ -86,15 +74,6 @@ object Utils {
        (u == "administrator") || (u == target)
      }.getOrElse(false)
    }   
-
-  val dataHome = Play.current.configuration.getString("data.home").getOrElse("/var/data/midi2abc") 
- 
-  val scriptDir = dataHome + "/scripts"  
-  val abcDir = dataHome + "/abc"  
-  val midiDir = dataHome + "/midi"
-
-  val midi2abcUsername = Play.current.configuration.getString("midi2abc.username").getOrElse("administrator")
-  val midi2abcPassword = Play.current.configuration.getString("midi2abc.password").getOrElse("unknown")
 
   /** command to invoke the javascript initialisation on window load for the appropriate genre */
   def onLoadCommand1(genre: String) = {
@@ -112,11 +91,6 @@ object Utils {
     case "scottish" => "reel"
     case "scandi" => "polska"
     case "klezmer" => "freylekhs"
-  }
-
-  /** build a url of the tune image as served up by musicrest */
-  def imageUrl(tuneRef: TuneRef) : String = {
-     remoteService + "genre/" + tuneRef.genre + "/tune/" + tuneRef.name + "/temporary" +"/png"
   }
 
   def base64Encode(s: String) = DatatypeConverter.printBase64Binary( s.getBytes("UTF-8") )

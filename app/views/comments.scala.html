@@ -1,4 +1,4 @@
-@(comments: Vector[models.Comment], commentForm: Form[Comment], genre: String, tuneid: String, isTry: Boolean)(userName: Option[String])
+@(comments: Vector[models.Comment], commentForm: Form[Comment], genre: String, tuneid: String, isTry: Boolean)(userName: Option[String])(implicit messages: Messages)
 
 @import snippets._
 @import utils.Pimps._

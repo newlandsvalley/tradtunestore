@@ -8,16 +8,11 @@ import play.api.data.validation._
 import models.{Login, PasswordReminder, Search, AdvancedSearch, Tune, AlternativeTitle, User, Comment, MidiMetadata}
 import models.User._
 import utils.Proxy
-import utils.Proxy.resolveFuture
 import utils.Utils._
 import javax.xml.bind.DatatypeConverter
 
-object Forms {
-
-  type UserFields = (String, String, String, String)
-  type UserConstraint = UserFields => ValidationResult
-  type UserValidation = UserFields => Boolean
-  
+/** these forms rely on the proxy and hence on the runtime configuration */
+class Forms (proxy: Proxy) {
 
   val loginForm = Form(
     mapping (
@@ -26,6 +21,28 @@ object Forms {
     ) (Login.apply)(Login.unapply)
     verifying ("user not registered", f => checkUser(f.name, f.password))
   ) 
+
+  /** check that a user is registered */
+  def checkUser(name: String, password: String): Boolean = {
+    val basicAuth = DatatypeConverter.printBase64Binary( (name + ":" + password).getBytes("UTF-8") )
+    val userValidation = proxy.resolveFuture(proxy.checkUser(basicAuth))
+      userValidation.fold (
+         e => false,
+         s => true
+      )        
+  }
+
+}
+
+/** these forms are simple */
+object Forms {
+
+  type UserFields = (String, String, String, String)
+  type UserConstraint = UserFields => ValidationResult
+  type UserValidation = UserFields => Boolean
+  
+
+
   
    val passwordReminderForm = Form(
     mapping (
@@ -109,15 +126,6 @@ object Forms {
     ) (Comment.apply)(Comment.unapply)    
   ) 
 
-  /** check that a user is registered */
-  def checkUser(name: String, password: String): Boolean = {
-    val basicAuth = DatatypeConverter.printBase64Binary( (name + ":" + password).getBytes("UTF-8") )
-    val userValidation = resolveFuture(Proxy.checkUser(basicAuth))
-      userValidation.fold (
-         e => false,
-         s => true
-      )        
-  }
 
   /** default values for the MIDI metadata form */
   def defaultMidiMetadataForm(genre: String) = {

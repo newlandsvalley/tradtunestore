@@ -3,19 +3,17 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.search
+GET     /                           		controllers.Application.search
 
 GET 	/home			    	    controllers.Application.home
 GET 	/search  		    	    controllers.Application.search
 POST 	/search 		    	    controllers.Application.processSearch
 
-GET 	/advancedsearch		    	controllers.Application.advancedsearch
-POST 	/advancedsearch 	    	controllers.Application.processAdvancedSearch
+GET 	/advancedsearch		    	    controllers.Application.advancedsearch
+POST 	/advancedsearch 	    	    controllers.Application.processAdvancedSearch
 
 GET 	/searchresults	   	    	controllers.Application.searchresults(genre: String, predicate: Option[String], sort: String, page: Int)
 GET 	/searchresults	   	    	controllers.Application.searchall(genre: String, sort: String, page: Int)
-
-GET 	/loginstatic		    	controllers.Application.loginStatic
 
 GET 	/login			         	controllers.Application.login
 POST 	/login  		   	        controllers.Application.processLogin
@@ -64,6 +62,7 @@ POST    /genre/:genre/tune/:tune/comment/:id      	controllers.Application.proce
 GET     /genre/:genre/tune/:tune/comment/:id/delete   	controllers.Application.commentDelete(genre: String, tune: String, id: String)
 
 GET 	/about		    				controllers.Application.about
+GET 	/abctutorial	    				controllers.Application.abcTutorial
 GET 	/credits		    			controllers.Application.credits	
 GET     /contact		    			controllers.Application.contact
 GET     /donate		        			controllers.Application.donate

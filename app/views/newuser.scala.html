@@ -1,4 +1,4 @@
-@(registrationForm: Form[User])(implicit lang: Lang, userName: Option[String])
+@(registrationForm: Form[User])(implicit lang: Lang, userName: Option[String], messages: Messages))
 
 @import snippets._
 @import utils.Pimps._
@@ -7,7 +7,6 @@
 @main("new user")(None)(userName)(navigation("login")(userName)) {         
    <div id="searchdiv" role="main" class="main" > 
     
-        <!--form name="Create_user" id="newuserform" action=@(Utils.remoteService) + "user" method="POST" enctype="application/x-www-form-urlencoded" -->
          @helper.form(action = routes.Application.processNewUser, 'id -> "newuserform", 'enctype -> "application/x-www-form-urlencoded" ) {
          <fieldset>
            <legend class="new-user" >New User</legend>

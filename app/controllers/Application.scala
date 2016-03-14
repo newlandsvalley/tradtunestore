@@ -1,8 +1,6 @@
 package controllers
 
 import play.api._
-import play.api.cache.Cache
-import play.api.Play.current
 import play.api.mvc.{Action, AnyContent, Controller, Request, Session, Security}
 import play.api.data._
 import play.api.data.Forms._
@@ -14,17 +12,29 @@ import java.io.{InputStream, File}
 import java.net.URLEncoder
 import utils._
 import utils.Utils._
-import utils.Proxy.resolveFuture
 import scala.sys.process.{Process, ProcessLogger}
 import scala.util.Random
+// DI imports to replace what used to be static imports of global state
+import javax.inject.Inject
+import play.api.i18n.I18nSupport
+import play.api.i18n.MessagesApi
+import play.api.cache._
 
-trait TradTuneController extends Controller {  this: Controller =>
 
-  val version = "1.1.0" 
-  val UUID = "uuid"
-  val random = new Random(System.currentTimeMillis())
+class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, config: Configuration) extends Controller with I18nSupport  {  this: Controller =>
 
-  
+  val version = "1.2.0" 
+  val UUID = "uuid" 
+  val random = new Random(System.currentTimeMillis())   
+  // cache config details which are used a lot 
+  val remoteService = "http://" + config.getString("musicrest.server").getOrElse("localhost:8080/musicrest/")
+  val defaultTimeout = config.getInt("musicrest.timeout").getOrElse(2500)
+  val longTimeout = defaultTimeout * 2
+  // configure the proxy (now a class and not an object because of DI)
+  val proxy = new Proxy(remoteService, defaultTimeout)
+  // the login form needs access to the proxy, others don't and so are held in the Forms object
+  val verifyingForms = new Forms(proxy)
+  val loginForm = verifyingForms.loginForm  
 
   // not used
   def index = Action { implicit request => {
@@ -105,13 +115,13 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def searchresults(genre: String, predicateOption: Option[String], sort: String, page: Int) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val resultsValidation = resolveFuture(Proxy.search(request, genre, predicateOption, sort, page))
+    val resultsValidation = proxy.resolveFuture(proxy.search(request, genre, predicateOption, sort, page))
     resultsValidation.fold (
       e => Redirect(routes.Application.error("Unexpected search error: " + e.getMessage()))
       ,
       resultsPage => {        
         
-        Logger.debug("search results from Proxy: " + resultsPage.content)
+        Logger.debug("search results from proxy: " + resultsPage.content)
         
         Ok(views.html.searchresults(genre, predicateOption, sort, 
            Html(resultsPage.content), resultsPage.currentPage, resultsPage.totalPages))
@@ -164,7 +174,8 @@ trait TradTuneController extends Controller {  this: Controller =>
       val slug = "_" + random.alphanumeric.take(5).mkString
       val fileprefix = filename.takeWhile(c => c != '.').filter(_.isLetterOrDigit) + slug
       val newfilename = fileprefix + ".mid"
-      val contentType = midi.contentType
+      val contentType = midi.contentType 
+      val midiDir = config.getString("data.home").getOrElse("/var/data/midi2abc") + "/midi"
       Logger.debug(s"file length: ${midi.ref.file.length} content type: $contentType")
       // do basic validation on the submission
       if ((Some("audio/midi") != contentType) && (Some("audio/mid") != contentType))  {      
@@ -176,7 +187,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       }    
       else { 
          Logger.debug(s"file for upload: $filename")
-         midi.ref.moveTo(new File(Utils.midiDir + "//"  + newfilename))
+         midi.ref.moveTo(new File(midiDir + "//"  + newfilename))
          Redirect(routes.Application.convert(fileprefix, None, None, None)).withSession(request.session + ("slug" -> slug))
       }
     }.getOrElse {
@@ -217,8 +228,10 @@ trait TradTuneController extends Controller {  this: Controller =>
                   val tune = Tune(metadata.genre, lines)
                   val abc = Utils.excise(slug, lines)
                   // get a temporary authorisation for cases where we're not logged in
-                  val temporaryAuth = base64Encode(Utils.midi2abcUsername + ":" + Utils.midi2abcPassword)
-                  val result = resolveFuture (Proxy.postTune(request, tune, false, Some(temporaryAuth)), Utils.longTimeout)
+                  val midi2abcUsername = config.getString("midi2abc.username").getOrElse("administrator")
+                  val midi2abcPassword = config.getString("midi2abc.password").getOrElse("unknown")
+                  val temporaryAuth = base64Encode(midi2abcUsername + ":" + midi2abcPassword)
+                  val result = proxy.resolveFuture (proxy.postTune(request, tune, false, Some(temporaryAuth)), longTimeout)
 
                   result.fold (
                        e => {
@@ -228,7 +241,7 @@ trait TradTuneController extends Controller {  this: Controller =>
                        tuneId => {  
                            val encodedTuneId = URLEncoder.encode(tuneId, "UTF-8")    
                            val tuneRef = TuneRef(metadata.genre, encodedTuneId)   
-                           val url = Utils.imageUrl(tuneRef)
+                           val url = imageUrl(remoteService, tuneRef)
                            Ok(views.html.convert(midiMetadataForm.bindFromRequest, metadata.filename, Some(abc), Some(url), None)).withSession(request.session + ("genre" -> genre))   
                            }
                   )       
@@ -265,7 +278,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => {
         val comment = commentForm.bindFromRequest.get
-        val response = resolveFuture(Proxy.postComment(request, genre, encodedTuneId, comment))
+        val response = proxy.resolveFuture(proxy.postComment(request, genre, encodedTuneId, comment))
         response.fold (
           e => Status(500)("Error posting comment " + e.getMessage)
           ,
@@ -318,7 +331,7 @@ trait TradTuneController extends Controller {  this: Controller =>
          },
          label => {
            val comment = commentForm.bindFromRequest.get
-           val response = resolveFuture(Proxy.postComment(request, genre, encodedTuneId, comment) )
+           val response = proxy.resolveFuture(proxy.postComment(request, genre, encodedTuneId, comment) )
            response.fold (
              e => Status(500)("Error posting comment " + e.getMessage())
              ,
@@ -354,7 +367,7 @@ trait TradTuneController extends Controller {  this: Controller =>
     val commentOption = commentsModel.get(id)
     commentOption match {
       case Some(comment) => {        
-       val response = resolveFuture(Proxy.deleteComment(request, genre, encodedTuneId, comment))
+       val response = proxy.resolveFuture(proxy.deleteComment(request, genre, encodedTuneId, comment))
        response.fold (
          e => Status(500)("Error deleting comment " + e.getMessage())
          ,
@@ -369,10 +382,12 @@ trait TradTuneController extends Controller {  this: Controller =>
   } } 
 
   // old static rendering
+  /*
   def loginStatic = Action {
     implicit val userName:Option[String] = None
     Ok(views.html.loginstatic("login"))
   }   
+  */
 
   def processLogin = Action { implicit request =>
     loginForm.bindFromRequest.fold (
@@ -393,7 +408,7 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def login = Action { implicit request => {
     implicit val userName:Option[String] =  request.session.get("username")
-    val service = resolveFuture(Proxy.checkService())
+    val service = proxy.resolveFuture(proxy.checkService())
     service.fold(
              e => Redirect(routes.Application.error(e.getMessage())),
              s => Ok(views.html.login(loginForm, None))
@@ -421,7 +436,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => { 
         val user = registrationForm.bindFromRequest.get
-          val response = resolveFuture(Proxy.saveUser(request, user))
+          val response = proxy.resolveFuture(proxy.saveUser(request, user))
           response.fold(
              e => { 
                 Redirect(routes.Application.error(e.getMessage()))
@@ -443,7 +458,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   
   def newuserRegister(uuid: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val registration = resolveFuture(Proxy.registerUser(uuid))
+    val registration = proxy.resolveFuture(proxy.registerUser(uuid))
     registration.fold(
              e => Redirect(routes.Application.error(e.getMessage())),
              s => Ok(views.html.login(loginForm, None))
@@ -473,7 +488,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => { 
         val reminder = passwordReminderForm.bindFromRequest.get
-          val response = resolveFuture(Proxy.remindUserPassword(request, reminder.name))
+          val response = proxy.resolveFuture(proxy.remindUserPassword(request, reminder.name))
           response.fold(
              e => { 
                 Redirect(routes.Application.error(e.getMessage()))
@@ -489,7 +504,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   
   def users = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val resultsValidation = resolveFuture(Proxy.users(request, 1))
+    val resultsValidation = proxy.resolveFuture(proxy.users(request, 1))
     resultsValidation.fold (
       e => Status(500)("Unexpected search error " + e.getMessage())
       ,
@@ -504,7 +519,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   def newtune = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")  
     implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-    val service = resolveFuture(Proxy.checkService())
+    val service = proxy.resolveFuture(proxy.checkService())
     service.fold(
              e => Redirect(routes.Application.error(e.getMessage())),
              s => userName.map(u => Ok(views.html.newtune(tuneForm))).
@@ -533,7 +548,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   /*
   private def postTune [A] (request: Request[A], tune: Tune) = {
      implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-     val response: Validation[String, String] = Proxy.postTune(request, tune, true)
+     val response: Validation[String, String] = proxy.postTune(request, tune, true)
      response.fold(
         e => {  
           Redirect(routes.Application.error(e))
@@ -560,7 +575,7 @@ trait TradTuneController extends Controller {  this: Controller =>
    */
   private def postTune [A] (request: Request[A], tune: Tune) = {
      implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-     val response = resolveFuture(Proxy.postTune(request, tune, true), Utils.longTimeout)
+     val response = proxy.resolveFuture(proxy.postTune(request, tune, true), longTimeout)
      response.fold(
         e => {  
           Redirect(routes.Application.error(e.getMessage()))
@@ -584,7 +599,7 @@ trait TradTuneController extends Controller {  this: Controller =>
       },
       label => {
         val tune = tuneForm.bindFromRequest.get
-          val response = resolveFuture(Proxy.postTune(request, tune, false), Utils.longTimeout)
+          val response = proxy.resolveFuture(proxy.postTune(request, tune, false), longTimeout)
           response.fold(
              e => { 
                 Redirect(routes.Application.error(e.getMessage()))
@@ -604,7 +619,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   def upload = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
     implicit val genre: String =  request.session.get("genre").getOrElse("irish")  
-    val service = resolveFuture(Proxy.checkService())
+    val service = proxy.resolveFuture(proxy.checkService())
     service.fold(
              e => Redirect(routes.Application.error(e.getMessage())),
              s => userName.map(u => Ok(views.html.uploadtune("unused message"))).
@@ -622,7 +637,7 @@ trait TradTuneController extends Controller {  this: Controller =>
         label => {
           val alternativeTitle = alternativeTitleForm.bindFromRequest.get
           val urlEncodedTuneId = URLEncoder.encode(tuneId, "UTF-8")
-          val response = resolveFuture(Proxy.postAlternativeTitle(request, genre, urlEncodedTuneId, alternativeTitle.title))
+          val response = proxy.resolveFuture(proxy.postAlternativeTitle(request, genre, urlEncodedTuneId, alternativeTitle.title))
           response.fold(
              e => { 
                 Redirect(routes.Application.error(e.getMessage()))
@@ -650,7 +665,7 @@ trait TradTuneController extends Controller {  this: Controller =>
     Logger.info(s"Tune $name exists? $exists")
     
     if (exists) {         
-      val imageUrl: String = Utils.remoteService + "genre/" +  URLEncoder.encode(genre, "UTF-8") + "/tune/" + URLEncoder.encode(name, "UTF-8")
+      val imageUrl: String = remoteService + "genre/" +  URLEncoder.encode(genre, "UTF-8") + "/tune/" + URLEncoder.encode(name, "UTF-8")
       // parse the JSON ABC Metadata
       val abcMetaOpt = AbcMeta.parseAbcJson(abcJsonMeta)
       // Logger.debug(s"ABC headers parsed from json: ${abcMetaOpt} ")
@@ -675,7 +690,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   def trytune (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
    
-    val imageUrl: String = Utils.remoteService + "genre/" +  URLEncoder.encode(genre, "UTF-8") + "/tune/" + URLEncoder.encode(name, "UTF-8")
+    val imageUrl: String = remoteService + "genre/" +  URLEncoder.encode(genre, "UTF-8") + "/tune/" + URLEncoder.encode(name, "UTF-8")
 
     Ok(views.html.trytune(genre, name, imageUrl))
     }
@@ -683,7 +698,7 @@ trait TradTuneController extends Controller {  this: Controller =>
 
   def deleteTune (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val response = resolveFuture(Proxy.deleteTune(request, genre, URLEncoder.encode(name, "UTF-8")))
+    val response = proxy.resolveFuture(proxy.deleteTune(request, genre, URLEncoder.encode(name, "UTF-8")))
     response.fold(
        e => { 
           Redirect(routes.Application.error("deletion error " + e.getMessage()))
@@ -698,7 +713,7 @@ trait TradTuneController extends Controller {  this: Controller =>
   def abc (genre: String, name: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
 
-    val response = resolveFuture(Proxy.getAbc(request, "text/html", genre, URLEncoder.encode(name, "UTF-8")))    
+    val response = proxy.resolveFuture(proxy.getAbc(request, "text/html", genre, URLEncoder.encode(name, "UTF-8")))    
     response.fold(
        e => { 
           Redirect(routes.Application.error("get abc error " + e.getMessage()))
@@ -714,13 +729,19 @@ trait TradTuneController extends Controller {  this: Controller =>
   }
 
   def about = Action { implicit request => {
-    implicit val userName: Option[String] =  request.session.get("username")
+    implicit val userName: Option[String] = request.session.get("username")
     Ok(views.html.about(version))
+    }
+  }   
+
+  def abcTutorial = Action { implicit request => {
+    implicit val userName: Option[String] = request.session.get("username")
+    Ok(views.html.abctutorial(version))
     }
   }   
   
   def credits = Action { implicit request => {
-    implicit val userName: Option[String] =  request.session.get("username")
+    implicit val userName: Option[String] = request.session.get("username")
     Ok(views.html.credits("home"))
     }
   }   
@@ -772,7 +793,7 @@ trait TradTuneController extends Controller {  this: Controller =>
  private def commentsModelFromSession(session: Session, genre: String, tuneid: String): (String, CommentsModel) = {
     val uuid = session.get(UUID).getOrElse(java.util.UUID.randomUUID().toString())
     // get the existing model from the cache if it exists or else install one for the supplied tune
-    val existingCommentsModel = Cache.getOrElse[CommentsModel](uuid) {
+    val existingCommentsModel = cache.getOrElse[CommentsModel](uuid) {
       installCommentsModel(uuid, genre, tuneid)
     }
     // get a new comments model if we've moved to a new tune
@@ -786,15 +807,15 @@ trait TradTuneController extends Controller {  this: Controller =>
   } 
   
   private def installCommentsModel(uuid: String, genre: String, tuneid: String):CommentsModel = {    
-     val cm = new CommentsModel(genre, tuneid)
+     val cm = new CommentsModel(proxy, genre, tuneid)
      cm.init       
-     Cache.set(uuid, cm)
+     cache.set(uuid, cm)
      Logger.debug(s"setting new cm in cache for uuid ${uuid} and genre ${genre} and tune ${tuneid}")
      cm
   }
 
    def existsTune(initialRequest: Request[AnyContent], genre: String, tune: String): (Boolean, String) = {   
-     val response = resolveFuture(Proxy.getAbc(initialRequest, "application/json", genre, tune))
+     val response = proxy.resolveFuture(proxy.getAbc(initialRequest, "application/json", genre, tune))
      response.fold(
        e => { 
           (false, null)
@@ -814,9 +835,14 @@ trait TradTuneController extends Controller {  this: Controller =>
     val logger = ProcessLogger(
       (o: String) => out.append(o),
       (e: String) => err.append(e))
-      
-    val script = Utils.scriptDir + "/" +  "midi2abc.sh" 
-    val cmd = script + " " + Utils.midiDir + " " + Utils.abcDir + " " + metadata.filename + " " + metadata.trackno +
+
+    // get the directories from config
+    val abcDir = config.getString("data.home").getOrElse("/var/data/midi2abc") +  "/abc"  
+    val midiDir = config.getString("data.home").getOrElse("/var/data/midi2abc") + "/midi"
+    val scriptDir = config.getString("data.home").getOrElse("/var/data/midi2abc")  + "/scripts"        
+    val script = scriptDir + "/" +  "midi2abc.sh" 
+    // bulid the script command
+    val cmd = script + " " + midiDir + " " + abcDir + " " + metadata.filename + " " + metadata.trackno +
                        " " + metadata.leadin + " " +  metadata.notelen +  " " + metadata.rhythm + " " + metadata.key + " " + metadata.mode
 
     Logger.debug(cmd)
@@ -826,7 +852,7 @@ trait TradTuneController extends Controller {  this: Controller =>
 
     exitValue match {
       case 0 => { 
-                 val fileName = Utils.abcDir + "//"  + metadata.filename + ".abc"
+                 val fileName = abcDir + "//"  + metadata.filename + ".abc"
                  val file = new File(fileName)
                  Logger.info(s"successful midi conversion of ${fileName}")
                  Right(file)
@@ -837,6 +863,11 @@ trait TradTuneController extends Controller {  this: Controller =>
                 }
     } 
   }
+
+  /* rather awkward - extra configuration details that were encapsulated in Utils before the introduction of DI */
+  def imageUrl(remoteService : String, tuneRef: TuneRef) : String = {
+     remoteService + "genre/" + tuneRef.genre + "/tune/" + tuneRef.name + "/temporary" +"/png"
+  }
 }
 
-object Application extends Controller with TradTuneController
+

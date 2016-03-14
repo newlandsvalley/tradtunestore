@@ -25,7 +25,7 @@ import utils.DispatchWorkaround._
  * is so pleased about - all you get is the error code.  Also, there seems to me no easy access to the response headers. 
  */
 
-object Proxy {
+class Proxy (remoteService : String, defaultTimeout: Int) {
 
 
    /** this is a hack.  It is intended to replace Dispatch's OK operator with one that will recognise the text of error repsonses
@@ -40,7 +40,7 @@ object Proxy {
    def checkService(): Future[Either[Throwable, String]] = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/plain; charset=UTF-8")   
-       val urlString = Utils.remoteService
+       val urlString = remoteService
        val req = url(urlString) <:< headers
        Http(req OKOrErr as.String).either  
      }
@@ -50,7 +50,7 @@ object Proxy {
    def checkUser(basicAuth: String): Future[Either[Throwable, String]] = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/plain; charset=UTF-8", "Authorization" -> ("Basic " + basicAuth))   
-       val urlString = Utils.remoteService + "user/check"
+       val urlString = remoteService + "user/check"
        val req = url(urlString) <:< headers
        Http(req OKOrErr as.String).either 
      }
@@ -60,7 +60,7 @@ object Proxy {
    def registerUser(uuid: String):  Future[Either[Throwable, String]]  = withHttp { 
      http => {   
        val headers = Map("Accept" -> "text/html; charset=UTF-8")   
-       val urlString = Utils.remoteService + "user/validate/" + uuid
+       val urlString = remoteService + "user/validate/" + uuid
        val req = url(urlString) <:< headers
        Http(req OKOrErr as.String).either
      }
@@ -84,9 +84,9 @@ object Proxy {
                          temporaryAuth
 
        val urlString =  if (saveMode) 
-          Utils.remoteService + "genre/" + tune.genre + "/tune"
+          remoteService + "genre/" + tune.genre + "/tune"
         else
-          Utils.remoteService + "genre/" + tune.genre + "/transcode"
+          remoteService + "genre/" + tune.genre + "/transcode"
 
        Logger.debug("abc:" + tune.abc)
        
@@ -116,7 +116,7 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
-       val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + tune + "/abc"
+       val urlString = remoteService + "genre/" + genre + "/tune/" + tune + "/abc"
 
        Logger.debug("new title url: " + urlString)
        Logger.debug("tune:" + tune + " new title: " + title)
@@ -146,7 +146,7 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
-       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comments"
+       val urlString =  remoteService + s"genre/${genre}/tune/${tuneName}/comments"
        
        Logger.debug("post comment url:" + urlString)
        
@@ -181,7 +181,7 @@ object Proxy {
        val basicAuth: Option[String] = session.get("basicauth") 
        val user = java.net.URLEncoder.encode(comment.user, "UTF-8")
        val commentId = String.valueOf(comment.timestamp)
-       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comment/${user}/${commentId}"
+       val urlString =  remoteService + s"genre/${genre}/tune/${tuneName}/comment/${user}/${commentId}"
           
        Logger.debug("delete comment url:" + urlString)   
  
@@ -210,7 +210,7 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
-       val urlString =  Utils.remoteService + s"genre/${genre}/comments"
+       val urlString =  remoteService + s"genre/${genre}/comments"
           
        Logger.debug("delete all comments url:" + urlString)   
  
@@ -230,7 +230,7 @@ object Proxy {
      http => {
        
        val headers = Map("Accept" -> "application/json; charset=UTF-8")   
-       val urlString =  Utils.remoteService + s"genre/${genre}/tune/${tuneName}/comments"
+       val urlString =  remoteService + s"genre/${genre}/tune/${tuneName}/comments"
 
        Logger.debug("get comments url is: " + urlString)
        def req =  (url(urlString) <:< headers)
@@ -243,8 +243,8 @@ object Proxy {
      http => {
        val headers = Map("Accept" -> "text/html; charset=UTF-8")
        val urlString = predicateOption.map (
-         p => Utils.remoteService + "genre/" + genre + "/search?" + p + "&page=" + page.toString + "&sort=" + sort).
-              getOrElse(Utils.remoteService + "genre/" + genre + "/search?" + "page=" + page.toString+ "&sort=" + sort)
+         p => remoteService + "genre/" + genre + "/search?" + p + "&page=" + page.toString + "&sort=" + sort).
+              getOrElse(remoteService + "genre/" + genre + "/search?" + "page=" + page.toString+ "&sort=" + sort)
 
        Logger.debug("search proxy url is: " + urlString)
        Logger.debug("Proxy requesting page " + page)
@@ -270,7 +270,7 @@ object Proxy {
        basicAuth.foreach( a => builder+="Authorization" -> ("Basic " + a) )
        val headers = builder.result            
        
-       val urlString = Utils.remoteService + "user?" + "page=" + pageNo.toString
+       val urlString = remoteService + "user?" + "page=" + pageNo.toString
 
        Logger.debug("Proxy requesting page " + pageNo)
        val req =  (url(urlString) <:< headers)
@@ -287,7 +287,7 @@ object Proxy {
      http => {      
        val session: Session = initialRequest.session
        val basicAuth: Option[String] = session.get("basicauth") 
-       val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + name
+       val urlString = remoteService + "genre/" + genre + "/tune/" + name
  
        val builder = Map.newBuilder[String, String]
        builder += "Accept" -> "text/plain"
@@ -304,7 +304,7 @@ object Proxy {
    def saveUser(initialRequest: Request[AnyContent], user: User): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
-       val urlString = Utils.remoteService + "user" 
+       val urlString = remoteService + "user" 
        val host = initialRequest.headers.get(play.api.http.HeaderNames.HOST).getOrElse("")
        val refererUrl = "http://" + host + initialRequest.path + "/register"
        val headers = Map("Accept" -> "text/html", "Content-Type" -> "application/x-www-form-urlencoded")
@@ -331,7 +331,7 @@ object Proxy {
    def remindUserPassword(initialRequest: Request[AnyContent], userName: String): Future[Either[Throwable, String]] = withHttp {   
      http => {      
        val session: Session = initialRequest.session
-       val urlString = Utils.remoteService + "user/password/resend" 
+       val urlString = remoteService + "user/password/resend" 
        val headers = Map("Accept" -> "text/plain", "Content-Type" -> "application/x-www-form-urlencoded")
        // both trad tune store and musicrest independently check that the confirmation password matches
        def req =  (url(urlString) <:< headers).POST << Map("name" -> userName)
@@ -359,7 +359,7 @@ object Proxy {
          case "application/json" => "/json"
          case _ => "/html"
        }
-       val urlString = Utils.remoteService + "genre/" + genre + "/tune/" + tune + path
+       val urlString = remoteService + "genre/" + genre + "/tune/" + tune + path
        Logger.debug(s"ABC request accept is ${initialRequest.acceptedTypes}" )
 
        Logger.debug("proxy url is: " + urlString)   
@@ -410,7 +410,7 @@ object Proxy {
   /** resolve a future (returned from the proxy request) 
       This stage handles the logging and manufacture of more sensible error messages for the user
   */  
-  def resolveFuture[A] (future: Future[Either[Throwable, A]], timeout:Int = Utils.defaultTimeout): Either[Throwable, A] = {
+  def resolveFuture[A] (future: Future[Either[Throwable, A]], timeout:Int = defaultTimeout): Either[Throwable, A] = {
     val res = resolveFutureWork(future, timeout)
     val newres = res.fold (
       e => {
@@ -440,5 +440,6 @@ object Proxy {
       case (e:Throwable) => Left(e)
     }     
   }
- 
 }
+
+
