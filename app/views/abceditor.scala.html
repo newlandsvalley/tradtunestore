@@ -1,0 +1,13 @@
+@(version: String)(implicit lang: Lang, userName: Option[String])
+
+@import snippets._
+
+@main("abceditor")(None)(userName)(navigation("home")(userName)) {         
+    <div id="abcdiv" role="main" class="main" >
+       <div id = "elmAbcEditorController">
+       </div>
+    </div>
+}
+
+
+

@@ -62,7 +62,7 @@ POST    /genre/:genre/tune/:tune/comment/:id      	controllers.Application.proce
 GET     /genre/:genre/tune/:tune/comment/:id/delete   	controllers.Application.commentDelete(genre: String, tune: String, id: String)
 
 GET 	/about		    				controllers.Application.about
-GET 	/abctutorial	    				controllers.Application.abcTutorial
+GET 	/abceditor	    				controllers.Application.abcEditor
 GET 	/credits		    			controllers.Application.credits	
 GET     /contact		    			controllers.Application.contact
 GET     /donate		        			controllers.Application.donate
