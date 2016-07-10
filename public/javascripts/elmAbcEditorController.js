@@ -16125,17 +16125,14 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$getFileName = function (m
 		var _p8 = m.tuneResult;
 		if (_p8.ctor === 'Ok') {
 			return A2(
-				F2(
-					function (x, y) {
-						return A2(_elm_lang$core$Basics_ops['++'], x, y);
-					}),
-				'.abc',
+				_elm_lang$core$Basics_ops['++'],
 				A2(
 					_elm_lang$core$Maybe$withDefault,
 					'untitled',
-					_newlandsvalley$elm_abc_player$Music_Notation$getTitle(_p8._0)));
+					_newlandsvalley$elm_abc_player$Music_Notation$getTitle(_p8._0)),
+				'.txt');
 		} else {
-			return 'untitled.abc';
+			return 'untitled.txt';
 		}
 	}
 };
@@ -16307,7 +16304,7 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 							[
 								_elm_lang$html$Html_Attributes$type$('file'),
 								_elm_lang$html$Html_Attributes$id('fileinput'),
-								_elm_lang$html$Html_Attributes$accept('.abc'),
+								_elm_lang$html$Html_Attributes$accept('.abc, .txt'),
 								A2(
 								_elm_lang$html$Html_Events$on,
 								'change',
@@ -16513,28 +16510,26 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$update = F2(
 					_1: _newlandsvalley$elm_abc_player$FileIO_Ports$requestSaveFile(filespec)
 				};
 			case 'FileLoaded':
-				var _p25 = _p19._0;
-				var _p22 = A2(_elm_lang$core$Debug$log, 'input filespec', _p25);
-				var _p23 = _p25;
-				if (_p23.ctor === 'Just') {
-					var _p24 = _p23._0;
+				var _p22 = _p19._0;
+				if (_p22.ctor === 'Just') {
+					var _p23 = _p22._0;
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
 							{
-								abc: _p24.contents,
-								fileName: _elm_lang$core$Maybe$Just(_p24.name)
+								abc: _p23.contents,
+								fileName: _elm_lang$core$Maybe$Just(_p23.name)
 							}),
-						_1: _newlandsvalley$elm_abc_player$AbcEditorController$checkAbc(_p24.contents)
+						_1: _newlandsvalley$elm_abc_player$AbcEditorController$checkAbc(_p23.contents)
 					};
 				} else {
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			default:
-				var _p26 = A2(_newlandsvalley$elm_abc_player$Midi_Player$update, _p19._0, model.player);
-				var newPlayer = _p26._0;
-				var cmd = _p26._1;
+				var _p24 = A2(_newlandsvalley$elm_abc_player$Midi_Player$update, _p19._0, model.player);
+				var newPlayer = _p24._0;
+				var cmd = _p24._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
