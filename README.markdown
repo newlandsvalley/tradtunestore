@@ -27,7 +27,7 @@ Dependencies
 *  [Play 2.5.0](http://www.playframework.org/download).
 *  [Argonaut 6.1](http://argonaut.io/) for JSON parsing.
 *  [Dispatch 0.11.2](http://dispatch.databinder.net/Dispatch.html) for proxying requests.
-*  [elm-abc-player](https://github.com/newlandsvalley/elm-abc-player) for the interactive ABC tutorial written in elm 0.16.
+*  [elm-abc-player](https://github.com/newlandsvalley/elm-abc-player) for the interactive ABC editor-controller written in elm 0.17. This in turn depends on the [soundfont player](https://github.com/danigb/soundfont-player) from danigb.
 
 Blog
 ----
