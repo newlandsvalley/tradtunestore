@@ -14939,10 +14939,7 @@ var _newlandsvalley$elm_abc_player$MidiPerformance$midiRecordingFromAbc = F2(
 		var header = {formatType: 0, trackCount: 1, ticksPerBeat: _newlandsvalley$elm_abc_player$Music_Notation$standardMidiTick};
 		var _p27 = A2(_newlandsvalley$elm_abc_player$MidiPerformance$melodyFromAbc, expandRepeats, tune);
 		var melody = _p27._0;
-		var _p28 = A2(_elm_lang$core$Debug$log, 'melody', melody);
 		var track = _newlandsvalley$elm_abc_player$MidiPerformance$toMidiTrack(melody);
-		var _p29 = A2(_elm_lang$core$Debug$log, 'track', track);
-		var _p30 = A2(_elm_lang$core$Debug$log, 'abc tune', tune);
 		return {
 			ctor: '_Tuple2',
 			_0: header,
@@ -14956,9 +14953,9 @@ var _newlandsvalley$elm_abc_player$MidiPerformance$fromAbcResult = function (r) 
 var _newlandsvalley$elm_abc_player$MidiPerformance$melodyFromAbcResult = function (r) {
 	return A2(
 		_elm_lang$core$Result$map,
-		function (_p31) {
+		function (_p28) {
 			return _newlandsvalley$elm_abc_player$Repeats$buildRepeatedMelody(
-				_newlandsvalley$elm_abc_player$MidiPerformance$fromAbc(_p31));
+				_newlandsvalley$elm_abc_player$MidiPerformance$fromAbc(_p28));
 		},
 		r);
 };
@@ -15132,7 +15129,7 @@ var _newlandsvalley$elm_abc_player$Midi_Player$stepState = F2(
 		stepState:
 		while (true) {
 			if (state.playing) {
-				var _p1 = A2(_elm_lang$core$Debug$log, 'sound event', soundEvent.event);
+				var _p1 = soundEvent.event;
 				var _p2 = soundEvent.event;
 				switch (_p2.ctor) {
 					case 'Text':
@@ -15340,9 +15337,8 @@ var _newlandsvalley$elm_abc_player$Midi_Player$player = function (model) {
 			return start;
 		}
 	}();
-	var _p8 = A2(_elm_lang$core$Debug$log, 'Midi Player view', model.track);
-	var _p9 = model.track;
-	if (_p9.ctor === 'Ok') {
+	var _p8 = model.track;
+	if (_p8.ctor === 'Ok') {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -15422,8 +15418,8 @@ var _newlandsvalley$elm_abc_player$Midi_Player$view = function (model) {
 			]));
 };
 var _newlandsvalley$elm_abc_player$Midi_Player$buttons = function (model) {
-	var _p10 = model.playbackState.playing;
-	if (_p10 === true) {
+	var _p9 = model.playbackState.playing;
+	if (_p9 === true) {
 		return A2(
 			_elm_lang$html$Html$div,
 			_elm_lang$core$Native_List.fromArray(
@@ -15509,18 +15505,18 @@ var _newlandsvalley$elm_abc_player$Midi_Player$step = function (delay) {
 	var task = A2(
 		_elm_lang$core$Task$andThen,
 		_elm_lang$core$Process$sleep(delay * _newlandsvalley$elm_abc_player$Midi_Player$elmPlayerOverhead),
-		function (_p11) {
+		function (_p10) {
 			return _elm_lang$core$Task$succeed(
-				function (_p12) {
+				function (_p11) {
 					return _newlandsvalley$elm_abc_player$Midi_Player$Step;
 				});
 		});
 	return A3(
 		_elm_lang$core$Task$perform,
-		function (_p13) {
+		function (_p12) {
 			return _newlandsvalley$elm_abc_player$Midi_Player$NoOp;
 		},
-		function (_p14) {
+		function (_p13) {
 			return _newlandsvalley$elm_abc_player$Midi_Player$Step;
 		},
 		task);
@@ -15528,14 +15524,14 @@ var _newlandsvalley$elm_abc_player$Midi_Player$step = function (delay) {
 var _newlandsvalley$elm_abc_player$Midi_Player$interpretSoundEvent = F3(
 	function (soundEvent, notes, state) {
 		if (state.playing) {
-			var _p15 = _elm_lang$core$List$length(notes);
-			switch (_p15) {
+			var _p14 = _elm_lang$core$List$length(notes);
+			switch (_p14) {
 				case 0:
 					return _newlandsvalley$elm_abc_player$Midi_Player$step(soundEvent.deltaTime * _newlandsvalley$elm_abc_player$Midi_Player$elmPlayerOverhead);
 				case 1:
-					var _p16 = _elm_lang$core$List$head(notes);
-					if (_p16.ctor === 'Just') {
-						return _newlandsvalley$elm_abc_player$Midi_Player$play(_p16._0);
+					var _p15 = _elm_lang$core$List$head(notes);
+					if (_p15.ctor === 'Just') {
+						return _newlandsvalley$elm_abc_player$Midi_Player$play(_p15._0);
 					} else {
 						return _newlandsvalley$elm_abc_player$Midi_Player$step(soundEvent.deltaTime * _newlandsvalley$elm_abc_player$Midi_Player$elmPlayerOverhead);
 					}
@@ -15548,17 +15544,17 @@ var _newlandsvalley$elm_abc_player$Midi_Player$interpretSoundEvent = F3(
 	});
 var _newlandsvalley$elm_abc_player$Midi_Player$stop = A3(
 	_elm_lang$core$Task$perform,
-	function (_p17) {
+	function (_p16) {
 		return _newlandsvalley$elm_abc_player$Midi_Player$NoOp;
 	},
-	function (_p18) {
+	function (_p17) {
 		return _newlandsvalley$elm_abc_player$Midi_Player$MoveTo(0);
 	},
 	_elm_lang$core$Task$succeed(_newlandsvalley$elm_abc_player$Midi_Player$NoOp));
 var _newlandsvalley$elm_abc_player$Midi_Player$update = F2(
 	function (msg, model) {
-		var _p19 = msg;
-		switch (_p19.ctor) {
+		var _p18 = msg;
+		switch (_p18.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'FontsLoaded':
@@ -15566,7 +15562,7 @@ var _newlandsvalley$elm_abc_player$Midi_Player$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{fontsLoaded: _p19._0}),
+						{fontsLoaded: _p18._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'SetRecording':
@@ -15578,7 +15574,7 @@ var _newlandsvalley$elm_abc_player$Midi_Player$update = F2(
 					model,
 					{
 						playbackState: newState,
-						track: _newlandsvalley$elm_abc_player$Midi_Player$toTrack0(_p19._0)
+						track: _newlandsvalley$elm_abc_player$Midi_Player$toTrack0(_p18._0)
 					});
 				return {ctor: '_Tuple2', _0: newModel, _1: _newlandsvalley$elm_abc_player$Midi_Player$stop};
 			case 'Start':
@@ -15604,21 +15600,20 @@ var _newlandsvalley$elm_abc_player$Midi_Player$update = F2(
 				var state = model.playbackState;
 				var newState = _elm_lang$core$Native_Utils.update(
 					state,
-					{playing: false, index: _p19._0});
+					{playing: false, index: _p18._0});
 				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{playbackState: newState});
 				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'Step':
 				var soundEvent = A2(_newlandsvalley$elm_abc_player$Midi_Player$nextEvent, model.playbackState, model.track);
-				var _p20 = A2(_newlandsvalley$elm_abc_player$Midi_Player$stepState, soundEvent, model.playbackState);
-				var newState = _p20._0;
-				var midiNotes = _p20._1;
+				var _p19 = A2(_newlandsvalley$elm_abc_player$Midi_Player$stepState, soundEvent, model.playbackState);
+				var newState = _p19._0;
+				var midiNotes = _p19._1;
 				var newModel = _elm_lang$core$Native_Utils.update(
 					model,
 					{playbackState: newState});
 				var nextAction = A3(_newlandsvalley$elm_abc_player$Midi_Player$interpretSoundEvent, soundEvent, midiNotes, newState);
-				var _p21 = A2(_elm_lang$core$Debug$log, 'step state', model.playbackState);
 				return {ctor: '_Tuple2', _0: newModel, _1: nextAction};
 			case 'PlayedNote':
 				return {
@@ -16130,9 +16125,9 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$getFileName = function (m
 					_elm_lang$core$Maybe$withDefault,
 					'untitled',
 					_newlandsvalley$elm_abc_player$Music_Notation$getTitle(_p8._0)),
-				'.txt');
+				'.abc');
 		} else {
-			return 'untitled.txt';
+			return 'untitled.abc';
 		}
 	}
 };
