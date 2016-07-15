@@ -7,7 +7,7 @@
 
 @onLoad=@{Utils.onLoadCommand2(genre, "any")}
 
-@main("search")(onLoad)(userName)(navigation("home")(userName)) {         
+@main("search", onLoad, userName, navigation("home")(userName)) {         
       <div id="searchdiv" role="main" class="main" >
        
          @helper.form(action = routes.Application.processSearch, 'id -> "searchform", 'enctype -> "application/x-www-form-urlencoded" ) {

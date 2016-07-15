@@ -7,7 +7,7 @@
 
 @onLoad=@{Utils.onLoadCommand1(genre)}
 
-@main("advanced search")(onLoad)(userName)(navigation("home")(userName)) {         
+@main("advanced search", onLoad, userName, navigation("home")(userName)) {         
      <div id="advancedsearchdiv" role="main" class="main" >
         @helper.form(action = routes.Application.processAdvancedSearch, 'id -> "advancedsearchform", 'enctype -> "application/x-www-form-urlencoded" ) {
         <!--form id="advancedsearchform" name="Search" action="searchresult.html" method="POST" enctype="application/x-www-form-urlencoded" -->

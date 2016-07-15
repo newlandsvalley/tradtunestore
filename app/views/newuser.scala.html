@@ -4,7 +4,7 @@
 @import utils.Pimps._
 @import utils.Utils
 
-@main("new user")(None)(userName)(navigation("login")(userName)) {         
+@main("new user", None, userName, navigation("login")(userName)) {         
    <div id="searchdiv" role="main" class="main" > 
     
          @helper.form(action = routes.Application.processNewUser, 'id -> "newuserform", 'enctype -> "application/x-www-form-urlencoded" ) {

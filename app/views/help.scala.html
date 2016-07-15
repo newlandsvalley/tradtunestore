@@ -2,7 +2,7 @@
 
 @import snippets._
 
-@main("help")(None)(userName)(navigation("home")(userName)) {         
+@main("help", None, userName, navigation("home")(userName)) {         
     <div id="helpdiv" role="main" class="main" >
        <h2>Are there any known issues or restrictions?</h2>
        <p>Tunes cannot be played in Internet Explorer. Because this is probably the main reason for using the system in the first
@@ -25,6 +25,22 @@
        can optionally use the keys or the rhythms when searching for tunes. The search dropdowns show the rhythms and keys that are supported for each genre.
        If you want to, you can also use an advanced search where (for example) you can look
        for a particular sequence of notes. 
+       </p>
+       <h2>How do learn ABC?</h2>
+       <p>You can use the interactive <a href='abctutorial'>ABC tutorial</a>. This takes you through a set of lessons, starting simply with just the letters 
+       <em>ABC</em> and so on and ending with a fully-fledged score.  Each lesson sample can be edited and if you enter incorrect text at any stage an
+       error message is displayed - otherwise you can play the tune snippet.  This should teach you the basics - after this you could look at a more
+       thorough tutorial - for example <a href='http://abcnotation.com/learn'>this one</a>.
+       </p>
+       <h2>How do I create an ABC file?</h2>
+       <p>You can experiment by using the interactive <a href='abceditor'>ABC editor</a>.  This allows you to build up your
+       ABC text gradually.  If it is correct, a player will appear allowing you to hear what you've written; if incorrect, you
+       will see an error message.  You can also use it to change octave or transpose to a different key.  Once you are happy,
+       you can save the ABC to file and load it to tradtunedb in the normal fashion.
+       </p>
+       <p>Note that the editor is very liberal in the ABC that it accepts.  For example, it allows you to enter and play just the notes whereas a complete
+       ABC tune requires certain headers always to be present.  It also plays tunes very simply - so that (for example) chord symbols and grace notes are
+       ignored.
        </p>
        <h2>How do I submit a tune?</h2>
        <p>This is slightly more complicated.  You must, of course, first log in. Tunes are submitted in <a href='http://abcnotation.com/'>ABC notation</a> which
@@ -70,13 +86,7 @@
        Alternatively, the new tune page has a button labelled 'try it out' which allows you to look at the score but doesn't save the tune
        to the database.  Again you can keep trying with edited versions of the tune until you are happy with the score and can submit it.
        </p>
-       <h2>How do I create an ABC file?</h2>
-       <p>You could start by taking a look at a tutorial - for example <a href='http://abcnotation.com/learn'>this one</a>.
-       You can also experiment by using the interactive <a href='abceditor'>ABC editor</a>.  This allows you to build up your
-       ABC text gradually.  If it is correct, a player will appear allowing you to hear what you've written; if incorrect, you
-       will see an error message.  You can also use it to change octave or transpose to a different key.  Once you are happy,
-       you can save the ABC to file and load it to tradtunedb in the normal fashion.
-       </p>
+
        <h2>How do I submit a comment?</h2>
        <p>Comments are intended to hold additional information about each tune.  They are particularly useful if you find a YouTube video of the tune 
        or perhaps a link to a recording.  Again, you have to log in before you can submit a comment.  Once on the tune page, click on the comments link

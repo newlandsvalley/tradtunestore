@@ -22,7 +22,7 @@
    </div>
 }
 
-@main("Comments")(None)(userName)(navigation("home")(userName)) {
+@main("Comments", None, userName, navigation("home")(userName)) {
     <div id="commentdiv" role="main" class="main" > 
     
     <p>number of comments: @{comments.size}</p>

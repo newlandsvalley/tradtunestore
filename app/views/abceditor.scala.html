@@ -2,7 +2,19 @@
 
 @import snippets._
 
-@main("abceditor")(None)(userName)(navigation("home")(userName)) {         
+<!-- elm code for the ABC editor -->	
+@scripts = {    
+    <script src="@routes.Assets.at("javascripts/elmAbcEditorController.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/soundfont-player.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+       var node = document.getElementById('elmAbcEditorController');
+       var myapp = Elm.AbcEditorController.embed(node); 
+    </script>
+    <script src="@routes.Assets.at("javascripts/nativeFileIO.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/nativeSoundFont.js")" type="text/javascript"></script>
+}
+
+@main("abceditor", None, userName, navigation("home")(userName), scripts) {         
     <div id="abcdiv" role="main" class="main" >
        <div id = "elmAbcEditorController">
        </div>

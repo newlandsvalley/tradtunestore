@@ -63,6 +63,7 @@ GET     /genre/:genre/tune/:tune/comment/:id/delete   	controllers.Application.c
 
 GET 	/about		    				controllers.Application.about
 GET 	/abceditor	    				controllers.Application.abcEditor
+GET 	/abctutorial	    				controllers.Application.abcTutorial
 GET 	/credits		    			controllers.Application.credits	
 GET     /contact		    			controllers.Application.contact
 GET     /donate		        			controllers.Application.donate

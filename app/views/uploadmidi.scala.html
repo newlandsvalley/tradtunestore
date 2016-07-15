@@ -2,7 +2,7 @@
 
 @import snippets._
 
-@main("midi2abc")(None)(userName)(navigation("midi2abc")(userName)) {
+@main("midi2abc", None, userName, navigation("midi2abc")(userName)) {
     <div id="uploadtunediv" role="main" class="main" >
 
    @helper.form(action = routes.Application.processUploadMidi, 'enctype -> "multipart/form-data", 'id -> "uploadtuneform" ) {    

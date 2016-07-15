@@ -3,7 +3,7 @@
 @import snippets._
 @import utils.Pimps._
 
-@main("upload")(None)(userName)(navigation("upload")(userName)) {         
+@main("upload", None, userName, navigation("upload")(userName)) {         
     <div id="uploadtunediv" role="main" class="main" >
 
    @helper.form(action = routes.Application.processUpload, 'enctype -> "multipart/form-data", 'id -> "uploadtuneform" ) {    

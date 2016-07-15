@@ -739,6 +739,12 @@ class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, conf
     Ok(views.html.abceditor(version))
     }
   }   
+
+  def abcTutorial = Action { implicit request => {
+    implicit val userName: Option[String] = request.session.get("username")
+    Ok(views.html.abctutorial(version))
+    }
+  }   
   
   def credits = Action { implicit request => {
     implicit val userName: Option[String] = request.session.get("username")

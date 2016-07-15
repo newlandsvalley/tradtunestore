@@ -2,7 +2,7 @@
 
 @import snippets._
 
-@main("debug request")(None)(userName)(navigation("home")(userName)) {         
+@main("debug request", None, userName, navigation("home")(userName)) {         
     <div id="searchdiv" role="main" class="main" >
           <p>headers: @headers.toString</p>
           <br/>

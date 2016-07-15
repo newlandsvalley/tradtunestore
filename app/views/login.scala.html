@@ -4,7 +4,7 @@
 @import utils.Pimps._
 @import utils.Utils
 
-@main("login")(None)(userName)(navigation("login")(userName)) {   
+@main("login", None, userName, navigation("login")(userName)) {   
     <div id="logindiv" role="main" class="main" > 
         <span class="error" >@(message.map(m => m))</span>  
          @helper.form(action = routes.Application.processLogin, 'id -> "loginform", 'enctype -> "application/x-www-form-urlencoded") {

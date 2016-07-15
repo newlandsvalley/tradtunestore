@@ -12,7 +12,7 @@
 @rhythm=@{controllers.Forms.getFormValue(midiMetadataForm, "rhythm").getOrElse("polka")}
 @onLoad=@{Utils.onLoadCommand2(genre, rhythm)}
 
-@main("convert")(onLoad)(userName)(navigation("midi2abc")(userName))  {         
+@main("convert", onLoad, userName, navigation("midi2abc")(userName))  {         
 
      <div id="metadatadiv" role="main" class="main" >
        
