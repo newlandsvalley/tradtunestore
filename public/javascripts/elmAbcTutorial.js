@@ -13628,7 +13628,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$title = function (i) {
 	} else {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
-			'lesson ',
+			'ABC Tutorial: lesson ',
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				_elm_lang$core$Basics$toString(i + 1),
@@ -13718,14 +13718,6 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$view = function (model) {
 			[_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A2(
-				_elm_lang$html$Html$h1,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('ABC Tutorial')
-					])),
 				A2(
 				_elm_lang$html$Html$h2,
 				_elm_lang$core$Native_List.fromArray(
