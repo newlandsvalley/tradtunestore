@@ -12152,13 +12152,33 @@ var _newlandsvalley$elm_abc_player$Abc$barSeparator = A2(
 					_Bogdanp$elm_combine$Combine$string('|'),
 					_Bogdanp$elm_combine$Combine$string(':')
 				]))));
-var _newlandsvalley$elm_abc_player$Abc$barline = A2(
+var _newlandsvalley$elm_abc_player$Abc$degenerateBarRepeat = A2(
+	_Bogdanp$elm_combine$Combine_Infix_ops['<$>'],
+	_newlandsvalley$elm_abc_player$Abc_ParseTree$Barline,
+	A2(
+		_Bogdanp$elm_combine$Combine_Infix_ops['<$>'],
+		A2(_newlandsvalley$elm_abc_player$Abc_ParseTree$Bar, _newlandsvalley$elm_abc_player$Abc_ParseTree$Thin, _elm_lang$core$Maybe$Nothing),
+		A2(
+			_Bogdanp$elm_combine$Combine_Infix_ops['<$>'],
+			_elm_lang$core$Maybe$Just,
+			A2(
+				_Bogdanp$elm_combine$Combine_Infix_ops['*>'],
+				A2(
+					_Bogdanp$elm_combine$Combine_Infix_ops['*>'],
+					_newlandsvalley$elm_abc_player$Abc$whiteSpace,
+					_Bogdanp$elm_combine$Combine_Char$char(
+						_elm_lang$core$Native_Utils.chr('['))),
+				_Bogdanp$elm_combine$Combine_Num$digit))));
+var _newlandsvalley$elm_abc_player$Abc$normalBarline = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
 	A2(
 		_Bogdanp$elm_combine$Combine_Infix_ops['<*>'],
 		A2(_Bogdanp$elm_combine$Combine_Infix_ops['<$>'], _newlandsvalley$elm_abc_player$Abc$buildBarline, _newlandsvalley$elm_abc_player$Abc$barSeparator),
 		_Bogdanp$elm_combine$Combine$maybe(_newlandsvalley$elm_abc_player$Abc$repeatSection)),
 	'barline');
+var _newlandsvalley$elm_abc_player$Abc$barline = _Bogdanp$elm_combine$Combine$choice(
+	_elm_lang$core$Native_List.fromArray(
+		[_newlandsvalley$elm_abc_player$Abc$normalBarline, _newlandsvalley$elm_abc_player$Abc$degenerateBarRepeat]));
 var _newlandsvalley$elm_abc_player$Abc$scoreItem = _Bogdanp$elm_combine$Combine$rec(
 	function (_p13) {
 		var _p14 = _p13;
