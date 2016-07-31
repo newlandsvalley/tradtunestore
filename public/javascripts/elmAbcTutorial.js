@@ -13819,7 +13819,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instComplexTriplet = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'If your triplet has notes of different lengths, you have to use the complex triplet notation.',
 	A2(_elm_lang$core$Basics_ops['++'], ' For example (3:2:4d2d2Bd means play the rhythm of three notes in the time of two over the following group', ' of four notes.'));
-var _newlandsvalley$elm_abc_player$Lessons$xmplTriplet = 'K:Dmaj\r\n| A2 d2 e>f | (3g2f2d2 B2 |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplTriplet = 'K:Dmaj\r\n| A2 | d2 e>f (3g2f2d2 | B4 |';
 var _newlandsvalley$elm_abc_player$Lessons$instTriplet = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'A triplet is usually used if you want to play three notes in the time normally taken by two.',
@@ -13831,7 +13831,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instTie = A2(
 	A2(_elm_lang$core$Basics_ops['++'], ' The second note may follow immediately, but it can be separated by spaces or even a bar line.  The effect is to play one long note', ' with the combined duration of the pair.  If the notes are of different pitches, the tie will simply be ignored.'));
 var _newlandsvalley$elm_abc_player$Lessons$xmplMeter = A2(
 	_elm_lang$core$Basics_ops['++'],
-	'X:1\r\nT:Another jig will do\r\nQ:3/8=120\r\nM:9/8\r\nK:D\r\n',
+	'Q:3/8=120\r\nM:9/8\r\nK:D\r\n',
 	A2(
 		_elm_lang$core$Basics_ops['++'],
 		'ABA A2G F2G | ABA AGF G2E |\r\n',
@@ -13854,7 +13854,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instMeter = A2(
 		A2(
 			_elm_lang$core$Basics_ops['++'],
 			' The presence of a meter actually makes little difference to how the tune sounds, but will show up in a score.',
-			A2(_elm_lang$core$Basics_ops['++'], ' But it is important to make sure that the duration of each complete bar agrees with the meter you designate.', ' This example is a slip-jig in 9/8'))));
+			A2(_elm_lang$core$Basics_ops['++'], ' But it is important to make sure that the duration of each complete bar agrees with the meter you designate.', ' This example is a slip-jig in 9/8.'))));
 var _newlandsvalley$elm_abc_player$Lessons$xmplTempo = 'L: 1/8 \r\nQ: 1/4=60\r\nA B c def';
 var _newlandsvalley$elm_abc_player$Lessons$instTempo = A2(
 	_elm_lang$core$Basics_ops['++'],
@@ -13866,13 +13866,13 @@ var _newlandsvalley$elm_abc_player$Lessons$instUnitNote = A2(
 	'You may have noticed when we first introduced notes that we talked about their duration in \'units\'.  But how long is a unit?',
 	A2(
 		_elm_lang$core$Basics_ops['++'],
-		' So far, we have used the convention that it represents an eighth note (a quaver).  In other words, in a score, this is how',
-		A2(_elm_lang$core$Basics_ops['++'], ' The note would look.  We can change the unit to be a sixteenth note (a semiquaver) if we use the L (unit note length) header', ' This will have the effect of doubling the speed.')));
+		' So far, we have used, by default, a convention that it represents an eighth note (a quaver).',
+		A2(_elm_lang$core$Basics_ops['++'], ' We can change the unit to be a sixteenth note (a semiquaver) if we use the L (unit note length) header.', ' This will have the effect of doubling the speed.')));
 var _newlandsvalley$elm_abc_player$Lessons$xmplAccidentals = 'K: AMinor \r\n| A2 B^c dcBc [CEa] |';
 var _newlandsvalley$elm_abc_player$Lessons$instAccidentals = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'Similarly, you can sharpen a note by placing a caret symbol (^) immediately before it and flatten it using an underscore',
-	A2(_elm_lang$core$Basics_ops['++'], ' symbol (_). If you need a double sharp or double flat, then just double the appropriate symbol.', ' This example reverts the major feel although the key is now A Minor. Each C is sharpened.'));
+	A2(_elm_lang$core$Basics_ops['++'], ' symbol (_). If you need a double sharp or double flat, then just double the appropriate symbol.', ' This example brings back the major feel although the key is now A Minor. Each C is sharpened.'));
 var _newlandsvalley$elm_abc_player$Lessons$xmplNaturals = 'K: AMajor \r\n| A2 B=c dcBc [CEa] |';
 var _newlandsvalley$elm_abc_player$Lessons$instNaturals = A2(
 	_elm_lang$core$Basics_ops['++'],
@@ -13880,23 +13880,26 @@ var _newlandsvalley$elm_abc_player$Lessons$instNaturals = A2(
 	A2(
 		_elm_lang$core$Basics_ops['++'],
 		' (unsharpened or unflattened) note, then you can override the key by using an equals symbol immediately before the note.',
-		A2(_elm_lang$core$Basics_ops['++'], ' Remember that, as in a score, you only need to mark as natural the first occurrence of the note in any given bar.', ' For example, this reverts the previous tune to a minor feel although the key is still a major one. Each C is natural.')));
+		A2(_elm_lang$core$Basics_ops['++'], ' Remember that, as in a score, you only need to mark as natural the first occurrence of the note in any given bar.', ' For example, this reintroduces the minor feel although the key is still a major one. Each C in the bar is natural.')));
 var _newlandsvalley$elm_abc_player$Lessons$xmplFlatKeySig = 'K: Bb\r\n| BfdB AecA | FdBF D4 |';
-var _newlandsvalley$elm_abc_player$Lessons$instFlatKeySig = A2(_elm_lang$core$Basics_ops['++'], 'If your key is a major key, you can, if you want, leave out the word \'Major\'.  If it is a flat key, you use \'b\' and if a sharp key, \'#\'. ', ' You can also choose to shorted the mode name to just three letters - in this case, BbMaj.');
-var _newlandsvalley$elm_abc_player$Lessons$xmplKeySig = 'K: AMajor \r\n| A2 Bc dcBc [CEa] |';
+var _newlandsvalley$elm_abc_player$Lessons$instFlatKeySig = A2(_elm_lang$core$Basics_ops['++'], 'If your key is a major key, you can, if you want, leave out the word \'Major\'.  If it is a flat key, you use \'b\' and if a sharp key, \'#\'. ', ' You can also choose to shorten the mode name to just three letters - i.e. BbMaj, BbMajor and Bb are equivalent to each other.');
+var _newlandsvalley$elm_abc_player$Lessons$xmplKeySig = 'K: AMajor \r\n| [acE]3 B A2G2 | [eBGE]4 |';
 var _newlandsvalley$elm_abc_player$Lessons$instKeySig = A2(
 	_elm_lang$core$Basics_ops['++'],
-	'So far, we have only used the white notes on the piano - i.e. the tune snippets have tended to be in the keys either',
+	'ABC lets you add information that determines how the tune is to be played.',
 	A2(
 		_elm_lang$core$Basics_ops['++'],
-		' of C Major or A Minor.  We now introduce our first header - K: for Key Signature.  Headers are placed on lines on their own',
-		A2(_elm_lang$core$Basics_ops['++'], ' before the melody.  In this way, we can move the last example from A Minor to A Major. This, of course, has the effect of', ' sharpening every C,F and G.')));
+		' So far, we have only used the white notes on the piano - i.e. the tune snippets have tended to be in the keys of either',
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			' C Major or A Minor.  If we want tunes in a different key, we can add what\'s called a \'K header\' where K represents the key signature. ',
+			A2(_elm_lang$core$Basics_ops['++'], ' A header is usually placed on a line of its own before the melody starts.', ' In the key of A, every C, F and G in the melody is implicitly sharpened - this will give a \'major\' feel to the chord example.'))));
 var _newlandsvalley$elm_abc_player$Lessons$hintChords = 'Try adding another phrase that ends in a chord.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplChords = '| A2 Bc dcBc |[CEa] GBG [BGD]4 |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplChords = '| [acE]3 B A2G2 | [eBGE]4 |';
 var _newlandsvalley$elm_abc_player$Lessons$instChords = A2(
 	_elm_lang$core$Basics_ops['++'],
-	'You can play a chord by placing a group of notes, beamed together, inside square brackets - for example [CEa].',
-	A2(_elm_lang$core$Basics_ops['++'], ' To set the duration of the chord, you can either annotate each note separately or else annotate the entire chord.', ' If you do both, the durations are multiplied together'));
+	'You can play a chord by placing a group of notes, adjacent to each other, inside square brackets - for example [acE].',
+	A2(_elm_lang$core$Basics_ops['++'], ' To set the duration of the chord, you can either set the length of each note individually or else for the entire chord.', ' If you do both, the durations are multiplied together'));
 var _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey = '| G | c2 e>c G<c e>g | c\'2 b>c\' a<c\' g>e |';
 var _newlandsvalley$elm_abc_player$Lessons$instStrathspey = A2(_elm_lang$core$Basics_ops['++'], 'Conversely, you can shorten the first note of a pair and lengthen the second by means of the < character.', ' This rhythm is found in strathspeys.');
 var _newlandsvalley$elm_abc_player$Lessons$hintHornpipe = 'If you know it, can you finish off the \'A\' part of the tune?';
@@ -13914,28 +13917,40 @@ var _newlandsvalley$elm_abc_player$Lessons$instShortNotes = A2(
 		_elm_lang$core$Basics_ops['++'],
 		' 1/2 or 1/3. A shorthand for 1/2 is simply / and a shorthand for 1/3 is simply /3.',
 		A2(_elm_lang$core$Basics_ops['++'], ' You can extend rests the same way.', ' If you make notes too short, they may not be heard.')));
-var _newlandsvalley$elm_abc_player$Lessons$hintLongNotes = 'Try making some of these notes even longer.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes = '| F G A B c4 g2 b2 c\'4 |';
-var _newlandsvalley$elm_abc_player$Lessons$instLongNotes = A2(_elm_lang$core$Basics_ops['++'], 'So far, all our notes have had a duration of 1 unit.  You can extend this by placing a whole number', ' after the note (and after the octave marker if you have one).');
 var _newlandsvalley$elm_abc_player$Lessons$hintOctaves = 'Experiment by adding some more high or low notes.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplOctaves = '| C,, G,, C, G, | C G c g | c\' g\' c\'\' |';
-var _newlandsvalley$elm_abc_player$Lessons$instOctaves = A2(_elm_lang$core$Basics_ops['++'], 'You can reach octaves below middle C by adding one (or more) commas immediately after the note.', ' Similarly higher octaves can be reached using apostrophes.');
+var _newlandsvalley$elm_abc_player$Lessons$xmplOctaves = '| C,, G,, C, G, | C G c g | c\' g\' c\'\'4 |';
+var _newlandsvalley$elm_abc_player$Lessons$instOctaves = A2(
+	_elm_lang$core$Basics_ops['++'],
+	'You can reach the octave below middle C by adding a comma immediately after the note name.',
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		' Each time you add a comma, you drop a further octave. ',
+		A2(_elm_lang$core$Basics_ops['++'], ' Similarly higher octaves can be reached using apostrophes.', ' If you want a longer note, you must put the duration after the comma or apostrophe.')));
 var _newlandsvalley$elm_abc_player$Lessons$hintBarsAndRests = 'Try adding another bar which contains both notes and rests.';
 var _newlandsvalley$elm_abc_player$Lessons$xmplBarsAndRests = A2(_elm_lang$core$Basics_ops['++'], '| c2 c2 | z cBA |\r\n', '| E2 A2 | z3 A |');
-var _newlandsvalley$elm_abc_player$Lessons$instBarsAndRests = A2(_elm_lang$core$Basics_ops['++'], 'Use the character z to represent a rest.  You can set the length of a rest in exactly the same manner as for a note - by adding a number after it', ' - for example z4. Use a vertical bar to introduce a bar line. You can spread out into multiple lines if you like.');
+var _newlandsvalley$elm_abc_player$Lessons$instBarsAndRests = A2(
+	_elm_lang$core$Basics_ops['++'],
+	'Use the character z to represent a rest.  In exactly the same manner as for notes, you can set the length of a rest by adding a number after it.',
+	A2(_elm_lang$core$Basics_ops['++'], ' For example z3 will make the rest last for three units.', ' Use a vertical bar to introduce a bar line. You can spread out into multiple lines if you like.'));
+var _newlandsvalley$elm_abc_player$Lessons$hintLongNotes = 'Try experimenting with different note lengths.';
+var _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes = 'c2 cG c2 e2 g4';
+var _newlandsvalley$elm_abc_player$Lessons$instLongNotes = A2(_elm_lang$core$Basics_ops['++'], 'You can make a note last longer by putting a number after the note name.', ' So, for example, c2 represents the note C in the octave immediately above the one that stars with middle C, having a duration of two units.');
 var _newlandsvalley$elm_abc_player$Lessons$hintNotes = 'Try altering some of the notes.';
 var _newlandsvalley$elm_abc_player$Lessons$xmplNotes = 'A B c def';
 var _newlandsvalley$elm_abc_player$Lessons$instNotes = A2(
 	_elm_lang$core$Basics_ops['++'],
-	'Use the characters A-G for the notes of the octave starting from middle C and a-g for the octave above.',
-	A2(_elm_lang$core$Basics_ops['++'], ' You can place notes next to each other or separate them with spaces - it won\'t make much difference to ', ' the sound but neighbouring notes will be \'beamed\' together in a score.'));
+	'Use the upper-case characters A-G for the notes of the octave starting from middle C and lower-case a-g for the octave above that.',
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		' In this example, each note has the same length - let\'s call it the \'unit length\' for the moment.',
+		A2(_elm_lang$core$Basics_ops['++'], ' You can place notes next to each other or separate them with spaces - it won\'t make much difference to', ' the sound. However, in a score, if they\'re adjacent then notes with tails will have them joined together.')));
 var _newlandsvalley$elm_abc_player$Lessons$lessons = _elm_lang$core$Array$fromList(
 	_elm_lang$core$Native_List.fromArray(
 		[
 			{title: 'the notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintNotes},
+			{title: 'long notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instLongNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintLongNotes},
 			{title: 'bars and rests', instruction: _newlandsvalley$elm_abc_player$Lessons$instBarsAndRests, example: _newlandsvalley$elm_abc_player$Lessons$xmplBarsAndRests, hint: _newlandsvalley$elm_abc_player$Lessons$hintBarsAndRests},
 			{title: 'octaves', instruction: _newlandsvalley$elm_abc_player$Lessons$instOctaves, example: _newlandsvalley$elm_abc_player$Lessons$xmplOctaves, hint: _newlandsvalley$elm_abc_player$Lessons$hintOctaves},
-			{title: 'long notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instLongNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintLongNotes},
 			{title: 'short notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instShortNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplShortNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintShortNotes},
 			{title: 'hornpipes', instruction: _newlandsvalley$elm_abc_player$Lessons$instHornpipe, example: _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe, hint: _newlandsvalley$elm_abc_player$Lessons$hintHornpipe},
 			{title: 'strathspeys', instruction: _newlandsvalley$elm_abc_player$Lessons$instStrathspey, example: _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey, hint: ''},
@@ -14169,43 +14184,37 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$viewError = function (me) {
 	if (_p6.ctor === 'Nothing') {
 		return '';
 	} else {
-		return _newlandsvalley$elm_abc_player$Abc$parseError(_p6._0);
+		var _p7 = _p6._0;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'parse error: ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_p7.input,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' at position ',
+					_elm_lang$core$Basics$toString(_p7.position))));
 	}
 };
-var _newlandsvalley$elm_abc_player$AbcTutorial$toInt = function (_p7) {
+var _newlandsvalley$elm_abc_player$AbcTutorial$toInt = function (_p8) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		0,
 		_elm_lang$core$Result$toMaybe(
-			_elm_lang$core$String$toInt(_p7)));
+			_elm_lang$core$String$toInt(_p8)));
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$terminateLine = function (s) {
 	return A2(_elm_lang$core$Basics_ops['++'], s, '|\r\n');
 };
-var _newlandsvalley$elm_abc_player$AbcTutorial$playAbc = function (m) {
-	var notesReversed = _newlandsvalley$elm_abc_player$MidiNotes$makeMIDINotes(
-		_newlandsvalley$elm_abc_player$Notable$toPerformance(
-			_newlandsvalley$elm_abc_player$AbcPerformance$melodyFromAbcResult(
-				_newlandsvalley$elm_abc_player$Abc$parse(
-					_newlandsvalley$elm_abc_player$AbcTutorial$terminateLine(m.abc)))));
-	var duration = _newlandsvalley$elm_abc_player$MidiNotes$reversedPhraseDuration(notesReversed);
-	return {
-		ctor: '_Tuple2',
-		_0: _elm_lang$core$Native_Utils.update(
-			m,
-			{playing: true, duration: duration}),
-		_1: _newlandsvalley$elm_abc_player$SoundFont_Ports$requestPlayNoteSequence(
-			_elm_lang$core$List$reverse(notesReversed))
-	};
-};
 var _newlandsvalley$elm_abc_player$AbcTutorial$performanceDuration = function (notes) {
 	var maybeLastNote = _elm_lang$core$List$head(
 		_elm_lang$core$List$reverse(notes));
-	var _p8 = maybeLastNote;
-	if (_p8.ctor === 'Nothing') {
+	var _p9 = maybeLastNote;
+	if (_p9.ctor === 'Nothing') {
 		return 0.0;
 	} else {
-		return _p8._0.timeOffset;
+		return _p9._0.timeOffset;
 	}
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$init = {
@@ -14413,30 +14422,72 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$subscriptions = function (m) {
 var _newlandsvalley$elm_abc_player$AbcTutorial$NoOp = {ctor: 'NoOp'};
 var _newlandsvalley$elm_abc_player$AbcTutorial$suspend = function (secs) {
 	var time = secs * 1000;
-	var _p9 = A2(_elm_lang$core$Debug$log, 'suspend time', secs);
+	var _p10 = A2(_elm_lang$core$Debug$log, 'suspend time', secs);
 	return A3(
 		_elm_lang$core$Task$perform,
-		function (_p10) {
+		function (_p11) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 		},
-		function (_p11) {
+		function (_p12) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$PlayCompleted;
 		},
 		_elm_lang$core$Process$sleep(time));
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$showButtonsAction = A3(
 	_elm_lang$core$Task$perform,
-	function (_p12) {
-		return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
-	},
 	function (_p13) {
 		return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 	},
+	function (_p14) {
+		return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
+	},
 	_newlandsvalley$elm_abc_player$AbcTutorial$showButtons);
+var _newlandsvalley$elm_abc_player$AbcTutorial$returnError = function (e) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		function (_p15) {
+			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
+		},
+		function (_p16) {
+			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
+		},
+		_elm_lang$core$Task$succeed(
+			_newlandsvalley$elm_abc_player$AbcTutorial$Error(e)));
+};
+var _newlandsvalley$elm_abc_player$AbcTutorial$playAbc = function (m) {
+	var abcTuneResult = _newlandsvalley$elm_abc_player$Abc$parse(
+		_newlandsvalley$elm_abc_player$AbcTutorial$terminateLine(m.abc));
+	var _p17 = abcTuneResult;
+	if (_p17.ctor === 'Ok') {
+		var notesReversed = _newlandsvalley$elm_abc_player$MidiNotes$makeMIDINotes(
+			_newlandsvalley$elm_abc_player$Notable$toPerformance(
+				_newlandsvalley$elm_abc_player$AbcPerformance$melodyFromAbcResult(abcTuneResult)));
+		var duration = _newlandsvalley$elm_abc_player$MidiNotes$reversedPhraseDuration(notesReversed);
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				m,
+				{playing: true, duration: duration}),
+			_1: _newlandsvalley$elm_abc_player$SoundFont_Ports$requestPlayNoteSequence(
+				_elm_lang$core$List$reverse(notesReversed))
+		};
+	} else {
+		var _p18 = _p17._0;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				m,
+				{
+					error: _elm_lang$core$Maybe$Just(_p18)
+				}),
+			_1: _newlandsvalley$elm_abc_player$AbcTutorial$returnError(_p18)
+		};
+	}
+};
 var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 	function (msg, model) {
-		var _p14 = msg;
-		switch (_p14.ctor) {
+		var _p19 = msg;
+		switch (_p19.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'ShowButtons':
@@ -14452,7 +14503,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{fontsLoaded: _p14._0}),
+						{fontsLoaded: _p19._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Abc':
@@ -14460,7 +14511,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{abc: _p14._0}),
+						{abc: _p19._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Play':
@@ -14481,8 +14532,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 				};
 			case 'Move':
 				var next = function () {
-					var _p15 = _p14._0;
-					if (_p15 === true) {
+					var _p20 = _p19._0;
+					if (_p20 === true) {
 						return A2(
 							_elm_lang$core$Basics$min,
 							model.lessonIndex + 1,
@@ -14504,8 +14555,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 				};
 			case 'MoveToEnd':
 				var next = function () {
-					var _p16 = _p14._0;
-					if (_p16 === true) {
+					var _p21 = _p19._0;
+					if (_p21 === true) {
 						return _elm_lang$core$Array$length(_newlandsvalley$elm_abc_player$Lessons$lessons) - 1;
 					} else {
 						return 0;
@@ -14528,7 +14579,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							error: _elm_lang$core$Maybe$Just(_p14._0)
+							error: _elm_lang$core$Maybe$Just(_p19._0)
 						}),
 					_1: _newlandsvalley$elm_abc_player$AbcTutorial$showButtonsAction
 				};
@@ -14546,18 +14597,6 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$main = {
 			view: _newlandsvalley$elm_abc_player$AbcTutorial$view,
 			subscriptions: _newlandsvalley$elm_abc_player$AbcTutorial$subscriptions
 		})
-};
-var _newlandsvalley$elm_abc_player$AbcTutorial$returnError = function (e) {
-	return A3(
-		_elm_lang$core$Task$perform,
-		function (_p17) {
-			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
-		},
-		function (_p18) {
-			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
-		},
-		_elm_lang$core$Task$succeed(
-			_newlandsvalley$elm_abc_player$AbcTutorial$Error(e)));
 };
 
 var Elm = {};
