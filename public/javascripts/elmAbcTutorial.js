@@ -13753,7 +13753,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instMixolydian = A2(
 		_elm_lang$core$Basics_ops['++'],
 		' you can instead use the mode name. For example, the following tune is in D Mixolydian.  But remember, the classical',
 		A2(_elm_lang$core$Basics_ops['++'], ' modes all use the standard diatonic scale - they just start at different places along the scale. So for this tune ', ' the printed score would look, to all intents and purposes, identical to that for E Minor. Feel free to use either signature.')));
-var _newlandsvalley$elm_abc_player$Lessons$xmplChangeKeyTransient = 'Q:1/4=80\r\nK:C\r\n| C,E,G,C |[K:A] A,CEA |[K:B] B,DFB |[K:C] CEGc |\r\n';
+var _newlandsvalley$elm_abc_player$Lessons$xmplChangeKeyTransient = 'X:1\r\nQ:1/4=80\r\nM:2/4\r\nK:C\r\n| C,E,G,C |[K:A] A,CEA |\r\n|[K:B] B,DFB |[K:C] CEGc |\r\n';
 var _newlandsvalley$elm_abc_player$Lessons$instChangeKeyTransient = 'You can also mark a transient key change by placing the K (key) header in the body of the tune score, but enclosed within square brackets.';
 var _newlandsvalley$elm_abc_player$Lessons$xmplChangeKey = A2(
 	_elm_lang$core$Basics_ops['++'],
@@ -13792,7 +13792,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instInformation = A2(_elm_lang$core$B
 var _newlandsvalley$elm_abc_player$Lessons$xmplRhythm = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'X: 1\r\nT: Kapten Lindholms Engelska\r\nR: engelska\r\nM: 4/4\r\nL: 1/8\r\nK:Amaj\r\n',
-	A2(_elm_lang$core$Basics_ops['++'], '|: ed | cAce dcdf | ecAF E2 ed | cABc defg | aece agfe | cAce dcdf | ecAF E2 ed | cABc defg | a2 ag a2 :|\r\n', '|: e2 | aac\'e aac\'e | bbd\'e bbd\'e | aac\'e aac\'e | efed cB A2| fdfa ecea | fdfa ecea |fdfa gegb | baag a2 :|\r\n'));
+	A2(_elm_lang$core$Basics_ops['++'], '|: ed | cAce dcdf | ecAF E2 ed |\r\n| cABc defg | aece agfe | cAce dcdf |\r\n| ecAF E2 ed | cABc defg | a2 ag a2 :|\r\n', '|: e2 | aac\'e aac\'e | bbd\'e bbd\'e | aac\'e aac\'e |\r\n| efed cB A2| fdfa ecea | fdfa ecea |\r\n| fdfa gegb | baag a2 :|\r\n'));
 var _newlandsvalley$elm_abc_player$Lessons$instRhythm = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'You can use the R (rhythm) header to indicate the type of tune (jig, reel, polska etc.). In most ABC collections, this field is optional.',
@@ -13805,11 +13805,11 @@ var _newlandsvalley$elm_abc_player$Lessons$instTitle = A2(
 		_elm_lang$core$Basics_ops['++'],
 		' requires some headers.  The first is largely irrelevant - a reference number denoted by X.  Any number will do',
 		A2(_elm_lang$core$Basics_ops['++'], ' in most cases. The second header must be the tune title - T. You should also include the L (note length) and  M (meter) headers', ' introduced earlier. Finally, the K (key) header should always be the last one.')));
-var _newlandsvalley$elm_abc_player$Lessons$xmplRepeatVariants = A2(_elm_lang$core$Basics_ops['++'], 'L: 1/16\r\nK:Dmaj\r\n|: A4 a4 a2f2 | gfga b3a g2f2 | e3f g2b2 a2g2 | f3e d2c2 d2B2 |\r\n', '|1 B2A^G A8 :|2 B2AG F2EF A2A,2 | A,2D2 D8 |');
+var _newlandsvalley$elm_abc_player$Lessons$xmplRepeatVariants = A2(_elm_lang$core$Basics_ops['++'], 'L: 1/16\r\nK:Dmaj\r\n|: A4 a4 a2f2 | gfga b3a g2f2 |\r\n| e3f g2b2 a2g2 | f3e d2c2 d2B2 |\r\n', '|1 B2A^G A8 :|2 B2AG F2EF A2A,2 | A,2D2 D8 |');
 var _newlandsvalley$elm_abc_player$Lessons$instRepeatVariants = 'In some tunes, the two repeats may differ in their endings.  You can indicate that using |1 and |2 for the two variant endings';
 var _newlandsvalley$elm_abc_player$Lessons$xmplRepeat = '| C2 D2 E2 C2 :|: E2 F2 G4 :|\r\n|: GAGF E2 C2 :|: C2 G,2 C4 :|';
 var _newlandsvalley$elm_abc_player$Lessons$instRepeat = A2(_elm_lang$core$Basics_ops['++'], 'You can indicate that a section should be repeated by sandwiching it between bars which use the colon as a repeat marker - |: and :|', ' The initial repeat marker at the first bar is optional.');
-var _newlandsvalley$elm_abc_player$Lessons$xmplQuadruplet = 'K:Amaj\r\n| (3efg a2 a>b | (3agf e2-e>e | (4f2d2e2c2 | d>f (3f2e2c2 |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplQuadruplet = 'K:Amaj\r\n| (3efg a2 a>b | (3agf e2-e>e |\r\n| (4f2d2e2c2 | d>f (3f2e2c2 |';
 var _newlandsvalley$elm_abc_player$Lessons$instQuadruplet = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'Quadruplets are used if you want to play four notes in the time usually taken by three.',
@@ -13868,12 +13868,12 @@ var _newlandsvalley$elm_abc_player$Lessons$instUnitNote = A2(
 		_elm_lang$core$Basics_ops['++'],
 		' So far, we have used, by default, a convention that it represents an eighth note (a quaver).',
 		A2(_elm_lang$core$Basics_ops['++'], ' We can change the unit to be a sixteenth note (a semiquaver) if we use the L (unit note length) header.', ' This will have the effect of doubling the speed.')));
-var _newlandsvalley$elm_abc_player$Lessons$xmplAccidentals = 'K: AMinor \r\n| A2 B^c dcBc [CEa] |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplAccidentals = 'K: AMinor \r\n| A2 B^c dcBc [CEA] |';
 var _newlandsvalley$elm_abc_player$Lessons$instAccidentals = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'Similarly, you can sharpen a note by placing a caret symbol (^) immediately before it and flatten it using an underscore',
 	A2(_elm_lang$core$Basics_ops['++'], ' symbol (_). If you need a double sharp or double flat, then just double the appropriate symbol.', ' This example brings back the major feel although the key is now A Minor. Each C is sharpened.'));
-var _newlandsvalley$elm_abc_player$Lessons$xmplNaturals = 'K: AMajor \r\n| A2 B=c dcBc [CEa] |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplNaturals = 'K: AMajor \r\n| A2 B=c dcBc [CEA] |';
 var _newlandsvalley$elm_abc_player$Lessons$instNaturals = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'If your key means that certain notes are sharpened or flattened, but you need to play the \'natural\' ',
@@ -13903,20 +13903,20 @@ var _newlandsvalley$elm_abc_player$Lessons$instChords = A2(
 var _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey = '| G | c2 e>c G<c e>g | c\'2 b>c\' a<c\' g>e |';
 var _newlandsvalley$elm_abc_player$Lessons$instStrathspey = A2(_elm_lang$core$Basics_ops['++'], 'Conversely, you can shorten the first note of a pair and lengthen the second by means of the < character.', ' This rhythm is found in strathspeys.');
 var _newlandsvalley$elm_abc_player$Lessons$hintHornpipe = 'If you know it, can you finish off the \'A\' part of the tune?';
-var _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe = '| C>GE>G C>GE>G | c>de>d c>BA>G |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe = '| C>GE>G C>GE>G |\r\n| c>de>d c>BA>G |';
 var _newlandsvalley$elm_abc_player$Lessons$instHornpipe = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'The last example was in a hornpipe-like rhythm.  Because this is so common, there is a shorthand for it',
 	A2(_elm_lang$core$Basics_ops['++'], ' where you separate each pair of notes with the > character.  This extends the first note by half its length', ' and reduces the second by the same amount.'));
-var _newlandsvalley$elm_abc_player$Lessons$hintShortNotes = 'Try experimenting with a succession of notes of different pitch and with different fractional values.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplShortNotes = '| C3/2 G1/2 E3/2 G1/2 C3/2 G/ E3/2 G/ |';
-var _newlandsvalley$elm_abc_player$Lessons$instShortNotes = A2(
+var _newlandsvalley$elm_abc_player$Lessons$hintFractionalNotes = 'Try experimenting with a succession of notes of different pitch and with different fractional values.';
+var _newlandsvalley$elm_abc_player$Lessons$xmplFractionalNotes = '| C3/2G1/2 E3/2G1/2 C3/2G/ E3/2G/ |';
+var _newlandsvalley$elm_abc_player$Lessons$instFractionalNotes = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'You can shorten a note by placing a fraction after the note.  This could be, for example,',
 	A2(
 		_elm_lang$core$Basics_ops['++'],
 		' 1/2 or 1/3. A shorthand for 1/2 is simply / and a shorthand for 1/3 is simply /3.',
-		A2(_elm_lang$core$Basics_ops['++'], ' You can extend rests the same way.', ' If you make notes too short, they may not be heard.')));
+		A2(_elm_lang$core$Basics_ops['++'], ' You can also have longer notes if you use a fraction greater than 1.  Rests are treated the same way.', ' If you make notes too short, they may not be heard.')));
 var _newlandsvalley$elm_abc_player$Lessons$hintOctaves = 'Experiment by adding some more high or low notes.';
 var _newlandsvalley$elm_abc_player$Lessons$xmplOctaves = '| C,, G,, C, G, | C G c g | c\' g\' c\'\'4 |';
 var _newlandsvalley$elm_abc_player$Lessons$instOctaves = A2(
@@ -13926,15 +13926,18 @@ var _newlandsvalley$elm_abc_player$Lessons$instOctaves = A2(
 		_elm_lang$core$Basics_ops['++'],
 		' Each time you add a comma, you drop a further octave. ',
 		A2(_elm_lang$core$Basics_ops['++'], ' Similarly higher octaves can be reached using apostrophes.', ' If you want a longer note, you must put the duration after the comma or apostrophe.')));
-var _newlandsvalley$elm_abc_player$Lessons$hintBarsAndRests = 'Try adding another bar which contains both notes and rests.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplBarsAndRests = A2(_elm_lang$core$Basics_ops['++'], '| c2 c2 | z cBA |\r\n', '| E2 A2 | z3 A |');
-var _newlandsvalley$elm_abc_player$Lessons$instBarsAndRests = A2(
+var _newlandsvalley$elm_abc_player$Lessons$hintRests = 'Try adding another bar which contains both notes and rests.';
+var _newlandsvalley$elm_abc_player$Lessons$xmplRests = A2(_elm_lang$core$Basics_ops['++'], '| c2 c2 z cBA |\r\n', '| E2 A2 z3 A |');
+var _newlandsvalley$elm_abc_player$Lessons$instRests = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'Use the character z to represent a rest.  In exactly the same manner as for notes, you can set the length of a rest by adding a number after it.',
-	A2(_elm_lang$core$Basics_ops['++'], ' For example z3 will make the rest last for three units.', ' Use a vertical bar to introduce a bar line. You can spread out into multiple lines if you like.'));
-var _newlandsvalley$elm_abc_player$Lessons$hintLongNotes = 'Try experimenting with different note lengths.';
-var _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes = 'c2 cG c2 e2 g4';
-var _newlandsvalley$elm_abc_player$Lessons$instLongNotes = A2(_elm_lang$core$Basics_ops['++'], 'You can make a note last longer by putting a number after the note name.', ' So, for example, c2 represents the note C in the octave immediately above the one that stars with middle C, having a duration of two units.');
+	A2(_elm_lang$core$Basics_ops['++'], ' For example z3 will make the rest last for three units.', ' You can spread out the tune into multiple lines if you like by hitting carriage return.'));
+var _newlandsvalley$elm_abc_player$Lessons$hintLongNotesAndBars = 'Try experimenting with different note lengths.';
+var _newlandsvalley$elm_abc_player$Lessons$xmplLongNotesAndBars = '| c2 cG c2 e2 | g4';
+var _newlandsvalley$elm_abc_player$Lessons$instLongNotesAndBars = A2(
+	_elm_lang$core$Basics_ops['++'],
+	'You can make a note last longer by putting a number after the note name.',
+	A2(_elm_lang$core$Basics_ops['++'], ' So, for example, c2 represents the note C in the octave immediately above the one that starts with middle C, having a duration of two units.', ' Use a vertical bar to introduce a bar line.'));
 var _newlandsvalley$elm_abc_player$Lessons$hintNotes = 'Try altering some of the notes.';
 var _newlandsvalley$elm_abc_player$Lessons$xmplNotes = 'A B c def';
 var _newlandsvalley$elm_abc_player$Lessons$instNotes = A2(
@@ -13947,39 +13950,39 @@ var _newlandsvalley$elm_abc_player$Lessons$instNotes = A2(
 var _newlandsvalley$elm_abc_player$Lessons$lessons = _elm_lang$core$Array$fromList(
 	_elm_lang$core$Native_List.fromArray(
 		[
-			{title: 'the notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintNotes},
-			{title: 'long notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instLongNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplLongNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintLongNotes},
-			{title: 'bars and rests', instruction: _newlandsvalley$elm_abc_player$Lessons$instBarsAndRests, example: _newlandsvalley$elm_abc_player$Lessons$xmplBarsAndRests, hint: _newlandsvalley$elm_abc_player$Lessons$hintBarsAndRests},
-			{title: 'octaves', instruction: _newlandsvalley$elm_abc_player$Lessons$instOctaves, example: _newlandsvalley$elm_abc_player$Lessons$xmplOctaves, hint: _newlandsvalley$elm_abc_player$Lessons$hintOctaves},
-			{title: 'short notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instShortNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplShortNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintShortNotes},
-			{title: 'hornpipes', instruction: _newlandsvalley$elm_abc_player$Lessons$instHornpipe, example: _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe, hint: _newlandsvalley$elm_abc_player$Lessons$hintHornpipe},
-			{title: 'strathspeys', instruction: _newlandsvalley$elm_abc_player$Lessons$instStrathspey, example: _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey, hint: ''},
-			{title: 'chords', instruction: _newlandsvalley$elm_abc_player$Lessons$instChords, example: _newlandsvalley$elm_abc_player$Lessons$xmplChords, hint: _newlandsvalley$elm_abc_player$Lessons$hintChords},
-			{title: 'key signature', instruction: _newlandsvalley$elm_abc_player$Lessons$instKeySig, example: _newlandsvalley$elm_abc_player$Lessons$xmplKeySig, hint: ''},
-			{title: 'sharp and flat key signatures', instruction: _newlandsvalley$elm_abc_player$Lessons$instFlatKeySig, example: _newlandsvalley$elm_abc_player$Lessons$xmplFlatKeySig, hint: ''},
-			{title: 'naturals', instruction: _newlandsvalley$elm_abc_player$Lessons$instNaturals, example: _newlandsvalley$elm_abc_player$Lessons$xmplNaturals, hint: ''},
-			{title: 'sharps and flats', instruction: _newlandsvalley$elm_abc_player$Lessons$instAccidentals, example: _newlandsvalley$elm_abc_player$Lessons$xmplAccidentals, hint: ''},
-			{title: 'how long is a unit note?', instruction: _newlandsvalley$elm_abc_player$Lessons$instUnitNote, example: _newlandsvalley$elm_abc_player$Lessons$xmplUnitNote, hint: ''},
-			{title: 'tempo', instruction: _newlandsvalley$elm_abc_player$Lessons$instTempo, example: _newlandsvalley$elm_abc_player$Lessons$xmplTempo, hint: ''},
-			{title: 'meter', instruction: _newlandsvalley$elm_abc_player$Lessons$instMeter, example: _newlandsvalley$elm_abc_player$Lessons$xmplMeter, hint: ''},
-			{title: 'tie', instruction: _newlandsvalley$elm_abc_player$Lessons$instTie, example: _newlandsvalley$elm_abc_player$Lessons$xmplTie, hint: ''},
-			{title: 'triplet', instruction: _newlandsvalley$elm_abc_player$Lessons$instTriplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplTriplet, hint: ''},
-			{title: 'triplet with differing note lengths', instruction: _newlandsvalley$elm_abc_player$Lessons$instComplexTriplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplComplexTriplet, hint: ''},
-			{title: 'quadruplet', instruction: _newlandsvalley$elm_abc_player$Lessons$instQuadruplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplQuadruplet, hint: ''},
-			{title: 'repeats', instruction: _newlandsvalley$elm_abc_player$Lessons$instRepeat, example: _newlandsvalley$elm_abc_player$Lessons$xmplRepeat, hint: ''},
-			{title: 'repeats with variant endings', instruction: _newlandsvalley$elm_abc_player$Lessons$instRepeatVariants, example: _newlandsvalley$elm_abc_player$Lessons$xmplRepeatVariants, hint: ''},
-			{title: 'tune title', instruction: _newlandsvalley$elm_abc_player$Lessons$instTitle, example: _newlandsvalley$elm_abc_player$Lessons$xmplTitle, hint: ''},
-			{title: 'rhythm', instruction: _newlandsvalley$elm_abc_player$Lessons$instRhythm, example: _newlandsvalley$elm_abc_player$Lessons$xmplRhythm, hint: ''},
-			{title: 'information headers', instruction: _newlandsvalley$elm_abc_player$Lessons$instInformation, example: _newlandsvalley$elm_abc_player$Lessons$xmplInformation, hint: ''},
-			{title: 'key changes', instruction: _newlandsvalley$elm_abc_player$Lessons$instChangeKey, example: _newlandsvalley$elm_abc_player$Lessons$xmplChangeKey, hint: ''},
-			{title: 'transient key changes', instruction: _newlandsvalley$elm_abc_player$Lessons$instChangeKeyTransient, example: _newlandsvalley$elm_abc_player$Lessons$xmplChangeKeyTransient, hint: ''},
-			{title: 'other modes', instruction: _newlandsvalley$elm_abc_player$Lessons$instMixolydian, example: _newlandsvalley$elm_abc_player$Lessons$xmplMixolydian, hint: ''},
-			{title: 'klezmer', instruction: _newlandsvalley$elm_abc_player$Lessons$instKlezmer, example: _newlandsvalley$elm_abc_player$Lessons$xmplKlezmer, hint: ''},
-			{title: 'Balkan', instruction: _newlandsvalley$elm_abc_player$Lessons$instBalkan, example: _newlandsvalley$elm_abc_player$Lessons$xmplBalkan, hint: ''}
+			{id: 'notes', title: 'the notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintNotes},
+			{id: 'longnotesandbars', title: 'long notes and bars', instruction: _newlandsvalley$elm_abc_player$Lessons$instLongNotesAndBars, example: _newlandsvalley$elm_abc_player$Lessons$xmplLongNotesAndBars, hint: _newlandsvalley$elm_abc_player$Lessons$hintLongNotesAndBars},
+			{id: 'rests', title: 'rests', instruction: _newlandsvalley$elm_abc_player$Lessons$instRests, example: _newlandsvalley$elm_abc_player$Lessons$xmplRests, hint: _newlandsvalley$elm_abc_player$Lessons$hintRests},
+			{id: 'octaves', title: 'octaves', instruction: _newlandsvalley$elm_abc_player$Lessons$instOctaves, example: _newlandsvalley$elm_abc_player$Lessons$xmplOctaves, hint: _newlandsvalley$elm_abc_player$Lessons$hintOctaves},
+			{id: 'fractionalnotes', title: 'fractional notes', instruction: _newlandsvalley$elm_abc_player$Lessons$instFractionalNotes, example: _newlandsvalley$elm_abc_player$Lessons$xmplFractionalNotes, hint: _newlandsvalley$elm_abc_player$Lessons$hintFractionalNotes},
+			{id: 'hornpipes', title: 'hornpipes', instruction: _newlandsvalley$elm_abc_player$Lessons$instHornpipe, example: _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe, hint: _newlandsvalley$elm_abc_player$Lessons$hintHornpipe},
+			{id: 'strathspeys', title: 'strathspeys', instruction: _newlandsvalley$elm_abc_player$Lessons$instStrathspey, example: _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey, hint: ''},
+			{id: 'chords', title: 'chords', instruction: _newlandsvalley$elm_abc_player$Lessons$instChords, example: _newlandsvalley$elm_abc_player$Lessons$xmplChords, hint: _newlandsvalley$elm_abc_player$Lessons$hintChords},
+			{id: 'keysignature', title: 'key signature', instruction: _newlandsvalley$elm_abc_player$Lessons$instKeySig, example: _newlandsvalley$elm_abc_player$Lessons$xmplKeySig, hint: ''},
+			{id: 'sharpandflatkeys', title: 'sharp and flat key signatures', instruction: _newlandsvalley$elm_abc_player$Lessons$instFlatKeySig, example: _newlandsvalley$elm_abc_player$Lessons$xmplFlatKeySig, hint: ''},
+			{id: 'naturals', title: 'naturals', instruction: _newlandsvalley$elm_abc_player$Lessons$instNaturals, example: _newlandsvalley$elm_abc_player$Lessons$xmplNaturals, hint: ''},
+			{id: 'accidentals', title: 'sharps and flats', instruction: _newlandsvalley$elm_abc_player$Lessons$instAccidentals, example: _newlandsvalley$elm_abc_player$Lessons$xmplAccidentals, hint: ''},
+			{id: 'unitnote', title: 'how long is a unit note?', instruction: _newlandsvalley$elm_abc_player$Lessons$instUnitNote, example: _newlandsvalley$elm_abc_player$Lessons$xmplUnitNote, hint: ''},
+			{id: 'tempo', title: 'tempo', instruction: _newlandsvalley$elm_abc_player$Lessons$instTempo, example: _newlandsvalley$elm_abc_player$Lessons$xmplTempo, hint: ''},
+			{id: 'meter', title: 'meter', instruction: _newlandsvalley$elm_abc_player$Lessons$instMeter, example: _newlandsvalley$elm_abc_player$Lessons$xmplMeter, hint: ''},
+			{id: 'tie', title: 'tie', instruction: _newlandsvalley$elm_abc_player$Lessons$instTie, example: _newlandsvalley$elm_abc_player$Lessons$xmplTie, hint: ''},
+			{id: 'triplet', title: 'triplet', instruction: _newlandsvalley$elm_abc_player$Lessons$instTriplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplTriplet, hint: ''},
+			{id: 'complextriplet', title: 'triplet with differing note lengths', instruction: _newlandsvalley$elm_abc_player$Lessons$instComplexTriplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplComplexTriplet, hint: ''},
+			{id: 'quadruplet', title: 'quadruplet', instruction: _newlandsvalley$elm_abc_player$Lessons$instQuadruplet, example: _newlandsvalley$elm_abc_player$Lessons$xmplQuadruplet, hint: ''},
+			{id: 'repeats', title: 'repeats', instruction: _newlandsvalley$elm_abc_player$Lessons$instRepeat, example: _newlandsvalley$elm_abc_player$Lessons$xmplRepeat, hint: ''},
+			{id: 'repeatvariants', title: 'repeats with variant endings', instruction: _newlandsvalley$elm_abc_player$Lessons$instRepeatVariants, example: _newlandsvalley$elm_abc_player$Lessons$xmplRepeatVariants, hint: ''},
+			{id: 'title', title: 'tune title', instruction: _newlandsvalley$elm_abc_player$Lessons$instTitle, example: _newlandsvalley$elm_abc_player$Lessons$xmplTitle, hint: ''},
+			{id: 'rhythm', title: 'rhythm', instruction: _newlandsvalley$elm_abc_player$Lessons$instRhythm, example: _newlandsvalley$elm_abc_player$Lessons$xmplRhythm, hint: ''},
+			{id: 'information', title: 'information headers', instruction: _newlandsvalley$elm_abc_player$Lessons$instInformation, example: _newlandsvalley$elm_abc_player$Lessons$xmplInformation, hint: ''},
+			{id: 'keychanges', title: 'key changes', instruction: _newlandsvalley$elm_abc_player$Lessons$instChangeKey, example: _newlandsvalley$elm_abc_player$Lessons$xmplChangeKey, hint: ''},
+			{id: 'keychangetransient', title: 'transient key changes', instruction: _newlandsvalley$elm_abc_player$Lessons$instChangeKeyTransient, example: _newlandsvalley$elm_abc_player$Lessons$xmplChangeKeyTransient, hint: ''},
+			{id: 'modes', title: 'other modes', instruction: _newlandsvalley$elm_abc_player$Lessons$instMixolydian, example: _newlandsvalley$elm_abc_player$Lessons$xmplMixolydian, hint: ''},
+			{id: 'klezmer', title: 'klezmer', instruction: _newlandsvalley$elm_abc_player$Lessons$instKlezmer, example: _newlandsvalley$elm_abc_player$Lessons$xmplKlezmer, hint: ''},
+			{id: 'balkan', title: 'Balkan', instruction: _newlandsvalley$elm_abc_player$Lessons$instBalkan, example: _newlandsvalley$elm_abc_player$Lessons$xmplBalkan, hint: ''}
 		]));
-var _newlandsvalley$elm_abc_player$Lessons$Lesson = F4(
-	function (a, b, c, d) {
-		return {title: a, instruction: b, example: c, hint: d};
+var _newlandsvalley$elm_abc_player$Lessons$Lesson = F5(
+	function (a, b, c, d, e) {
+		return {id: a, title: b, instruction: c, example: d, hint: e};
 	});
 
 var _newlandsvalley$elm_abc_player$SoundFont_Ports$initialiseAudioContext = _elm_lang$core$Native_Platform.outgoingPort(
@@ -14084,6 +14087,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$fieldsetStyle = _elm_lang$html$Ht
 			{ctor: '_Tuple2', _0: 'border', _1: 'none'},
 			{ctor: '_Tuple2', _0: 'border-radius', _1: '2px'},
 			{ctor: '_Tuple2', _0: 'margin-bottom', _1: '12px'},
+			{ctor: '_Tuple2', _0: 'margin-left', _1: '12px'},
+			{ctor: '_Tuple2', _0: 'margin-right', _1: '12px'},
 			{ctor: '_Tuple2', _0: 'padding', _1: '10px 10px 20px 10px'},
 			{ctor: '_Tuple2', _0: 'display', _1: 'inline-block'}
 		]));
@@ -14107,6 +14112,23 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$buttonAttributes = F2(
 				_elm_lang$core$Basics$not(isEnabled))
 			]);
 	});
+var _newlandsvalley$elm_abc_player$AbcTutorial$rightImageStyle = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'position', _1: 'absolute'}
+		]));
+var _newlandsvalley$elm_abc_player$AbcTutorial$leftPaneCentreStyle = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'float', _1: 'left'},
+			{ctor: '_Tuple2', _0: 'margin-left', _1: '200px'}
+		]));
+var _newlandsvalley$elm_abc_player$AbcTutorial$leftPaneStyle = _elm_lang$html$Html_Attributes$style(
+	_elm_lang$core$Native_List.fromArray(
+		[
+			{ctor: '_Tuple2', _0: 'float', _1: 'left'},
+			{ctor: '_Tuple2', _0: 'width', _1: '800px'}
+		]));
 var _newlandsvalley$elm_abc_player$AbcTutorial$centreStyle = _elm_lang$html$Html_Attributes$style(
 	_elm_lang$core$Native_List.fromArray(
 		[
@@ -14137,37 +14159,49 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$taStyle = _elm_lang$html$Html_Att
 			{ctor: '_Tuple2', _0: 'margin-right', _1: 'auto'},
 			{ctor: '_Tuple2', _0: 'background-color', _1: '#f3f6c6'}
 		]));
-var _newlandsvalley$elm_abc_player$AbcTutorial$hint = function (i) {
+var _newlandsvalley$elm_abc_player$AbcTutorial$scoreUrl = function (i) {
 	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
 	var _p2 = mlesson;
 	if (_p2.ctor === 'Nothing') {
 		return '';
 	} else {
-		return _p2._0.hint;
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'assets/images/tutorial/',
+			A2(_elm_lang$core$Basics_ops['++'], _p2._0.id, '.png'));
 	}
 };
-var _newlandsvalley$elm_abc_player$AbcTutorial$example = function (i) {
+var _newlandsvalley$elm_abc_player$AbcTutorial$hint = function (i) {
 	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
 	var _p3 = mlesson;
 	if (_p3.ctor === 'Nothing') {
-		return 'error';
+		return '';
 	} else {
-		return _p3._0.example;
+		return _p3._0.hint;
 	}
 };
-var _newlandsvalley$elm_abc_player$AbcTutorial$instruction = function (i) {
+var _newlandsvalley$elm_abc_player$AbcTutorial$example = function (i) {
 	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
 	var _p4 = mlesson;
 	if (_p4.ctor === 'Nothing') {
 		return 'error';
 	} else {
-		return _p4._0.instruction;
+		return _p4._0.example;
+	}
+};
+var _newlandsvalley$elm_abc_player$AbcTutorial$instruction = function (i) {
+	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
+	var _p5 = mlesson;
+	if (_p5.ctor === 'Nothing') {
+		return 'error';
+	} else {
+		return _p5._0.instruction;
 	}
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$title = function (i) {
 	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
-	var _p5 = mlesson;
-	if (_p5.ctor === 'Nothing') {
+	var _p6 = mlesson;
+	if (_p6.ctor === 'Nothing') {
 		return 'error';
 	} else {
 		return A2(
@@ -14176,33 +14210,33 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$title = function (i) {
 			A2(
 				_elm_lang$core$Basics_ops['++'],
 				_elm_lang$core$Basics$toString(i + 1),
-				A2(_elm_lang$core$Basics_ops['++'], ' - ', _p5._0.title)));
+				A2(_elm_lang$core$Basics_ops['++'], ' - ', _p6._0.title)));
 	}
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$viewError = function (me) {
-	var _p6 = me;
-	if (_p6.ctor === 'Nothing') {
+	var _p7 = me;
+	if (_p7.ctor === 'Nothing') {
 		return '';
 	} else {
-		var _p7 = _p6._0;
+		var _p8 = _p7._0;
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
 			'parse error: ',
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				_p7.input,
+				_p8.input,
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					' at position ',
-					_elm_lang$core$Basics$toString(_p7.position))));
+					_elm_lang$core$Basics$toString(_p8.position))));
 	}
 };
-var _newlandsvalley$elm_abc_player$AbcTutorial$toInt = function (_p8) {
+var _newlandsvalley$elm_abc_player$AbcTutorial$toInt = function (_p9) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		0,
 		_elm_lang$core$Result$toMaybe(
-			_elm_lang$core$String$toInt(_p8)));
+			_elm_lang$core$String$toInt(_p9)));
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$terminateLine = function (s) {
 	return A2(_elm_lang$core$Basics_ops['++'], s, '|\r\n');
@@ -14210,11 +14244,11 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$terminateLine = function (s) {
 var _newlandsvalley$elm_abc_player$AbcTutorial$performanceDuration = function (notes) {
 	var maybeLastNote = _elm_lang$core$List$head(
 		_elm_lang$core$List$reverse(notes));
-	var _p9 = maybeLastNote;
-	if (_p9.ctor === 'Nothing') {
+	var _p10 = maybeLastNote;
+	if (_p10.ctor === 'Nothing') {
 		return 0.0;
 	} else {
-		return _p9._0.timeOffset;
+		return _p10._0.timeOffset;
 	}
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$init = {
@@ -14253,13 +14287,13 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$view = function (model) {
 	return model.fontsLoaded ? A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle]),
+			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
 				_elm_lang$html$Html$h2,
 				_elm_lang$core$Native_List.fromArray(
-					[]),
+					[_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text(
@@ -14269,6 +14303,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$view = function (model) {
 				_elm_lang$html$Html$textarea,
 				_elm_lang$core$Native_List.fromArray(
 					[
+						_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle,
 						_elm_lang$html$Html_Attributes$value(
 						_newlandsvalley$elm_abc_player$AbcTutorial$instruction(model.lessonIndex)),
 						_newlandsvalley$elm_abc_player$AbcTutorial$instructionStyle,
@@ -14279,43 +14314,60 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				A2(
-				_elm_lang$html$Html$fieldset,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[_newlandsvalley$elm_abc_player$AbcTutorial$fieldsetStyle]),
+					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
-						_elm_lang$html$Html$legend,
+						_elm_lang$html$Html$fieldset,
 						_elm_lang$core$Native_List.fromArray(
-							[_newlandsvalley$elm_abc_player$AbcTutorial$legendStyle]),
+							[_newlandsvalley$elm_abc_player$AbcTutorial$fieldsetStyle]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html$text('you can edit the text inside the box and then hit play')
+								A2(
+								_elm_lang$html$Html$legend,
+								_elm_lang$core$Native_List.fromArray(
+									[_newlandsvalley$elm_abc_player$AbcTutorial$legendStyle]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('you can edit the text inside the box and then hit play')
+									])),
+								A2(
+								_elm_lang$html$Html$textarea,
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$placeholder('abc'),
+											_elm_lang$html$Html_Attributes$value(model.abc),
+											_elm_lang$html$Html_Events$onInput(_newlandsvalley$elm_abc_player$AbcTutorial$Abc),
+											_newlandsvalley$elm_abc_player$AbcTutorial$taStyle,
+											_elm_lang$html$Html_Attributes$cols(70),
+											_elm_lang$html$Html_Attributes$rows(15),
+											_elm_lang$html$Html_Attributes$autocomplete(false),
+											_elm_lang$html$Html_Attributes$spellcheck(false),
+											_elm_lang$html$Html_Attributes$autofocus(true)
+										]),
+									_newlandsvalley$elm_abc_player$AbcTutorial$highlights(model)),
+								_elm_lang$core$Native_List.fromArray(
+									[]))
 							])),
 						A2(
-						_elm_lang$html$Html$textarea,
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$html$Html_Attributes$placeholder('abc'),
-									_elm_lang$html$Html_Attributes$value(model.abc),
-									_elm_lang$html$Html_Events$onInput(_newlandsvalley$elm_abc_player$AbcTutorial$Abc),
-									_newlandsvalley$elm_abc_player$AbcTutorial$taStyle,
-									_elm_lang$html$Html_Attributes$cols(70),
-									_elm_lang$html$Html_Attributes$rows(12),
-									_elm_lang$html$Html_Attributes$autocomplete(false),
-									_elm_lang$html$Html_Attributes$spellcheck(false),
-									_elm_lang$html$Html_Attributes$autofocus(true)
-								]),
-							_newlandsvalley$elm_abc_player$AbcTutorial$highlights(model)),
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(
+								_newlandsvalley$elm_abc_player$AbcTutorial$scoreUrl(model.lessonIndex)),
+								_newlandsvalley$elm_abc_player$AbcTutorial$rightImageStyle
+							]),
 						_elm_lang$core$Native_List.fromArray(
 							[]))
 					])),
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle]),
+					[_newlandsvalley$elm_abc_player$AbcTutorial$leftPaneCentreStyle]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
@@ -14372,7 +14424,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$view = function (model) {
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[_newlandsvalley$elm_abc_player$AbcTutorial$centreStyle]),
+					[_newlandsvalley$elm_abc_player$AbcTutorial$leftPaneCentreStyle]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
@@ -14422,33 +14474,33 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$subscriptions = function (m) {
 var _newlandsvalley$elm_abc_player$AbcTutorial$NoOp = {ctor: 'NoOp'};
 var _newlandsvalley$elm_abc_player$AbcTutorial$suspend = function (secs) {
 	var time = secs * 1000;
-	var _p10 = A2(_elm_lang$core$Debug$log, 'suspend time', secs);
+	var _p11 = A2(_elm_lang$core$Debug$log, 'suspend time', secs);
 	return A3(
 		_elm_lang$core$Task$perform,
-		function (_p11) {
+		function (_p12) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 		},
-		function (_p12) {
+		function (_p13) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$PlayCompleted;
 		},
 		_elm_lang$core$Process$sleep(time));
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$showButtonsAction = A3(
 	_elm_lang$core$Task$perform,
-	function (_p13) {
+	function (_p14) {
 		return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 	},
-	function (_p14) {
+	function (_p15) {
 		return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 	},
 	_newlandsvalley$elm_abc_player$AbcTutorial$showButtons);
 var _newlandsvalley$elm_abc_player$AbcTutorial$returnError = function (e) {
 	return A3(
 		_elm_lang$core$Task$perform,
-		function (_p15) {
+		function (_p16) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 		},
-		function (_p16) {
+		function (_p17) {
 			return _newlandsvalley$elm_abc_player$AbcTutorial$NoOp;
 		},
 		_elm_lang$core$Task$succeed(
@@ -14457,8 +14509,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$returnError = function (e) {
 var _newlandsvalley$elm_abc_player$AbcTutorial$playAbc = function (m) {
 	var abcTuneResult = _newlandsvalley$elm_abc_player$Abc$parse(
 		_newlandsvalley$elm_abc_player$AbcTutorial$terminateLine(m.abc));
-	var _p17 = abcTuneResult;
-	if (_p17.ctor === 'Ok') {
+	var _p18 = abcTuneResult;
+	if (_p18.ctor === 'Ok') {
 		var notesReversed = _newlandsvalley$elm_abc_player$MidiNotes$makeMIDINotes(
 			_newlandsvalley$elm_abc_player$Notable$toPerformance(
 				_newlandsvalley$elm_abc_player$AbcPerformance$melodyFromAbcResult(abcTuneResult)));
@@ -14472,22 +14524,22 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$playAbc = function (m) {
 				_elm_lang$core$List$reverse(notesReversed))
 		};
 	} else {
-		var _p18 = _p17._0;
+		var _p19 = _p18._0;
 		return {
 			ctor: '_Tuple2',
 			_0: _elm_lang$core$Native_Utils.update(
 				m,
 				{
-					error: _elm_lang$core$Maybe$Just(_p18)
+					error: _elm_lang$core$Maybe$Just(_p19)
 				}),
-			_1: _newlandsvalley$elm_abc_player$AbcTutorial$returnError(_p18)
+			_1: _newlandsvalley$elm_abc_player$AbcTutorial$returnError(_p19)
 		};
 	}
 };
 var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 	function (msg, model) {
-		var _p19 = msg;
-		switch (_p19.ctor) {
+		var _p20 = msg;
+		switch (_p20.ctor) {
 			case 'NoOp':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'ShowButtons':
@@ -14503,7 +14555,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{fontsLoaded: _p19._0}),
+						{fontsLoaded: _p20._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Abc':
@@ -14511,7 +14563,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{abc: _p19._0}),
+						{abc: _p20._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Play':
@@ -14532,8 +14584,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 				};
 			case 'Move':
 				var next = function () {
-					var _p20 = _p19._0;
-					if (_p20 === true) {
+					var _p21 = _p20._0;
+					if (_p21 === true) {
 						return A2(
 							_elm_lang$core$Basics$min,
 							model.lessonIndex + 1,
@@ -14555,8 +14607,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 				};
 			case 'MoveToEnd':
 				var next = function () {
-					var _p21 = _p19._0;
-					if (_p21 === true) {
+					var _p22 = _p20._0;
+					if (_p22 === true) {
 						return _elm_lang$core$Array$length(_newlandsvalley$elm_abc_player$Lessons$lessons) - 1;
 					} else {
 						return 0;
@@ -14579,7 +14631,7 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							error: _elm_lang$core$Maybe$Just(_p19._0)
+							error: _elm_lang$core$Maybe$Just(_p20._0)
 						}),
 					_1: _newlandsvalley$elm_abc_player$AbcTutorial$showButtonsAction
 				};
