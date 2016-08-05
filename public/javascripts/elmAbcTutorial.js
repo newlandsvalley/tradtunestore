@@ -13900,7 +13900,7 @@ var _newlandsvalley$elm_abc_player$Lessons$instChords = A2(
 	_elm_lang$core$Basics_ops['++'],
 	'You can play a chord by placing a group of notes, adjacent to each other, inside square brackets - for example [acE].',
 	A2(_elm_lang$core$Basics_ops['++'], ' To set the duration of the chord, you can either set the length of each note individually or else for the entire chord.', ' If you do both, the durations are multiplied together'));
-var _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey = '| G | c2 e>c G<c e>g | c\'2 b>c\' a<c\' g>e |';
+var _newlandsvalley$elm_abc_player$Lessons$xmplStrathspey = '| G | c2 e>c G<c e>g |\r\n| c\'2 b>c\' a<c\' g>e |';
 var _newlandsvalley$elm_abc_player$Lessons$instStrathspey = A2(_elm_lang$core$Basics_ops['++'], 'Conversely, you can shorten the first note of a pair and lengthen the second by means of the < character.', ' This rhythm is found in strathspeys.');
 var _newlandsvalley$elm_abc_player$Lessons$hintHornpipe = 'If you know it, can you finish off the \'A\' part of the tune?';
 var _newlandsvalley$elm_abc_player$Lessons$xmplHornpipe = '| C>GE>G C>GE>G |\r\n| c>de>d c>BA>G |';
