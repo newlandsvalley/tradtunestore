@@ -1518,22 +1518,124 @@ var _elm_lang$core$List$intersperse = F2(
 			return A2(_elm_lang$core$List_ops['::'], _p21._0, spersed);
 		}
 	});
-var _elm_lang$core$List$take = F2(
+var _elm_lang$core$List$takeReverse = F3(
+	function (n, list, taken) {
+		takeReverse:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) {
+				return taken;
+			} else {
+				var _p22 = list;
+				if (_p22.ctor === '[]') {
+					return taken;
+				} else {
+					var _v23 = n - 1,
+						_v24 = _p22._1,
+						_v25 = A2(_elm_lang$core$List_ops['::'], _p22._0, taken);
+					n = _v23;
+					list = _v24;
+					taken = _v25;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var _elm_lang$core$List$takeTailRec = F2(
 	function (n, list) {
+		return _elm_lang$core$List$reverse(
+			A3(
+				_elm_lang$core$List$takeReverse,
+				n,
+				list,
+				_elm_lang$core$Native_List.fromArray(
+					[])));
+	});
+var _elm_lang$core$List$takeFast = F3(
+	function (ctr, n, list) {
 		if (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) {
 			return _elm_lang$core$Native_List.fromArray(
 				[]);
 		} else {
-			var _p22 = list;
-			if (_p22.ctor === '[]') {
-				return list;
-			} else {
-				return A2(
-					_elm_lang$core$List_ops['::'],
-					_p22._0,
-					A2(_elm_lang$core$List$take, n - 1, _p22._1));
-			}
+			var _p23 = {ctor: '_Tuple2', _0: n, _1: list};
+			_v26_5:
+			do {
+				_v26_1:
+				do {
+					if (_p23.ctor === '_Tuple2') {
+						if (_p23._1.ctor === '[]') {
+							return list;
+						} else {
+							if (_p23._1._1.ctor === '::') {
+								switch (_p23._0) {
+									case 1:
+										break _v26_1;
+									case 2:
+										return _elm_lang$core$Native_List.fromArray(
+											[_p23._1._0, _p23._1._1._0]);
+									case 3:
+										if (_p23._1._1._1.ctor === '::') {
+											return _elm_lang$core$Native_List.fromArray(
+												[_p23._1._0, _p23._1._1._0, _p23._1._1._1._0]);
+										} else {
+											break _v26_5;
+										}
+									default:
+										if ((_p23._1._1._1.ctor === '::') && (_p23._1._1._1._1.ctor === '::')) {
+											var _p28 = _p23._1._1._1._0;
+											var _p27 = _p23._1._1._0;
+											var _p26 = _p23._1._0;
+											var _p25 = _p23._1._1._1._1._0;
+											var _p24 = _p23._1._1._1._1._1;
+											return (_elm_lang$core$Native_Utils.cmp(ctr, 1000) > 0) ? A2(
+												_elm_lang$core$List_ops['::'],
+												_p26,
+												A2(
+													_elm_lang$core$List_ops['::'],
+													_p27,
+													A2(
+														_elm_lang$core$List_ops['::'],
+														_p28,
+														A2(
+															_elm_lang$core$List_ops['::'],
+															_p25,
+															A2(_elm_lang$core$List$takeTailRec, n - 4, _p24))))) : A2(
+												_elm_lang$core$List_ops['::'],
+												_p26,
+												A2(
+													_elm_lang$core$List_ops['::'],
+													_p27,
+													A2(
+														_elm_lang$core$List_ops['::'],
+														_p28,
+														A2(
+															_elm_lang$core$List_ops['::'],
+															_p25,
+															A3(_elm_lang$core$List$takeFast, ctr + 1, n - 4, _p24)))));
+										} else {
+											break _v26_5;
+										}
+								}
+							} else {
+								if (_p23._0 === 1) {
+									break _v26_1;
+								} else {
+									break _v26_5;
+								}
+							}
+						}
+					} else {
+						break _v26_5;
+					}
+				} while(false);
+				return _elm_lang$core$Native_List.fromArray(
+					[_p23._1._0]);
+			} while(false);
+			return list;
 		}
+	});
+var _elm_lang$core$List$take = F2(
+	function (n, list) {
+		return A3(_elm_lang$core$List$takeFast, 0, n, list);
 	});
 var _elm_lang$core$List$repeatHelp = F3(
 	function (result, n, value) {
@@ -1542,12 +1644,12 @@ var _elm_lang$core$List$repeatHelp = F3(
 			if (_elm_lang$core$Native_Utils.cmp(n, 0) < 1) {
 				return result;
 			} else {
-				var _v23 = A2(_elm_lang$core$List_ops['::'], value, result),
-					_v24 = n - 1,
-					_v25 = value;
-				result = _v23;
-				n = _v24;
-				value = _v25;
+				var _v27 = A2(_elm_lang$core$List_ops['::'], value, result),
+					_v28 = n - 1,
+					_v29 = value;
+				result = _v27;
+				n = _v28;
+				value = _v29;
 				continue repeatHelp;
 			}
 		}
@@ -2224,17 +2326,40 @@ var incomingPortMap = F2(function subMap(tagger, finalTagger)
 
 function setupIncomingPort(name, callback)
 {
+	var sentBeforeInit = [];
 	var subs = _elm_lang$core$Native_List.Nil;
 	var converter = effectManagers[name].converter;
+	var currentOnEffects = preInitOnEffects;
+	var currentSend = preInitSend;
 
 	// CREATE MANAGER
 
 	var init = _elm_lang$core$Native_Scheduler.succeed(null);
 
-	function onEffects(router, subList, state)
+	function preInitOnEffects(router, subList, state)
+	{
+		var postInitResult = postInitOnEffects(router, subList, state);
+
+		for(var i = 0; i < sentBeforeInit.length; i++)
+		{
+			postInitSend(sentBeforeInit[i]);
+		}
+
+		sentBeforeInit = null; // to release objects held in queue
+		currentSend = postInitSend;
+		currentOnEffects = postInitOnEffects;
+		return postInitResult;
+	}
+
+	function postInitOnEffects(router, subList, state)
 	{
 		subs = subList;
 		return init;
+	}
+
+	function onEffects(router, subList, state)
+	{
+		return currentOnEffects(router, subList, state);
 	}
 
 	effectManagers[name].init = init;
@@ -2242,9 +2367,14 @@ function setupIncomingPort(name, callback)
 
 	// PUBLIC API
 
-	function send(value)
+	function preInitSend(value)
 	{
-		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, value);
+		sentBeforeInit.push(value);
+	}
+
+	function postInitSend(incomingValue)
+	{
+		var result = A2(_elm_lang$core$Json_Decode$decodeValue, converter, incomingValue);
 		if (result.ctor === 'Err')
 		{
 			throw new Error('Trying to send an unexpected type of value through port `' + name + '`:\n' + result._0);
@@ -2257,6 +2387,11 @@ function setupIncomingPort(name, callback)
 			callback(temp._0(value));
 			temp = temp._1;
 		}
+	}
+
+	function send(incomingValue)
+	{
+		currentSend(incomingValue);
 	}
 
 	return { send: send };
@@ -2281,6 +2416,7 @@ return {
 };
 
 }();
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Scheduler = function() {
@@ -2530,7 +2666,10 @@ function work()
 	var process;
 	while (numSteps < MAX_STEPS && (process = workQueue.shift()))
 	{
-		numSteps = step(numSteps, process);
+		if (process.root)
+		{
+			numSteps = step(numSteps, process);
+		}
 	}
 	if (!process)
 	{
@@ -2896,13 +3035,21 @@ function endsWith(sub, str)
 function indexes(sub, str)
 {
 	var subLen = sub.length;
+	
+	if (subLen < 1)
+	{
+		return _elm_lang$core$Native_List.Nil;
+	}
+
 	var i = 0;
 	var is = [];
+
 	while ((i = str.indexOf(sub, i)) > -1)
 	{
 		is.push(i);
 		i = i + subLen;
-	}
+	}	
+	
 	return _elm_lang$core$Native_List.fromArray(is);
 }
 
@@ -3031,6 +3178,7 @@ return {
 };
 
 }();
+
 //import Native.Utils //
 
 var _elm_lang$core$Native_Char = function() {
@@ -7453,7 +7601,7 @@ function badToString(problem)
 					+ ':\n\n' + problems.join('\n');
 
 			case 'custom':
-				return 'A `customDecode` failed'
+				return 'A `customDecoder` failed'
 					+ (context === '_' ? '' : ' at ' + context)
 					+ ' with the message: ' + problem.msg;
 
@@ -9204,7 +9352,7 @@ function applyPatch(domNode, patch)
 	switch (patch.type)
 	{
 		case 'p-redraw':
-			return redraw(domNode, patch.data, patch.eventNode);
+			return applyPatchRedraw(domNode, patch.data, patch.eventNode);
 
 		case 'p-facts':
 			applyFacts(domNode, patch.eventNode, patch.data);
@@ -9253,57 +9401,7 @@ function applyPatch(domNode, patch)
 			return domNode;
 
 		case 'p-reorder':
-			var data = patch.data;
-
-			// end inserts
-			var endInserts = data.endInserts;
-			var end;
-			if (typeof endInserts !== 'undefined')
-			{
-				if (endInserts.length === 1)
-				{
-					var insert = endInserts[0];
-					var entry = insert.entry;
-					var end = entry.tag === 'move'
-						? entry.data
-						: render(entry.vnode, patch.eventNode);
-				}
-				else
-				{
-					end = document.createDocumentFragment();
-					for (var i = 0; i < endInserts.length; i++)
-					{
-						var insert = endInserts[i];
-						var entry = insert.entry;
-						var node = entry.tag === 'move'
-							? entry.data
-							: render(entry.vnode, patch.eventNode);
-						end.appendChild(node);
-					}
-				}
-			}
-
-			// removals
-			domNode = applyPatchesHelp(domNode, data.patches);
-
-			// inserts
-			var inserts = data.inserts;
-			for (var i = 0; i < inserts.length; i++)
-			{
-				var insert = inserts[i];
-				var entry = insert.entry;
-				var node = entry.tag === 'move'
-					? entry.data
-					: render(entry.vnode, patch.eventNode);
-				domNode.insertBefore(node, domNode.childNodes[insert.index]);
-			}
-
-			if (typeof end !== 'undefined')
-			{
-				domNode.appendChild(end);
-			}
-
-			return domNode;
+			return applyPatchReorder(domNode, patch);
 
 		case 'p-custom':
 			var impl = patch.data;
@@ -9315,7 +9413,7 @@ function applyPatch(domNode, patch)
 }
 
 
-function redraw(domNode, vNode, eventNode)
+function applyPatchRedraw(domNode, vNode, eventNode)
 {
 	var parentNode = domNode.parentNode;
 	var newNode = render(vNode, eventNode);
@@ -9330,6 +9428,59 @@ function redraw(domNode, vNode, eventNode)
 		parentNode.replaceChild(newNode, domNode);
 	}
 	return newNode;
+}
+
+
+function applyPatchReorder(domNode, patch)
+{
+	var data = patch.data;
+
+	// remove end inserts
+	var frag = applyPatchReorderEndInsertsHelp(data.endInserts, patch);
+
+	// removals
+	domNode = applyPatchesHelp(domNode, data.patches);
+
+	// inserts
+	var inserts = data.inserts;
+	for (var i = 0; i < inserts.length; i++)
+	{
+		var insert = inserts[i];
+		var entry = insert.entry;
+		var node = entry.tag === 'move'
+			? entry.data
+			: render(entry.vnode, patch.eventNode);
+		domNode.insertBefore(node, domNode.childNodes[insert.index]);
+	}
+
+	// add end inserts
+	if (typeof frag !== 'undefined')
+	{
+		domNode.appendChild(frag);
+	}
+
+	return domNode;
+}
+
+
+function applyPatchReorderEndInsertsHelp(endInserts, patch)
+{
+	if (typeof endInserts === 'undefined')
+	{
+		return;
+	}
+
+	var frag = document.createDocumentFragment();
+	for (var i = 0; i < endInserts.length; i++)
+	{
+		var insert = endInserts[i];
+		var entry = insert.entry;
+		frag.appendChild(entry.tag === 'move'
+			? entry.data
+			: render(entry.vnode, patch.eventNode)
+		);
+	}
+	return frag;
 }
 
 
@@ -10757,9 +10908,6 @@ var _newlandsvalley$elm_abc_player$Abc_ParseTree$Ignore = {ctor: 'Ignore'};
 var _newlandsvalley$elm_abc_player$Abc_ParseTree$Spacer = function (a) {
 	return {ctor: 'Spacer', _0: a};
 };
-var _newlandsvalley$elm_abc_player$Abc_ParseTree$NoteSequence = function (a) {
-	return {ctor: 'NoteSequence', _0: a};
-};
 var _newlandsvalley$elm_abc_player$Abc_ParseTree$Inline = function (a) {
 	return {ctor: 'Inline', _0: a};
 };
@@ -12006,10 +12154,6 @@ var _newlandsvalley$elm_abc_player$Abc$abcChord = A2(
 				_Bogdanp$elm_combine$Combine$many1(_newlandsvalley$elm_abc_player$Abc$abcNote))),
 		_Bogdanp$elm_combine$Combine$maybe(_newlandsvalley$elm_abc_player$Abc$noteDur)),
 	'ABC chord');
-var _newlandsvalley$elm_abc_player$Abc$noteSequence = A2(
-	_Bogdanp$elm_combine$Combine_Infix_ops['<$>'],
-	_newlandsvalley$elm_abc_player$Abc_ParseTree$NoteSequence,
-	_Bogdanp$elm_combine$Combine$many1(_newlandsvalley$elm_abc_player$Abc$note));
 var _newlandsvalley$elm_abc_player$Abc$longDecoration = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
 	A3(
@@ -12041,6 +12185,20 @@ var _newlandsvalley$elm_abc_player$Abc$acciaccatura = A2(
 	_Bogdanp$elm_combine$Combine$maybe(
 		_Bogdanp$elm_combine$Combine_Char$char(
 			_elm_lang$core$Native_Utils.chr('/'))));
+var _newlandsvalley$elm_abc_player$Abc$grace = A2(
+	_Bogdanp$elm_combine$Combine_Infix_ops['<*>'],
+	A2(_Bogdanp$elm_combine$Combine_Infix_ops['<$>'], _newlandsvalley$elm_abc_player$Abc_ParseTree$GraceNote, _newlandsvalley$elm_abc_player$Abc$acciaccatura),
+	_Bogdanp$elm_combine$Combine$many1(_newlandsvalley$elm_abc_player$Abc$abcNote));
+var _newlandsvalley$elm_abc_player$Abc$graceNote = A2(
+	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
+	A3(
+		_Bogdanp$elm_combine$Combine$between,
+		_Bogdanp$elm_combine$Combine_Char$char(
+			_elm_lang$core$Native_Utils.chr('{')),
+		_Bogdanp$elm_combine$Combine_Char$char(
+			_elm_lang$core$Native_Utils.chr('}')),
+		_newlandsvalley$elm_abc_player$Abc$grace),
+	'grace note');
 var _newlandsvalley$elm_abc_player$Abc$inline = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
 	A2(
@@ -12058,22 +12216,6 @@ var _newlandsvalley$elm_abc_player$Abc$chord = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
 	A2(_Bogdanp$elm_combine$Combine_Infix_ops['<$>'], _newlandsvalley$elm_abc_player$Abc_ParseTree$Chord, _newlandsvalley$elm_abc_player$Abc$abcChord),
 	'chord');
-var _newlandsvalley$elm_abc_player$Abc$grace = A2(
-	_Bogdanp$elm_combine$Combine_Infix_ops['<*>'],
-	A2(_Bogdanp$elm_combine$Combine_Infix_ops['<$>'], _newlandsvalley$elm_abc_player$Abc_ParseTree$GraceNote, _newlandsvalley$elm_abc_player$Abc$acciaccatura),
-	_Bogdanp$elm_combine$Combine$choice(
-		_elm_lang$core$Native_List.fromArray(
-			[_newlandsvalley$elm_abc_player$Abc$noteSequence, _newlandsvalley$elm_abc_player$Abc$chord])));
-var _newlandsvalley$elm_abc_player$Abc$graceNote = A2(
-	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
-	A3(
-		_Bogdanp$elm_combine$Combine$between,
-		_Bogdanp$elm_combine$Combine_Char$char(
-			_elm_lang$core$Native_Utils.chr('{')),
-		_Bogdanp$elm_combine$Combine_Char$char(
-			_elm_lang$core$Native_Utils.chr('}')),
-		_newlandsvalley$elm_abc_player$Abc$grace),
-	'grace note');
 var _newlandsvalley$elm_abc_player$Abc$annotation = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<?>'],
 	A2(_Bogdanp$elm_combine$Combine_Infix_ops['<$>'], _newlandsvalley$elm_abc_player$Abc$buildAnnotation, _newlandsvalley$elm_abc_player$Abc$annotationString),
@@ -12148,9 +12290,21 @@ var _newlandsvalley$elm_abc_player$Abc$barSeparator = A2(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_Bogdanp$elm_combine$Combine$string('[|'),
+					_Bogdanp$elm_combine$Combine$string('|]:'),
 					_Bogdanp$elm_combine$Combine$string('|]'),
-					_Bogdanp$elm_combine$Combine$string('|'),
-					_Bogdanp$elm_combine$Combine$string(':')
+					_Bogdanp$elm_combine$Combine$string(']|:'),
+					_Bogdanp$elm_combine$Combine$string(']|'),
+					_Bogdanp$elm_combine$Combine$string(':[|'),
+					_Bogdanp$elm_combine$Combine$string('|:'),
+					_Bogdanp$elm_combine$Combine$string(':|:'),
+					_Bogdanp$elm_combine$Combine$string(':||:'),
+					_Bogdanp$elm_combine$Combine$string(':|]'),
+					_Bogdanp$elm_combine$Combine$string(':||'),
+					_Bogdanp$elm_combine$Combine$string(':|'),
+					_Bogdanp$elm_combine$Combine$string('::'),
+					_Bogdanp$elm_combine$Combine$string('||:'),
+					_Bogdanp$elm_combine$Combine$string('||'),
+					_Bogdanp$elm_combine$Combine$string('|')
 				]))));
 var _newlandsvalley$elm_abc_player$Abc$degenerateBarRepeat = A2(
 	_Bogdanp$elm_combine$Combine_Infix_ops['<$>'],
@@ -12307,6 +12461,57 @@ var _newlandsvalley$elm_abc_player$Music_Notation$accidentalKey = function (k) {
 	var acc = _p3._1;
 	return !_elm_lang$core$Native_Utils.eq(acc, _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural);
 };
+var _newlandsvalley$elm_abc_player$Music_Notation$modalDistance = function (mode) {
+	var _p4 = mode;
+	switch (_p4.ctor) {
+		case 'Dorian':
+			return 10;
+		case 'Phrygian':
+			return 8;
+		case 'Lydian':
+			return 7;
+		case 'Mixolydian':
+			return 5;
+		case 'Aeolian':
+			return 3;
+		case 'Minor':
+			return 3;
+		case 'Locrian':
+			return 1;
+		default:
+			return 0;
+	}
+};
+var _newlandsvalley$elm_abc_player$Music_Notation$accToMacc = function (acc) {
+	var _p5 = acc;
+	switch (_p5.ctor) {
+		case 'Sharp':
+			return _elm_lang$core$Maybe$Just(_newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp);
+		case 'Flat':
+			return _elm_lang$core$Maybe$Just(_newlandsvalley$elm_abc_player$Abc_ParseTree$Flat);
+		default:
+			return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _newlandsvalley$elm_abc_player$Music_Notation$maccToAcc = function (macc) {
+	var _p6 = macc;
+	_v4_2:
+	do {
+		if (_p6.ctor === 'Just') {
+			switch (_p6._0.ctor) {
+				case 'Sharp':
+					return _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp;
+				case 'Flat':
+					return _newlandsvalley$elm_abc_player$Abc_ParseTree$Flat;
+				default:
+					break _v4_2;
+			}
+		} else {
+			break _v4_2;
+		}
+	} while(false);
+	return _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural;
+};
 var _newlandsvalley$elm_abc_player$Music_Notation$partialSum = function (l) {
 	return A2(
 		_elm_lang$core$List$take,
@@ -12363,14 +12568,14 @@ var _newlandsvalley$elm_abc_player$Music_Notation$majorIntervals = _elm_lang$cor
 	[2, 2, 1, 2, 2, 2, 1]);
 var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonicKeySig = F3(
 	function (pc, a, m) {
-		var _p4 = {ctor: '_Tuple3', _0: pc, _1: a, _2: m};
-		_v2_6:
+		var _p7 = {ctor: '_Tuple3', _0: pc, _1: a, _2: m};
+		_v5_6:
 		do {
-			if (_p4.ctor === '_Tuple3') {
-				switch (_p4._1.ctor) {
+			if (_p7.ctor === '_Tuple3') {
+				switch (_p7._1.ctor) {
 					case 'Sharp':
-						if (_p4._2.ctor === 'Major') {
-							switch (_p4._0.ctor) {
+						if (_p7._2.ctor === 'Major') {
+							switch (_p7._0.ctor) {
 								case 'A':
 									return {
 										pitchClass: _newlandsvalley$elm_abc_player$Abc_ParseTree$B,
@@ -12390,14 +12595,14 @@ var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonicKeySig = F
 										mode: _newlandsvalley$elm_abc_player$Abc_ParseTree$Major
 									};
 								default:
-									break _v2_6;
+									break _v5_6;
 							}
 						} else {
-							break _v2_6;
+							break _v5_6;
 						}
 					case 'Flat':
-						if (_p4._2.ctor === 'Minor') {
-							switch (_p4._0.ctor) {
+						if (_p7._2.ctor === 'Minor') {
+							switch (_p7._0.ctor) {
 								case 'G':
 									return {
 										pitchClass: _newlandsvalley$elm_abc_player$Abc_ParseTree$F,
@@ -12417,16 +12622,16 @@ var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonicKeySig = F
 										mode: _newlandsvalley$elm_abc_player$Abc_ParseTree$Minor
 									};
 								default:
-									break _v2_6;
+									break _v5_6;
 							}
 						} else {
-							break _v2_6;
+							break _v5_6;
 						}
 					default:
-						break _v2_6;
+						break _v5_6;
 				}
 			} else {
-				break _v2_6;
+				break _v5_6;
 			}
 		} while(false);
 		return {
@@ -12436,11 +12641,11 @@ var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonicKeySig = F
 		};
 	});
 var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonic = function (k) {
-	var _p5 = k;
-	_v3_4:
+	var _p8 = k;
+	_v6_4:
 	do {
-		if ((_p5.ctor === '_Tuple2') && (_p5._1.ctor === 'Sharp')) {
-			switch (_p5._0.ctor) {
+		if ((_p8.ctor === '_Tuple2') && (_p8._1.ctor === 'Sharp')) {
+			switch (_p8._0.ctor) {
 				case 'A':
 					return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$B, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Flat};
 				case 'C':
@@ -12450,10 +12655,10 @@ var _newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonic = functio
 				case 'G':
 					return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$A, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Flat};
 				default:
-					break _v3_4;
+					break _v6_4;
 			}
 		} else {
-			break _v3_4;
+			break _v6_4;
 		}
 	} while(false);
 	return k;
@@ -12475,20 +12680,20 @@ var _newlandsvalley$elm_abc_player$Music_Notation$flatScale = _elm_lang$core$Nat
 	]);
 var _newlandsvalley$elm_abc_player$Music_Notation$extremeFlatScale = function () {
 	var f = function (pc) {
-		var _p6 = pc;
-		_v4_2:
+		var _p9 = pc;
+		_v7_2:
 		do {
-			if ((_p6.ctor === '_Tuple2') && (_p6._1.ctor === 'Natural')) {
-				switch (_p6._0.ctor) {
+			if ((_p9.ctor === '_Tuple2') && (_p9._1.ctor === 'Natural')) {
+				switch (_p9._0.ctor) {
 					case 'E':
 						return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$F, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Flat};
 					case 'B':
 						return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Flat};
 					default:
-						break _v4_2;
+						break _v7_2;
 				}
 			} else {
-				break _v4_2;
+				break _v7_2;
 			}
 		} while(false);
 		return pc;
@@ -12512,20 +12717,20 @@ var _newlandsvalley$elm_abc_player$Music_Notation$sharpScale = _elm_lang$core$Na
 	]);
 var _newlandsvalley$elm_abc_player$Music_Notation$extremeSharpScale = function () {
 	var f = function (pc) {
-		var _p7 = pc;
-		_v5_2:
+		var _p10 = pc;
+		_v8_2:
 		do {
-			if ((_p7.ctor === '_Tuple2') && (_p7._1.ctor === 'Natural')) {
-				switch (_p7._0.ctor) {
+			if ((_p10.ctor === '_Tuple2') && (_p10._1.ctor === 'Natural')) {
+				switch (_p10._0.ctor) {
 					case 'F':
 						return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$E, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp};
 					case 'C':
 						return {ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$B, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp};
 					default:
-						break _v5_2;
+						break _v8_2;
 				}
 			} else {
-				break _v5_2;
+				break _v8_2;
 			}
 		} while(false);
 		return pc;
@@ -12534,17 +12739,17 @@ var _newlandsvalley$elm_abc_player$Music_Notation$extremeSharpScale = function (
 }();
 var _newlandsvalley$elm_abc_player$Music_Notation$transposeKeyAccidentalBy = F2(
 	function (i, ka) {
-		var _p8 = ka;
-		var sourcepc = _p8._0;
-		var sourceacc = _p8._1;
+		var _p11 = ka;
+		var sourcepc = _p11._0;
+		var sourceacc = _p11._1;
 		var pattern = _elm_lang$core$Basics$toString(sourcepc);
 		var index = A2(
 			_elm_lang$core$Maybe$withDefault,
 			0,
 			A2(_elm_lang$core$Dict$get, pattern, _newlandsvalley$elm_abc_player$Music_Notation$chromaticScaleDict));
-		var _p9 = function () {
-			var _p10 = sourceacc;
-			switch (_p10.ctor) {
+		var _p12 = function () {
+			var _p13 = sourceacc;
+			switch (_p13.ctor) {
 				case 'Sharp':
 					return {ctor: '_Tuple2', _0: 1, _1: _newlandsvalley$elm_abc_player$Music_Notation$sharpScale};
 				case 'Flat':
@@ -12557,8 +12762,8 @@ var _newlandsvalley$elm_abc_player$Music_Notation$transposeKeyAccidentalBy = F2(
 					return {ctor: '_Tuple2', _0: 0, _1: _newlandsvalley$elm_abc_player$Music_Notation$sharpScale};
 			}
 		}();
-		var modifier = _p9._0;
-		var scale = _p9._1;
+		var modifier = _p12._0;
+		var scale = _p12._1;
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural},
@@ -12580,8 +12785,8 @@ var _newlandsvalley$elm_abc_player$Music_Notation$noteDuration = F2(
 		return ((60.0 * _imeckler$ratio$Ratio$toFloat(t.unitNoteLength)) * _imeckler$ratio$Ratio$toFloat(n)) / (_imeckler$ratio$Ratio$toFloat(t.tempoNoteLength) * _elm_lang$core$Basics$toFloat(t.bpm));
 	});
 var _newlandsvalley$elm_abc_player$Music_Notation$dotFactor = function (i) {
-	var _p11 = i;
-	switch (_p11) {
+	var _p14 = i;
+	switch (_p14) {
 		case 1:
 			return A2(_imeckler$ratio$Ratio$over, 1, 2);
 		case 2:
@@ -12594,9 +12799,9 @@ var _newlandsvalley$elm_abc_player$Music_Notation$dotFactor = function (i) {
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$modifyKeySet = F2(
 	function (target, ks) {
-		var _p12 = target;
-		var pc = _p12._0;
-		var accidental = _p12._1;
+		var _p15 = target;
+		var pc = _p15._0;
+		var accidental = _p15._1;
 		var f = function (key) {
 			return !_elm_lang$core$Native_Utils.eq(
 				_elm_lang$core$Basics$fst(key),
@@ -12609,46 +12814,239 @@ var _newlandsvalley$elm_abc_player$Music_Notation$inScale = F2(
 	function (ka, s) {
 		return A2(_elm_lang$core$List$member, ka, s);
 	});
-var _newlandsvalley$elm_abc_player$Music_Notation$getTitle = function (t) {
+var _newlandsvalley$elm_abc_player$Music_Notation$getHeaderMap = function (t) {
 	var f = function (h) {
-		var _p13 = h;
-		if (_p13.ctor === 'Title') {
-			return _elm_lang$core$Maybe$Just(_p13._0);
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
+		var _p16 = h;
+		switch (_p16.ctor) {
+			case 'Area':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('A'),
+					_1: h
+				};
+			case 'Book':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('B'),
+					_1: h
+				};
+			case 'Composer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('C'),
+					_1: h
+				};
+			case 'Discography':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('D'),
+					_1: h
+				};
+			case 'FileUrl':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('F'),
+					_1: h
+				};
+			case 'Group':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('G'),
+					_1: h
+				};
+			case 'History':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('H'),
+					_1: h
+				};
+			case 'Instruction':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('I'),
+					_1: h
+				};
+			case 'Key':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('K'),
+					_1: h
+				};
+			case 'UnitNoteLength':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('L'),
+					_1: h
+				};
+			case 'Meter':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('M'),
+					_1: h
+				};
+			case 'Macro':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('m'),
+					_1: h
+				};
+			case 'Notes':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('N'),
+					_1: h
+				};
+			case 'Origin':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('O'),
+					_1: h
+				};
+			case 'Parts':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('P'),
+					_1: h
+				};
+			case 'Tempo':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('Q'),
+					_1: h
+				};
+			case 'Rhythm':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('R'),
+					_1: h
+				};
+			case 'Remark':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('r'),
+					_1: h
+				};
+			case 'Source':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('S'),
+					_1: h
+				};
+			case 'SymbolLine':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('s'),
+					_1: h
+				};
+			case 'Title':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('T'),
+					_1: h
+				};
+			case 'UserDefined':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('U'),
+					_1: h
+				};
+			case 'Voice':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('V'),
+					_1: h
+				};
+			case 'WordsAfter':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('W'),
+					_1: h
+				};
+			case 'WordsAligned':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('w'),
+					_1: h
+				};
+			case 'ReferenceNumber':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('X'),
+					_1: h
+				};
+			case 'Transcription':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('Z'),
+					_1: h
+				};
+			case 'FieldContinuation':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('+'),
+					_1: h
+				};
+			case 'Comment':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('-'),
+					_1: h
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.chr('u'),
+					_1: h
+				};
 		}
 	};
-	var headers = _elm_lang$core$Basics$fst(t);
-	var titles = A2(
-		_elm_lang$core$List$filter,
-		_elm_community$maybe_extra$Maybe_Extra$isJust,
-		A2(_elm_lang$core$List$map, f, headers));
-	return _elm_community$maybe_extra$Maybe_Extra$join(
-		_elm_lang$core$List$head(titles));
+	var annotatedHeaders = A2(
+		_elm_lang$core$List$map,
+		f,
+		_elm_lang$core$List$reverse(
+			_elm_lang$core$Basics$fst(t)));
+	return _elm_lang$core$Dict$fromList(annotatedHeaders);
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$getKeySig = function (t) {
-	var f = function (h) {
-		var _p14 = h;
-		if (_p14.ctor === 'Key') {
-			return _elm_lang$core$Maybe$Just(_p14._0);
+	var headerMap = _newlandsvalley$elm_abc_player$Music_Notation$getHeaderMap(t);
+	var _p17 = A2(
+		_elm_lang$core$Dict$get,
+		_elm_lang$core$Native_Utils.chr('K'),
+		headerMap);
+	if (_p17.ctor === 'Just') {
+		var _p18 = _p17._0;
+		if (_p18.ctor === 'Key') {
+			return _elm_lang$core$Maybe$Just(_p18._0);
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
-	};
-	var headers = _elm_lang$core$Basics$fst(t);
-	var ksigs = A2(
-		_elm_lang$core$List$filter,
-		_elm_community$maybe_extra$Maybe_Extra$isJust,
-		A2(_elm_lang$core$List$map, f, headers));
-	return _elm_community$maybe_extra$Maybe_Extra$join(
-		_elm_lang$core$List$head(ksigs));
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _newlandsvalley$elm_abc_player$Music_Notation$getTitle = function (t) {
+	var headerMap = _newlandsvalley$elm_abc_player$Music_Notation$getHeaderMap(t);
+	var _p19 = A2(
+		_elm_lang$core$Dict$get,
+		_elm_lang$core$Native_Utils.chr('T'),
+		headerMap);
+	if (_p19.ctor === 'Just') {
+		var _p20 = _p19._0;
+		if (_p20.ctor === 'Title') {
+			return _elm_lang$core$Maybe$Just(_p20._0);
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$inKeySet = F2(
 	function (ka, ks) {
 		return A2(_elm_lang$core$List$member, ka, ks);
 	});
 var _newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale = 12;
-var _newlandsvalley$elm_abc_player$Music_Notation$lookUp = F2(
+var _newlandsvalley$elm_abc_player$Music_Notation$lookUpScale = F2(
 	function (s, i) {
 		var modi = A2(_elm_lang$core$Basics_ops['%'], i, _newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale);
 		var index = (_elm_lang$core$Native_Utils.cmp(modi, 0) < 0) ? (_newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale - modi) : modi;
@@ -12657,6 +13055,18 @@ var _newlandsvalley$elm_abc_player$Music_Notation$lookUp = F2(
 			{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural},
 			A2(_elm_community$elm_list_extra$List_Extra$getAt, index, s));
 	});
+var _newlandsvalley$elm_abc_player$Music_Notation$sharpScaleEquivalent = function (ka) {
+	var _p21 = _elm_lang$core$Basics$snd(ka);
+	if (_p21.ctor === 'Flat') {
+		var index = A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			A2(_elm_community$elm_list_extra$List_Extra$elemIndex, ka, _newlandsvalley$elm_abc_player$Music_Notation$flatScale));
+		return A2(_newlandsvalley$elm_abc_player$Music_Notation$lookUpScale, _newlandsvalley$elm_abc_player$Music_Notation$sharpScale, index);
+	} else {
+		return ka;
+	}
+};
 var _newlandsvalley$elm_abc_player$Music_Notation$majorScale = function (target) {
 	var chromaticScale = (_elm_lang$core$Native_Utils.eq(
 		target,
@@ -12667,7 +13077,7 @@ var _newlandsvalley$elm_abc_player$Music_Notation$majorScale = function (target)
 		{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$F, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp}) || _elm_lang$core$Native_Utils.eq(
 		target,
 		{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp})) ? _newlandsvalley$elm_abc_player$Music_Notation$extremeSharpScale : _newlandsvalley$elm_abc_player$Music_Notation$sharpScale));
-	var f = _newlandsvalley$elm_abc_player$Music_Notation$lookUp(
+	var f = _newlandsvalley$elm_abc_player$Music_Notation$lookUpScale(
 		A2(_newlandsvalley$elm_abc_player$Music_Notation$rotateFrom, target, chromaticScale));
 	return A2(
 		_elm_lang$core$List$map,
@@ -12681,43 +13091,33 @@ var _newlandsvalley$elm_abc_player$Music_Notation$modalScale = F2(
 			0,
 			A2(_elm_community$elm_list_extra$List_Extra$elemIndex, target, _newlandsvalley$elm_abc_player$Music_Notation$sharpScale));
 		var distance = function () {
-			var _p15 = mode;
-			switch (_p15.ctor) {
+			var _p22 = mode;
+			switch (_p22.ctor) {
 				case 'Minor':
 					return 3;
-				case 'Dorian':
-					return 10;
-				case 'Phrygian':
-					return 8;
-				case 'Lydian':
-					return 7;
-				case 'Mixolydian':
-					return 5;
-				case 'Aeolian':
-					return 3;
-				case 'Locrian':
-					return 1;
-				default:
+				case 'Major':
 					return 0;
+				default:
+					return _newlandsvalley$elm_abc_player$Music_Notation$modalDistance(mode);
 			}
 		}();
 		var majorKeyIndex = A2(_elm_lang$core$Basics_ops['%'], index + distance, _newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale);
-		var majorKey = A2(_newlandsvalley$elm_abc_player$Music_Notation$lookUp, _newlandsvalley$elm_abc_player$Music_Notation$sharpScale, majorKeyIndex);
+		var majorKey = A2(_newlandsvalley$elm_abc_player$Music_Notation$lookUpScale, _newlandsvalley$elm_abc_player$Music_Notation$sharpScale, majorKeyIndex);
 		return _newlandsvalley$elm_abc_player$Music_Notation$majorScale(
 			_newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonic(majorKey));
 	});
 var _newlandsvalley$elm_abc_player$Music_Notation$diatonicScale = function (ks) {
 	var accidental = function () {
-		var _p16 = ks.accidental;
-		if (_p16.ctor === 'Just') {
-			return _p16._0;
+		var _p23 = ks.accidental;
+		if (_p23.ctor === 'Just') {
+			return _p23._0;
 		} else {
 			return _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural;
 		}
 	}();
 	var target = {ctor: '_Tuple2', _0: ks.pitchClass, _1: accidental};
-	var _p17 = ks.mode;
-	switch (_p17.ctor) {
+	var _p24 = ks.mode;
+	switch (_p24.ctor) {
 		case 'Major':
 			return _newlandsvalley$elm_abc_player$Music_Notation$majorScale(target);
 		case 'Ionian':
@@ -12733,17 +13133,17 @@ var _newlandsvalley$elm_abc_player$Music_Notation$keySet = function (ks) {
 		_newlandsvalley$elm_abc_player$Music_Notation$diatonicScale(ks));
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$modifiedKeySet = function (ksm) {
-	var _p18 = ksm;
-	var ksig = _p18._0;
-	var mods = _p18._1;
+	var _p25 = ksm;
+	var ksig = _p25._0;
+	var mods = _p25._1;
 	var ks = _newlandsvalley$elm_abc_player$Music_Notation$keySet(ksig);
 	return _elm_lang$core$List$isEmpty(mods) ? ks : A3(_elm_lang$core$List$foldr, _newlandsvalley$elm_abc_player$Music_Notation$modifyKeySet, ks, mods);
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$getKeySet = function (t) {
 	var mksig = _newlandsvalley$elm_abc_player$Music_Notation$getKeySig(t);
-	var _p19 = mksig;
-	if (_p19.ctor === 'Just') {
-		return _newlandsvalley$elm_abc_player$Music_Notation$modifiedKeySet(_p19._0);
+	var _p26 = mksig;
+	if (_p26.ctor === 'Just') {
+		return _newlandsvalley$elm_abc_player$Music_Notation$modifiedKeySet(_p26._0);
 	} else {
 		return _elm_lang$core$Native_List.fromArray(
 			[]);
@@ -12778,19 +13178,19 @@ var _newlandsvalley$elm_abc_player$Music_Notation$toMidiPitch = F3(
 	});
 var _newlandsvalley$elm_abc_player$Music_Notation$isCOrSharpKey = function (ksig) {
 	var kset = _newlandsvalley$elm_abc_player$Music_Notation$keySet(ksig);
-	var _p20 = A2(
+	var _p27 = A2(
 		_elm_lang$core$Maybe$withDefault,
 		{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp},
 		_elm_lang$core$List$head(kset));
-	var samplePC = _p20._0;
-	var sampleAcc = _p20._1;
+	var samplePC = _p27._0;
+	var sampleAcc = _p27._1;
 	return _elm_lang$core$Native_Utils.eq(sampleAcc, _newlandsvalley$elm_abc_player$Abc_ParseTree$Sharp);
 };
 var _newlandsvalley$elm_abc_player$Music_Notation$transposeKeySignatureBy = F2(
 	function (i, mks) {
-		var _p21 = mks;
-		var ks = _p21._0;
-		var keyaccs = _p21._1;
+		var _p28 = mks;
+		var ks = _p28._0;
+		var keyaccs = _p28._1;
 		var pattern = A2(
 			_elm_lang$core$Basics_ops['++'],
 			_elm_lang$core$Basics$toString(ks.pitchClass),
@@ -12801,12 +13201,12 @@ var _newlandsvalley$elm_abc_player$Music_Notation$transposeKeySignatureBy = F2(
 			A2(_elm_lang$core$Dict$get, pattern, _newlandsvalley$elm_abc_player$Music_Notation$chromaticScaleDict));
 		var newIndex = A2(_elm_lang$core$Basics_ops['%'], (_newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale + index) + i, _newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale);
 		var scale = _newlandsvalley$elm_abc_player$Music_Notation$isCOrSharpKey(ks) ? _newlandsvalley$elm_abc_player$Music_Notation$sharpScale : _newlandsvalley$elm_abc_player$Music_Notation$flatScale;
-		var _p22 = A2(
+		var _p29 = A2(
 			_elm_lang$core$Maybe$withDefault,
 			{ctor: '_Tuple2', _0: _newlandsvalley$elm_abc_player$Abc_ParseTree$C, _1: _newlandsvalley$elm_abc_player$Abc_ParseTree$Natural},
 			A2(_elm_community$elm_list_extra$List_Extra$getAt, newIndex, scale));
-		var pc = _p22._0;
-		var ma = _p22._1;
+		var pc = _p29._0;
+		var ma = _p29._1;
 		var accs = A2(
 			_elm_lang$core$List$map,
 			_newlandsvalley$elm_abc_player$Music_Notation$transposeKeyAccidentalBy(i),
@@ -12814,6 +13214,48 @@ var _newlandsvalley$elm_abc_player$Music_Notation$transposeKeySignatureBy = F2(
 		var newks = A3(_newlandsvalley$elm_abc_player$Music_Notation$equivalentEnharmonicKeySig, pc, ma, ks.mode);
 		return {ctor: '_Tuple2', _0: newks, _1: accs};
 	});
+var _newlandsvalley$elm_abc_player$Music_Notation$normaliseModalKey = function (ks) {
+	var scale = function () {
+		var _p30 = ks.accidental;
+		_v21_2:
+		do {
+			if (_p30.ctor === 'Just') {
+				switch (_p30._0.ctor) {
+					case 'Sharp':
+						return _newlandsvalley$elm_abc_player$Music_Notation$sharpScale;
+					case 'Flat':
+						return _newlandsvalley$elm_abc_player$Music_Notation$flatScale;
+					default:
+						break _v21_2;
+				}
+			} else {
+				break _v21_2;
+			}
+		} while(false);
+		var _p31 = ks.pitchClass;
+		if (_p31.ctor === 'F') {
+			return _newlandsvalley$elm_abc_player$Music_Notation$flatScale;
+		} else {
+			return _newlandsvalley$elm_abc_player$Music_Notation$sharpScale;
+		}
+	}();
+	var sourceAccidental = _newlandsvalley$elm_abc_player$Music_Notation$maccToAcc(ks.accidental);
+	var keyAccidental = {ctor: '_Tuple2', _0: ks.pitchClass, _1: sourceAccidental};
+	var index = A2(
+		_elm_lang$core$Maybe$withDefault,
+		0,
+		A2(_elm_community$elm_list_extra$List_Extra$elemIndex, keyAccidental, scale));
+	var distance = _newlandsvalley$elm_abc_player$Music_Notation$modalDistance(ks.mode);
+	var majorKeyIndex = A2(_elm_lang$core$Basics_ops['%'], index + distance, _newlandsvalley$elm_abc_player$Music_Notation$notesInChromaticScale);
+	var majorKeyAcc = A2(_newlandsvalley$elm_abc_player$Music_Notation$lookUpScale, scale, majorKeyIndex);
+	var targetAccidental = _newlandsvalley$elm_abc_player$Music_Notation$accToMacc(
+		_elm_lang$core$Basics$snd(majorKeyAcc));
+	return _elm_lang$core$Native_Utils.eq(0, distance) ? ks : {
+		pitchClass: _elm_lang$core$Basics$fst(majorKeyAcc),
+		accidental: targetAccidental,
+		mode: _newlandsvalley$elm_abc_player$Abc_ParseTree$Major
+	};
+};
 var _newlandsvalley$elm_abc_player$Music_Notation$standardMidiTick = 480;
 var _newlandsvalley$elm_abc_player$Music_Notation$noteTicks = function (n) {
 	return ((_newlandsvalley$elm_abc_player$Music_Notation$standardMidiTick * _imeckler$ratio$Ratio$numerator(n)) / _imeckler$ratio$Ratio$denominator(n)) | 0;
@@ -14157,7 +14599,8 @@ var _newlandsvalley$elm_abc_player$AbcTutorial$taStyle = _elm_lang$html$Html_Att
 			{ctor: '_Tuple2', _0: 'display', _1: 'block'},
 			{ctor: '_Tuple2', _0: 'margin-left', _1: 'auto'},
 			{ctor: '_Tuple2', _0: 'margin-right', _1: 'auto'},
-			{ctor: '_Tuple2', _0: 'background-color', _1: '#f3f6c6'}
+			{ctor: '_Tuple2', _0: 'background-color', _1: '#f3f6c6'},
+			{ctor: '_Tuple2', _0: 'font-family', _1: 'monospace'}
 		]));
 var _newlandsvalley$elm_abc_player$AbcTutorial$scoreUrl = function (i) {
 	var mlesson = A2(_elm_lang$core$Array$get, i, _newlandsvalley$elm_abc_player$Lessons$lessons);
