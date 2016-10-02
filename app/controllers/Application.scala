@@ -458,7 +458,7 @@ class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, conf
   
   def newuserRegister(uuid: String) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val registration = proxy.resolveFuture(proxy.registerUser(uuid))
+    val registration = proxy.resolveFuture(proxy.registerUser(uuid), longTimeout)
     registration.fold(
              e => Redirect(routes.Application.error(e.getMessage())),
              s => Ok(views.html.login(loginForm, None))
