@@ -2,8 +2,11 @@
 
 @import snippets._
 
-@main("midi2abc", None, userName, navigation("midi2abc")(userName)) {
+@main("midi2abc", None, userName, navigation("abc")(userName)) {
     <div id="uploadtunediv" role="main" class="main" >
+
+    <h2>Translate MIDI to ABC</h2>
+    
 
    @helper.form(action = routes.Application.processUploadMidi, 'enctype -> "multipart/form-data", 'id -> "uploadtuneform" ) {    
      <fieldset>
