@@ -395,6 +395,13 @@ span.help {
 
 
 
+div#user {    
+  text-align: right;
+  padding-right: 20px;
+  display: block;
+  color: blue;
+}
+
 /* TABLES
 ---------------------------------------------- */
 
@@ -434,6 +441,8 @@ table.textalign tr td  {
    padding-left: 2em;
    padding-right: 2em;
 }
+
+
 
 /* Just a simple list of text items 
 ---------------------------------------------- */
@@ -541,7 +550,15 @@ audio {
 }
 
  
-/* Site Nav */
+/* Site Nav - the upper navigation bar */
+
+/* new for dropdown */
+.nav {
+    overflow: hidden;
+}
+
+/* end */
+
 .nav li {
 	float: left;
 	font-size: .75em; /* 12px/16px */  /* makes the bullets smaller */
@@ -550,6 +567,7 @@ audio {
 }
 
 .nav li a {
+        display: inline-block;
 	font-size: 1.5em; /* 18px/12px */  /* makes the linked text larger than the bullets */
         color: #cccc99; /* light greenish grey */
         text-decoration: none;
@@ -572,12 +590,31 @@ audio {
         background-color: #224422; /* hard dark green */
 }
 
-div#user {    
-  text-align: right;
-  padding-right: 20px;
-  display: block;
-  color: blue;
+/* dropdown menus within the navigation bar */
+
+
+.dropdown-content {
+    display: none;
+    position: absolute; 
+    background-color: #224422; /* hard dark green */
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
+
+
+.dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+
 
 /** definition lists */
 
