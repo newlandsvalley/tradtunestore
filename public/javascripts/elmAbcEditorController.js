@@ -17704,20 +17704,27 @@ var _newlandsvalley$elm_abc_player$VexScore_Canonical$vexItem = function (vi) {
 										_elm_lang$core$List$length(_p16)),
 									'^'))))));
 		case 'VChord':
+			var chordDur = _newlandsvalley$elm_abc_player$VexScore_Canonical$noteDur(_p15._0);
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
-				' ( ',
+				' ',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$String$concat(
+					chordDur,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' ( ',
 						A2(
-							_elm_lang$core$List$intersperse,
-							'.',
-							A2(
-								_elm_lang$core$List$map,
-								_newlandsvalley$elm_abc_player$VexScore_Canonical$vexNote(_newlandsvalley$elm_abc_player$VexScore_Canonical$Chordal),
-								_p15._1))),
-					' )'));
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$String$concat(
+								A2(
+									_elm_lang$core$List$intersperse,
+									'.',
+									A2(
+										_elm_lang$core$List$map,
+										_newlandsvalley$elm_abc_player$VexScore_Canonical$vexNote(_newlandsvalley$elm_abc_player$VexScore_Canonical$Chordal),
+										_p15._1))),
+							' )'))));
 		case 'VNotePair':
 			return A2(
 				_elm_lang$core$Basics_ops['++'],
