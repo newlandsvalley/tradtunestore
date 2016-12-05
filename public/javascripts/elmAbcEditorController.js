@@ -19723,32 +19723,41 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$fieldsetStyle = _elm_lang
 			}
 		}
 	});
-var _newlandsvalley$elm_abc_player$AbcEditorController$bStyle = function (enabled) {
-	var textSize = {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1em'},
-		_1: {ctor: '[]'}
-	};
-	var colour = enabled ? {ctor: '[]'} : {
-		ctor: '::',
-		_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'lightgray'},
-		_1: {
+var _newlandsvalley$elm_abc_player$AbcEditorController$bStyle = F2(
+	function (enabled, hasTopMargin) {
+		var marginTop = hasTopMargin ? {
 			ctor: '::',
-			_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgrey'},
+			_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '20px'},
 			_1: {ctor: '[]'}
-		}
-	};
-	return _elm_lang$html$Html_Attributes$style(
-		A2(_elm_lang$core$Basics_ops['++'], colour, textSize));
-};
-var _newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes = F2(
-	function (isEnabled, msg) {
+		} : {ctor: '[]'};
+		var textSize = {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'font-size', _1: '1em'},
+			_1: {ctor: '[]'}
+		};
+		var colour = enabled ? {ctor: '[]'} : {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'lightgray'},
+			_1: {
+				ctor: '::',
+				_0: {ctor: '_Tuple2', _0: 'color', _1: 'darkgrey'},
+				_1: {ctor: '[]'}
+			}
+		};
+		return _elm_lang$html$Html_Attributes$style(
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				colour,
+				A2(_elm_lang$core$Basics_ops['++'], textSize, marginTop)));
+	});
+var _newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes = F3(
+	function (isEnabled, hasTopMargin, msg) {
 		return {
 			ctor: '::',
 			_0: _elm_lang$html$Html_Attributes$class('hoverable'),
 			_1: {
 				ctor: '::',
-				_0: _newlandsvalley$elm_abc_player$AbcEditorController$bStyle(isEnabled),
+				_0: A2(_newlandsvalley$elm_abc_player$AbcEditorController$bStyle, isEnabled, hasTopMargin),
 				_1: {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Events$onClick(msg),
@@ -20746,6 +20755,15 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$Abc = function (a) {
 	return {ctor: 'Abc', _0: a};
 };
 var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
+	var hasTopMargin = true;
+	var enableButton = function () {
+		var _p35 = model.tuneResult;
+		if (_p35.ctor === 'Ok') {
+			return true;
+		} else {
+			return false;
+		}
+	}();
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -20831,7 +20849,7 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$button,
-												A2(_newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes, true, _newlandsvalley$elm_abc_player$AbcEditorController$RequestFileDownload),
+												A3(_newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes, true, false, _newlandsvalley$elm_abc_player$AbcEditorController$RequestFileDownload),
 												{
 													ctor: '::',
 													_0: _elm_lang$html$Html$text('save'),
@@ -20892,9 +20910,10 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 														ctor: '::',
 														_0: A2(
 															_elm_lang$html$Html$button,
-															A2(
+															A3(
 																_newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes,
-																true,
+																enableButton,
+																hasTopMargin,
 																_newlandsvalley$elm_abc_player$AbcEditorController$MoveOctave(true)),
 															{
 																ctor: '::',
@@ -20905,9 +20924,10 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 															ctor: '::',
 															_0: A2(
 																_elm_lang$html$Html$button,
-																A2(
+																A3(
 																	_newlandsvalley$elm_abc_player$AbcEditorController$buttonAttributes,
-																	true,
+																	enableButton,
+																	hasTopMargin,
 																	_newlandsvalley$elm_abc_player$AbcEditorController$MoveOctave(false)),
 																{
 																	ctor: '::',
