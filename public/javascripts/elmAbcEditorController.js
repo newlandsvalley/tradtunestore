@@ -20972,7 +20972,7 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 											_0: _elm_lang$html$Html_Attributes$placeholder('abc'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$value(model.abc),
+												_0: _elm_lang$html$Html_Attributes$defaultValue(model.abc),
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$html$Html_Events$onInput(_newlandsvalley$elm_abc_player$AbcEditorController$Abc),
