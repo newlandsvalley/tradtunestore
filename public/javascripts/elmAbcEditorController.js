@@ -20658,8 +20658,16 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$tempoSlider = function (m
 											_elm_lang$html$Html_Events$targetValue)),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$disabled(playing),
-										_1: {ctor: '[]'}
+										_0: _elm_lang$html$Html_Events$onInput(
+											function (_p33) {
+												return _newlandsvalley$elm_abc_player$AbcEditorController$SetTempo(
+													_newlandsvalley$elm_abc_player$AbcEditorController$safeToInt(_p33));
+											}),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$disabled(playing),
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
@@ -20704,16 +20712,16 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$Transpose = function (a) 
 };
 var _newlandsvalley$elm_abc_player$AbcEditorController$transpositionMenu = function (m) {
 	var mKeySig = function () {
-		var _p33 = m.tuneResult;
-		if (_p33.ctor === 'Ok') {
+		var _p34 = m.tuneResult;
+		if (_p34.ctor === 'Ok') {
 			return _newlandsvalley$elm_abc_player$AbcEditorController$defaultToC(
-				_newlandsvalley$elm_abc_parser$Music_Notation$getKeySig(_p33._0));
+				_newlandsvalley$elm_abc_parser$Music_Notation$getKeySig(_p34._0));
 		} else {
 			return _elm_lang$core$Maybe$Nothing;
 		}
 	}();
-	var _p34 = mKeySig;
-	if (_p34.ctor === 'Just') {
+	var _p35 = mKeySig;
+	if (_p35.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$select,
 			{
@@ -20728,7 +20736,7 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$transpositionMenu = funct
 					_1: {ctor: '[]'}
 				}
 			},
-			_newlandsvalley$elm_abc_player$AbcEditorController$transpositionOptions(_p34._0));
+			_newlandsvalley$elm_abc_player$AbcEditorController$transpositionOptions(_p35._0));
 	} else {
 		return A2(
 			_elm_lang$html$Html$select,
@@ -20757,8 +20765,8 @@ var _newlandsvalley$elm_abc_player$AbcEditorController$Abc = function (a) {
 var _newlandsvalley$elm_abc_player$AbcEditorController$view = function (model) {
 	var hasTopMargin = true;
 	var enableButton = function () {
-		var _p35 = model.tuneResult;
-		if (_p35.ctor === 'Ok') {
+		var _p36 = model.tuneResult;
+		if (_p36.ctor === 'Ok') {
 			return true;
 		} else {
 			return false;
