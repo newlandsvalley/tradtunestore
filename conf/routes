@@ -26,7 +26,7 @@ GET 	/logout			    	    controllers.Application.logout
 
 GET 	/newuser		    	    controllers.Application.newuser
 POST	/newuser		    	    controllers.Application.processNewUser
-GET 	/users		    	            controllers.Application.users
+GET 	/users		    	            controllers.Application.users(page: Int)
 
 GET     /newuser/acknowledge        	    controllers.Application.newuserAcknowledge
 GET     /newuser/register/:uuid     	    controllers.Application.newuserRegister(uuid: String)

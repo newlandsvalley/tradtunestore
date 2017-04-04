@@ -502,9 +502,9 @@ class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, conf
     )    
   }
   
-  def users = Action { implicit request => {
+  def users(page: Int) = Action { implicit request => {
     implicit val userName: Option[String] =  request.session.get("username")
-    val resultsValidation = proxy.resolveFuture(proxy.users(request, 1))
+    val resultsValidation = proxy.resolveFuture(proxy.users(request, page))
     resultsValidation.fold (
       e => Status(500)("Unexpected search error " + e.getMessage())
       ,

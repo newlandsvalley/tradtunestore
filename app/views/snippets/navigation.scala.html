@@ -8,7 +8,7 @@
 @navigationlink("/upload")(Utils.cssClass("upload", context))("upload")
 @abcDropdown(Utils.cssClass("abc", context))
 @(userName match {
-     case Some("administrator")  => navigationlink("/users")(Utils.cssClass("users", context))("users")   
+     case Some("administrator")  => navigationlink("/users?page=1")(Utils.cssClass("users", context))("users")   
      case _ =>  None
 })
 @(userName match {
