@@ -2,26 +2,14 @@
 
 @import snippets._
 
-<!-- elm code for the ABC editor -->	
-@scripts = {    
-    <script src="@routes.Assets.at("javascripts/elmAbcEditorController.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/soundfont-player.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/vextab-div.js")" type="text/javascript"></script>
-    <script type="text/javascript">
-       var node = document.getElementById('elmAbcEditorController');
-       var myapp = Elm.AbcEditorController.embed(node); 
-    </script>
-    <script src="@routes.Assets.at("javascripts/nativeFileIO.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/nativeSoundFont.js")" type="text/javascript"></script>
-    <script src="@routes.Assets.at("javascripts/nativeVexTab.js")" type="text/javascript"></script>
+<!-- PureScript code for the ABC editor -->
+@scripts = {
+    <script src="@routes.Assets.at("javascripts/vexflow-debug.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/abc-editor.js")" type="text/javascript"></script>
 }
 
-@main("abceditor", None, userName, navigation("abc")(userName), scripts) {         
-    <div id="abcdiv" role="main" class="main" >
-       <div id = "elmAbcEditorController">
-       </div>
-    </div>
+@main("abceditor", None, userName, navigation("abc")(userName), scripts) {
+  <div id="abcdiv" role="main" class="main" >
+  <!--  we use p as the placeholder for the running code  -->
+  </p>
 }
-
-
-

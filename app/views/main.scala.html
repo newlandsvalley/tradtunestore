@@ -16,15 +16,23 @@
         <meta name="copyright" content="public domain" />
         <meta name="robots" content="noindex,follow" />
         <link href='http://fonts.googleapis.com/css?family=Fondamento' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/base.css")?version=110">   
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/abcplayer.css")">   
-          <!-- MIDI.js player css -->
-          <link rel="stylesheet" media="screen" href="@routes.Assets.at("MIDI.js/css/MIDIPlayer.css")" >
-          <!-- end of MIDI.js player css -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/base.css")?version=110">
+        <!-- MIDI.js player css -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("MIDI.js/css/MIDIPlayer.css")" >
+        <!-- end of MIDI.js player css -->
+@if(title == "abceditor") {
+        <!-- ABC editor -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/abcEditor.css")">
+}
+
+@if(title == "abctutorial") {
+        <!-- ABC tutorial -->
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/abcTutorial.css")">
+}
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")" >
         <script src="@routes.Assets.at("javascripts/jquery-2.0.3.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/tradtunestore.js")?version=111" type="text/javascript"></script>
-@if(true) {  
+@if(true) {
           <!-- midi.js package -->
           <script src="@routes.Assets.at("MIDI.js/js/MIDI/AudioDetect.js")" type="text/javascript"></script>
           <script src="@routes.Assets.at("MIDI.js/js/MIDI/LoadPlugin.js")" type="text/javascript"></script>
@@ -42,7 +50,7 @@
           <script src="@routes.Assets.at("MIDI.js/inc/Base64.js")" type="text/javascript"></script>
           <script src="@routes.Assets.at("MIDI.js/inc/base64binary.js")" type="text/javascript"></script>
 
-          <script> 
+          <script>
            window.onload = function() {
              @onload.getOrElse("");
            }
@@ -65,27 +73,27 @@
          </div>
        </header>
        <!-- end #masthead -->
-		
+
        <!-- ==== START MAIN CONTENT ==== -->
        @content
-       <!-- end #main content -->		
-   
+       <!-- end #main content -->
+
        <!-- ==== START FOOTER ==== -->
        <footer id="footer" role="contentinfo">
          <h1><div class="mainlogo"><span class="mainlogoprefix">tradtunedb</span><span class="mainlogosuffix">.org.uk</span></div></h1>
- 
+
          <div class="credits">
-           <nav role="navigation" class="hnav">   
-           
+           <nav role="navigation" class="hnav">
+
                @if(!(title == "about")) {
                  <a href="/about" >about</a>
-               }           
+               }
                @if(!(title == "abceditor")) {
                  <a href="/abceditor" >abc editor</a>
-               }           
+               }
                @if(!(title == "abctutorial")) {
                  <a href="/abctutorial" >abc tutorial</a>
-               }           
+               }
                @if(!(title == "credits")) {
                  <a href="/credits" >credits</a>
                }
@@ -101,9 +109,9 @@
        </footer>
        <!-- end #footer -->
      </div>
-     <!-- #page -->	
+     <!-- #page -->
    </div>
    @scripts
 <!-- #container -->
-</body>   
+</body>
 </html>

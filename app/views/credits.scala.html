@@ -2,9 +2,9 @@
 
 @import snippets._
 
-@main("credits", None, userName, navigation("home")(userName)) {         
+@main("credits", None, userName, navigation("home")(userName)) {
     <div id="creditsdiv" role="main" class="main" >
-          <p>TradTuneDb uses <a href="http://abcnotation.com/">ABC notation</a> and so obviously owes a tremendous debt to Chris Walshaw who developed it. 
+          <p>TradTuneDb uses <a href="http://abcnotation.com/">ABC notation</a> and so obviously owes a tremendous debt to Chris Walshaw who developed it.
  It uses the <a href="https://github.com/newlandsvalley/musicrest">MusicRest</a> web service for storing and transcoding its tunes. This in turn transcodes by means of:</p>
           <table id="samplesearch" >
              <tr>
@@ -20,10 +20,10 @@
                 <td><a href="http://abc.sourceforge.net/abcMIDI/">abcMIDI</a></td>
              </tr>
           </table>
-          <p>It uses the <a href="http://mudcu.be/midi-js/">MIDI.js</a> midi player to play tunes which have been saved to the database and the 
-            <a href="https://github.com/danigb/soundfont-player">soundfont player</a> from danigb for tunes played in the ABC editor and tutorial. It uses 
-           <a href="http://www.vexflow.com/">VexFlow</a> for dynamic score engraving in the editor.</p>
-          <p>Code is written in scala and <a href="http://elm-lang.org/">elm</a>, with particular thanks to the following:</p>         
+          <p>It uses the <a href="http://mudcu.be/midi-js/">MIDI.js</a> midi player to play tunes which have been saved to the database and the soundfont
+              player from  <a href="https://github.com/newlandsvalley/purescript-halogen-components">purescript-halogen-components</a> for tunes played
+              in the ABC editor and tutorial. It uses <a href="http://www.vexflow.com/">VexFlow</a> for dynamic score engraving in the editor.</p>
+          <p>Code is written in scala and <a href="http://www.purescript.org/">PureScript</a>, with particular thanks to the following:</p>
           <table id="samplesearch" >
              <tr>
                 <td>content negotiation:</td>
@@ -41,13 +41,7 @@
                 <td>JSON:</td>
                 <td><a href="http://argonaut.io/">argonaut</a></td>
              </tr>
-             <tr>
-                <td>ABC parsing:</td>
-                <td><a href="https://github.com/Bogdanp/elm-combine">elm-combine</a> from Bogdan Popa</td>
-             </tr>
           </table>
 
     </div>
 }
-
-
