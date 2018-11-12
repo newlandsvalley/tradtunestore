@@ -3,19 +3,15 @@
 @import utils._
 
 
-@navigationlink("/home")(Utils.cssClass("home", context))("home") 
+@navigationlink("/home")(Utils.cssClass("home", context))("home")
 @navigationlink("/newtune")(Utils.cssClass("newtune", context))("new tune")
 @navigationlink("/upload")(Utils.cssClass("upload", context))("upload")
 @abcDropdown(Utils.cssClass("abc", context))
 @(userName match {
-     case Some("administrator")  => navigationlink("/users?page=1")(Utils.cssClass("users", context))("users")   
+     case Some("administrator")  => navigationlink("/users?page=1")(Utils.cssClass("users", context))("users")
      case _ =>  None
 })
 @(userName match {
-     case Some(u)  => navigationlink("/logout")(Utils.cssClass("logout", context))("logout")   
+     case Some(u)  => navigationlink("/logout")(Utils.cssClass("logout", context))("logout")
      case _ =>  navigationlink("/login")(Utils.cssClass("login", context))("login")
 })
-
-
-
-

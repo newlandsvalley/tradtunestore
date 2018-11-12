@@ -10,6 +10,10 @@
 
 @main("abceditor", None, userName, navigation("abc")(userName), scripts) {
   <div id="abcdiv" role="main" class="main" >
-  <!--  we use p as the placeholder for the running code  -->
-  </p>
+    <!--  we use this div  as the placeholder for the running PureScript code  -->
+    <div id= "embed-ps-div">
+      <!-- and place an element inside to avoid its being optimised away -->
+      </p>
+    </div>
+  </div>
 }

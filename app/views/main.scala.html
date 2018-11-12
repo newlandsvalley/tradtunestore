@@ -17,12 +17,15 @@
         <meta name="robots" content="noindex,follow" />
         <link href='http://fonts.googleapis.com/css?family=Fondamento' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/base.css")?version=110">
+@if(title != "abceditor") {
         <!-- MIDI.js player css -->
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("MIDI.js/css/MIDIPlayer.css")" >
-        <!-- end of MIDI.js player css -->
+}
+
 @if(title == "abceditor") {
         <!-- ABC editor -->
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/abcEditor.css")">
+        <link rel="stylesheet" media="print" href="@routes.Assets.at("stylesheets/printScore.css")">
 }
 
 @if(title == "abctutorial") {
@@ -32,7 +35,7 @@
         <link rel="shortcut icon" href="@routes.Assets.at("images/favicon.ico")" >
         <script src="@routes.Assets.at("javascripts/jquery-2.0.3.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/tradtunestore.js")?version=111" type="text/javascript"></script>
-@if(true) {
+@if(title != "abceditor") {
           <!-- midi.js package -->
           <script src="@routes.Assets.at("MIDI.js/js/MIDI/AudioDetect.js")" type="text/javascript"></script>
           <script src="@routes.Assets.at("MIDI.js/js/MIDI/LoadPlugin.js")" type="text/javascript"></script>
@@ -55,7 +58,7 @@
              @onload.getOrElse("");
            }
           </script>
-        }
+}
 </head>
 <body >
   <div id="container">

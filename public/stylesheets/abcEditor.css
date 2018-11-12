@@ -1,31 +1,21 @@
-/*
-body {
-  padding: 0 40px 0 40px;
-}
 
-.longLabel,
-label {
-  display: block;
-  color: #444;
-}
-*/
 
 .hoverable {
   border: none;
   border-radius: 6px;
   padding: 2px 10px;
   margin: 10px 20px 10px 0;
-  font-size: 1.1em;
-  background-color: #67d665;  /* lighter green */
+  background-color: #67d665;
   color: black;
-  box-shadow: 3px 3px #669966;  /* darker green */
+  box-shadow: 3px 3px #669966;
   transition: 500ms;
 }
 
 .hoverable:hover {
   box-shadow: 0 0;
-  background-color: #669966;   /* darker green */
+  background-color: #669966;
 }
+
 
 /* unhoverable means greyed and disabled */
 .unhoverable {
@@ -33,7 +23,6 @@ label {
   border-radius: 6px;
   padding: 2px 10px;
   margin: 10px 20px 10px 0;
-  font-size: 1.1em;
   background-color: lightGray;
   color: darkGray;
   transition: 500ms;
@@ -63,35 +52,36 @@ label {
   font-size: 1.0em;
 }
 
-/* this over-writes values in base.css
+#tune-title {
+  width: 1200px;
+  float: left;
+  margin: 12px 0px 0px 0px;
+}
+
+/* this over-writes values in base.css for label
    we seem to need this width for FireFox
-   bit it looks awkaward in Chrome
+   but it looks awkaward in Chrome
 */
-label {
+.labelAlignment {
   text-align: left;
   padding: 0px 0px;
-  width: 120px;
-  font-size: 1.0em;
+  margin: 2px 0px 10px 20px;
+  width: 190px;
+  font-size: 1.2em;
 }
 
 
 .fileInputLabel {
   /* the label for a file input */
+  width: 105px;             /* we need this for FireFox, awkwardly big in Chrome */
   margin: 0 20px 0 0;
-  /* padding: 1px 8px 0 8px; */
-  font-size: 1.1em;
+  text-align: left;
   display: inline-block;
 }
 
+/*
 .msCommitLabel {
-  /* need slightly more space for the multiple select label*/
   display: inline-block;
-  width: 200px;
-  font-size: 1.2em;
-}
-
-.labelAlignment {
-  /* align labels at the LHS of a frame */
   margin: 5px 0px 0px 0px;
   display: inline-block;
   text-align: left;
@@ -99,9 +89,10 @@ label {
   width: 180px;
   font-size: 1.1em;
 }
+*/
 
 .leftPane {
-  width: 420px;
+  width: 450px;
   float: left;
 }
 
