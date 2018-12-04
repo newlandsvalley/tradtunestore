@@ -23,7 +23,7 @@ import play.api.cache._
 
 class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, config: Configuration) extends Controller with I18nSupport  {  this: Controller =>
 
-  val version = "1.2.1" 
+  val version = "1.2.2"
   val UUID = "uuid"
   val random = new Random(System.currentTimeMillis())
   // cache config details which are used a lot
@@ -745,6 +745,12 @@ class Application @Inject() (val messagesApi: MessagesApi, cache: CacheApi, conf
     Ok(views.html.abctutorial(version))
     }
   }
+
+  def polskaMetronome = Action { implicit request => {
+      implicit val userName: Option[String] = request.session.get("username")
+      Ok(views.html.polskaMetronome(version))
+      }
+    }
 
   def credits = Action { implicit request => {
     implicit val userName: Option[String] = request.session.get("username")

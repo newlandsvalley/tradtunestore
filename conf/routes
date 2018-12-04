@@ -62,13 +62,14 @@ POST    /genre/:genre/tune/:tune/comment/:id      	controllers.Application.proce
 GET     /genre/:genre/tune/:tune/comment/:id/delete   	controllers.Application.commentDelete(genre: String, tune: String, id: String)
 
 GET 	/about		    				controllers.Application.about
-GET 	/abceditor	    				controllers.Application.abcEditor
-GET 	/abctutorial	    				controllers.Application.abcTutorial
-GET 	/credits		    			controllers.Application.credits	
-GET     /contact		    			controllers.Application.contact
-GET     /donate		        			controllers.Application.donate
-GET     /help                				controllers.Application.help
-GET     /helpmidi2abc                			controllers.Application.helpMidi2abc
+GET 	/abceditor	    			controllers.Application.abcEditor
+GET 	/abctutorial	    		controllers.Application.abcTutorial
+GET 	/metronome	    		  controllers.Application.polskaMetronome
+GET 	/credits		    			controllers.Application.credits
+GET   /contact		    		  controllers.Application.contact
+GET   /donate		          	controllers.Application.donate
+GET   /help                 controllers.Application.help
+GET   /helpmidi2abc         controllers.Application.helpMidi2abc
 
 GET 	/examine		    			controllers.Application.examine
 
@@ -79,5 +80,3 @@ GET 	/error			    			controllers.Application.error(message: String)
 GET     /assets/*file               		controllers.Assets.at(path="/public", file)
 # Catch all
 GET   /*path   					controllers.Application.noSuchRoute(path: String)
-
-

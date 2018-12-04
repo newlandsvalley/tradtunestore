@@ -7,6 +7,7 @@
 @navigationlink("/newtune")(Utils.cssClass("newtune", context))("new tune")
 @navigationlink("/upload")(Utils.cssClass("upload", context))("upload")
 @abcDropdown(Utils.cssClass("abc", context))
+@navigationlink("/metronome")(Utils.cssClass("metronome", context))("metronome")
 @(userName match {
      case Some("administrator")  => navigationlink("/users?page=1")(Utils.cssClass("users", context))("users")
      case _ =>  None

@@ -2,13 +2,13 @@
 
 @import snippets._
 
-<!-- Transpiled PureScript code for the ABC tutorial -->
+<!-- transpiled PureScript code for the polska metronome -->
 @scripts = {
-  <script src="@routes.Assets.at("javascripts/abc-tutorial.js")" type="text/javascript"></script>
+  <script src="@routes.Assets.at("javascripts/metronome.js")" type="text/javascript"></script>
 }
 
-@main("abctutorial", None, userName, navigation("abc")(userName), scripts) {
-    <div id="abcdiv" role="main" class="main" >
+@main("metronome", None, userName, navigation("abc")(userName), scripts) {
+    <div id="metronomediv" role="main" class="main" >
       <!--  we use this div  as the placeholder for the running PureScript code  -->
       <div id= "embed-ps-div">
         <!-- and place an element inside to avoid its being optimised away -->
